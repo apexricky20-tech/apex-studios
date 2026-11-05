@@ -6,6 +6,8 @@ import ProjectPage from './pages/ProjectPage'
 import ServicesPage from './pages/ServicesPage'
 import WebsiteDesignPage from './pages/WebsiteDesignPage'
 import GoogleBusinessProfilePage from './pages/GoogleBusinessProfilePage'
+import DevelopmentPage from './pages/DevelopmentPage'
+import AutomationPage from './pages/AutomationPage'
 import ProcessPage from './pages/ProcessPage'
 import AboutPage from './pages/AboutPage'
 import ContactPage from './pages/ContactPage'
@@ -24,6 +26,8 @@ export default function App() {
           <Route path="services" element={<ServicesPage />} />
           <Route path="website-design" element={<WebsiteDesignPage />} />
           <Route path="google-business-profile" element={<GoogleBusinessProfilePage />} />
+          <Route path="development" element={<DevelopmentPage />} />
+          <Route path="automation" element={<AutomationPage />} />
           <Route path="process" element={<ProcessPage />} />
           <Route path="about" element={<AboutPage />} />
           <Route path="contact" element={<ContactPage />} />

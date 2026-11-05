@@ -16,8 +16,8 @@ const links = [
 const serviceLinks = [
   ['All services', '/services'],
   ['Website Design', '/website-design'],
-  ['Development', '/services'],
-  ['Automation', '/services'],
+  ['Development', '/development'],
+  ['Automation', '/automation'],
   ['Branding', '/services'],
   ['Google Business Profile', '/google-business-profile'],
 ]
@@ -29,7 +29,7 @@ const linkClass = (isActive) =>
 
 export default function Nav() {
   const { pathname } = useLocation()
-  const onServices = pathname.startsWith('/services') || pathname.startsWith('/website-design') || pathname.startsWith('/google-business-profile')
+  const onServices = ['/services', '/website-design', '/google-business-profile', '/development', '/automation'].some((p) => pathname.startsWith(p))
   const [open, setOpen] = useState(false)
   const [servicesOpen, setServicesOpen] = useState(false)
   const close = () => setOpen(false)

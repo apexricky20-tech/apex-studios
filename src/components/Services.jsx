@@ -4,6 +4,8 @@ import { Link } from 'react-router-dom'
 const pages = {
   'Website Design': '/website-design',
   'Google Business Profile': '/google-business-profile',
+  Development: '/development',
+  Automation: '/automation',
 }
 
 const services = [
