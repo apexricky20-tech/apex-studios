@@ -1,34 +1,59 @@
-const stats = [
-  ['192', 'Google interactions across both branches'],
-  ['100', 'Mobile performance score'],
-  ['100', 'Mobile SEO score'],
-]
+import { Link } from 'react-router-dom'
+import { visibleProjects } from '../data/projects'
+
+function Card({ project, index }) {
+  const external = project.href.startsWith('http')
+  const cls = `group relative block aspect-[4/3] w-full overflow-hidden rounded-2xl border border-paper/10 bg-gradient-to-br from-neutral-800 to-neutral-950 md:w-[46%] ${
+    index % 2 ? 'md:ml-auto' : ''
+  }`
+  const inner = (
+    <>
+      <img
+        src={project.image}
+        alt={`${project.title} website`}
+        loading="lazy"
+        className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+        onError={(e) => {
+          e.currentTarget.style.display = 'none'
+        }}
+      />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent" />
+      <div className="absolute inset-x-0 bottom-0 p-6 md:p-8">
+        <h3 className="text-3xl transition-colors group-hover:text-amber md:text-4xl">
+          {project.title}
+        </h3>
+        <p className="mt-2 text-sm text-paper/70">{project.category}</p>
+      </div>
+    </>
+  )
+  return external ? (
+    <a href={project.href} target="_blank" rel="noreferrer" className={cls}>
+      {inner}
+    </a>
+  ) : (
+    <Link to={project.href} className={cls}>
+      {inner}
+    </Link>
+  )
+}
 
 export default function Work() {
+  const projects = visibleProjects()
   return (
-    <section id="work" className="mx-auto max-w-[2000px] px-gutter py-24  md:py-32">
-      <h2 className="mt-4 text-5xl md:text-7xl">Bullhead Hotel &amp; Butchery</h2>
-      <p className="mt-6 max-w-2xl text-lg text-paper/70">
-        A 24-hour hotel and butchery on the Mombasa highway, loved by weekend visitors but
-        invisible online. We built a mobile-first site for both branches with delivery
-        ordering, so customers who could only visit on weekends can now order during the week.
-      </p>
-      <div className="mt-12 grid gap-6 md:grid-cols-3">
-        {stats.map(([n, label]) => (
-          <div key={label} className="rounded-2xl border border-paper/10 p-8">
-            <p className="font-display text-6xl font-extrabold text-amber">{n}</p>
-            <p className="mt-3 text-paper/70">{label}</p>
-          </div>
+    <section id="work" className="relative">
+      <div className="sticky top-0 flex h-svh items-center justify-center overflow-hidden px-gutter">
+        <h2 className="whitespace-nowrap text-[15vw] font-bold leading-none tracking-[-0.05em]">
+          <span className="sr-only">Latest work</span>
+          <span aria-hidden="true">
+            Latest<span className="text-outline">work</span>
+          </span>
+        </h2>
+      </div>
+      <div className="relative z-10 -mt-[45svh] flex flex-col gap-[18svh] px-gutter pb-[30svh]">
+        {projects.map((p, i) => (
+          <Card key={p.slug} project={p} index={i} />
         ))}
       </div>
-      <a
-        href="https://bullheadhotels.co.ke"
-        target="_blank"
-        rel="noreferrer"
-        className="mt-10 inline-block font-semibold text-amber"
-      >
-        Visit the live site →
-      </a>
     </section>
   )
 }

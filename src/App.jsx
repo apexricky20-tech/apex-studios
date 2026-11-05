@@ -6,6 +6,8 @@ import ServicesPage from './pages/ServicesPage'
 import ProcessPage from './pages/ProcessPage'
 import AboutPage from './pages/AboutPage'
 import ContactPage from './pages/ContactPage'
+import ArticlesPage from './pages/ArticlesPage'
+import ArticlePage from './pages/ArticlePage'
 import NotFound from './pages/NotFound'
 
 export default function App() {
@@ -19,6 +21,8 @@ export default function App() {
           <Route path="process" element={<ProcessPage />} />
           <Route path="about" element={<AboutPage />} />
           <Route path="contact" element={<ContactPage />} />
+          <Route path="articles" element={<ArticlesPage />} />
+          <Route path="articles/:slug" element={<ArticlePage />} />
           <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>
