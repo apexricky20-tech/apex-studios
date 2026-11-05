@@ -5,7 +5,7 @@ export default function ArticleCard({ article }) {
   return (
     <Link
       to={`/articles/${article.slug}`}
-      className="group flex flex-col rounded-2xl border border-paper/10 bg-paper/[0.03] p-5 transition-colors hover:border-amber/60"
+      className="group flex flex-col rounded-2xl border border-paper/10 bg-surface p-5 transition-colors hover:border-amber/60"
     >
       <div className="relative aspect-[16/10] overflow-hidden rounded-xl bg-gradient-to-br from-neutral-800 to-neutral-950">
         <img

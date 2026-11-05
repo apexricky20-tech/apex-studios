@@ -50,7 +50,7 @@ const columns = [
   },
 ]
 
-const linkClass = 'text-sm text-paper/60 transition-colors hover:text-amber'
+const linkClass = 'text-sm text-muted transition-colors hover:text-amber'
 
 function FooterLink({ label, href }) {
   const external = /^(https?:|mailto:)/.test(href)

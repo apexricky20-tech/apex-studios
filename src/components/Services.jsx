@@ -69,7 +69,7 @@ export default function Services() {
                 }`}
               >
                 <h3
-                  className={`text-[clamp(2.75rem,7.2vw,8.5rem)] transition-[color,text-shadow] duration-300 group-hover:text-amber group-hover:[text-shadow:0_0_40px_rgba(245,165,36,0.55)] md:flex-1 ${
+                  className={`text-[clamp(2.75rem,7.2vw,8.5rem)] transition-colors duration-200 group-hover:text-amber md:flex-1 ${
                     flipped ? 'md:text-right' : ''
                   }`}
                 >
@@ -77,7 +77,7 @@ export default function Services() {
                 </h3>
                 <div className="md:w-[38%] lg:w-[30%]">
                   <p className="text-paper/80">{s.text}</p>
-                  <ul className="mt-5 space-y-2 text-sm text-paper/60">
+                  <ul className="mt-5 space-y-2 text-sm text-muted">
                     {s.items.map((item) => (
                       <li key={item} className="flex items-center gap-3">
                         <span
