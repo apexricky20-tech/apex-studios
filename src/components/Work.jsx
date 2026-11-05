@@ -49,7 +49,7 @@ export default function Work() {
           </span>
         </h2>
       </div>
-      <div className="relative z-10 -mt-[45svh] flex flex-col gap-[18svh] px-gutter pb-[30svh]">
+      <div className="relative z-10 flex flex-col gap-[18svh] px-gutter pb-[30svh] pt-[30svh]">
         {projects.map((p, i) => (
           <Card key={p.slug} project={p} index={i} />
         ))}
