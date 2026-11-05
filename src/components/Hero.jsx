@@ -48,7 +48,10 @@ export default function Hero() {
 
         <ul className="hero-rise mt-6 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs text-paper/70" style={{ animationDelay: '550ms' }}>
           <li className="flex items-center gap-2 text-paper">
-            <span className="h-2 w-2 rounded-full bg-[#12b76a]" aria-hidden="true" />
+            <span className="relative flex h-2 w-2" aria-hidden="true">
+              <span className="absolute inline-flex h-full w-full rounded-full bg-[#12b76a] opacity-75 motion-safe:animate-ping" />
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-[#12b76a]" />
+            </span>
             {site.availability}
           </li>
           <li>{site.role}</li>
