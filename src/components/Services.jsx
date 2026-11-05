@@ -44,7 +44,7 @@ const services = [
 export default function Services() {
   return (
     <section id="services" className="mx-auto max-w-[2000px] px-gutter py-24  md:py-32">
-      <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+      <div className="sr-only">
         <div>
           <p className="text-sm uppercase tracking-widest text-amber">Services</p>
           <h2 className="mt-4 text-5xl md:text-7xl">What I build</h2>
@@ -55,7 +55,7 @@ export default function Services() {
         </p>
       </div>
 
-      <ul className="mt-16 border-t border-paper/15">
+      <ul className="border-t border-paper/15">
         {services.map((s, i) => {
           const flipped = i % 2 === 1
           return (
