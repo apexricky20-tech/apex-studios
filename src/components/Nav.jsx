@@ -28,7 +28,7 @@ export default function Nav() {
   return (
     <>
       <header className="fixed inset-x-0 top-0 z-50 bg-gradient-to-b from-ink/90 to-transparent">
-        <div className="flex items-center justify-between px-6 py-5 md:px-12">
+        <div className="flex items-center justify-between px-gutter py-5 ">
           <Link to="/" onClick={close} aria-label="Apex Studios home">
             <Logo />
           </Link>
@@ -67,7 +67,7 @@ export default function Nav() {
       {open && (
         <div
           id="site-menu"
-          className="fixed inset-0 z-40 flex flex-col justify-center bg-ink px-6 md:px-12"
+          className="fixed inset-0 z-40 flex flex-col justify-center bg-ink px-gutter "
         >
           <nav className="flex flex-col gap-2">
             {links.map(([label, to], i) => (

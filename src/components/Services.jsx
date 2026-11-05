@@ -43,10 +43,10 @@ const services = [
 
 export default function Services() {
   return (
-    <section id="services" className="mx-auto max-w-[1400px] px-6 py-24 md:px-12 md:py-32">
+    <section id="services" className="mx-auto max-w-[2000px] px-gutter py-24  md:py-32">
       <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
         <div>
-          <p className="text-sm uppercase tracking-widest text-amber">02 / Services</p>
+          <p className="text-sm uppercase tracking-widest text-amber">Services</p>
           <h2 className="mt-4 text-5xl md:text-7xl">What I build</h2>
         </div>
         <p className="max-w-md text-paper/70">
@@ -69,13 +69,13 @@ export default function Services() {
                 }`}
               >
                 <h3
-                  className={`text-[clamp(2.5rem,5.2vw,5rem)] transition-colors duration-300 group-hover:text-amber md:flex-1 ${
+                  className={`text-[clamp(2.75rem,7.2vw,8.5rem)] transition-colors duration-300 group-hover:text-amber md:flex-1 ${
                     flipped ? 'md:text-right' : ''
                   }`}
                 >
                   {s.title}
                 </h3>
-                <div className="md:w-[34%]">
+                <div className="md:w-[38%] lg:w-[30%]">
                   <p className="text-paper/80">{s.text}</p>
                   <ul className="mt-5 space-y-2 text-sm text-paper/60">
                     {s.items.map((item) => (

@@ -12,7 +12,7 @@ export default function Contact() {
   }
 
   return (
-    <section id="contact" className="mx-auto max-w-3xl px-6 py-24 md:px-12 md:py-32">
+    <section id="contact" className="mx-auto max-w-3xl px-gutter py-24  md:py-32">
       <h2 className="text-5xl md:text-7xl">Tell us about your place.</h2>
       <p className="mt-6 text-lg text-paper/70">
         We'll show you what it could look like online.

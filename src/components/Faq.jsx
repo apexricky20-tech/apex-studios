@@ -8,8 +8,8 @@ const faqs = [
 
 export default function Faq() {
   return (
-    <section className="mx-auto max-w-4xl px-6 py-24 md:px-12 md:py-32">
-      <p className="text-sm uppercase tracking-widest text-amber">04 / Before you ask</p>
+    <section className="mx-auto max-w-4xl px-gutter py-24  md:py-32">
+      <p className="text-sm uppercase tracking-widest text-amber">Before you ask</p>
       <div className="mt-12 divide-y divide-paper/10 border-y border-paper/10">
         {faqs.map(([q, a]) => (
           <details key={q} className="group py-6">

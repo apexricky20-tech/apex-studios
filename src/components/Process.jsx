@@ -7,8 +7,8 @@ const steps = [
 
 export default function Process() {
   return (
-    <section id="process" className="mx-auto max-w-7xl px-6 py-24 md:px-12 md:py-32">
-      <p className="text-sm uppercase tracking-widest text-amber">03 / How a build runs</p>
+    <section id="process" className="mx-auto max-w-[2000px] px-gutter py-24  md:py-32">
+      <p className="text-sm uppercase tracking-widest text-amber">How a build runs</p>
       <div className="mt-12 grid gap-6 md:grid-cols-4">
         {steps.map(([n, title, text]) => (
           <div key={n}>

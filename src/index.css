@@ -4,9 +4,16 @@
   --color-ink: #0a0a0a;
   --color-paper: #f4f1ea;
   --color-amber: #f5a524;
-  --font-display: "Syne", sans-serif;
-  --font-body: "Inter", sans-serif;
+  --font-display: "Satoshi", "Inter", sans-serif;
+  --font-body: "Satoshi", "Inter", sans-serif;
   --font-signature: "Herr Von Muellerhoff", cursive;
+  --spacing-gutter: min(calc(1rem + 3.9vw), 6rem);
+  --animate-marquee: marquee 40s linear infinite;
+
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
 }
 
 html { scroll-behavior: smooth; }
@@ -14,12 +21,11 @@ body {
   background: var(--color-ink);
   color: var(--color-paper);
   font-family: var(--font-body);
-  --font-signature: "Herr Von Muellerhoff", cursive;
 }
 h1, h2, h3 {
   font-family: var(--font-display);
-  font-weight: 800;
-  letter-spacing: -0.03em;
+  font-weight: 500;
+  letter-spacing: -0.04em;
   line-height: 0.95;
 }
 @media (prefers-reduced-motion: reduce) {

@@ -6,8 +6,7 @@ const stats = [
 
 export default function Work() {
   return (
-    <section id="work" className="mx-auto max-w-7xl px-6 py-24 md:px-12 md:py-32">
-      <p className="text-sm uppercase tracking-widest text-amber">01 / Selected work</p>
+    <section id="work" className="mx-auto max-w-[2000px] px-gutter py-24  md:py-32">
       <h2 className="mt-4 text-5xl md:text-7xl">Bullhead Hotel &amp; Butchery</h2>
       <p className="mt-6 max-w-2xl text-lg text-paper/70">
         A 24-hour hotel and butchery on the Mombasa highway, loved by weekend visitors but

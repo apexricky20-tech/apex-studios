@@ -25,7 +25,7 @@ export default function Hero() {
       </div>
 
       {/* Layer 2: the text sits over the portrait, then scrolls away */}
-      <div className="relative z-10 -mt-[100svh] flex h-svh flex-col items-center justify-end px-6 pb-8 text-center">
+      <div className="relative z-10 -mt-[100svh] flex h-svh flex-col items-center justify-end px-gutter pb-8 text-center">
         <h1 className="sr-only">Websites for hotels, lodges and restaurants</h1>
         <p className="max-w-2xl text-base text-paper/80 md:text-lg">
           I&apos;m {site.name}, founder of Apex Studios. I design and build fast, immersive
