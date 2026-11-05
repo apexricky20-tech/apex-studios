@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { useContact, useSite } from '../lib/content'
 
 const services = [
@@ -238,6 +239,13 @@ export default function ContactPage() {
               >
                 {status === 'sending' ? 'Sending...' : 'Send message'}
               </button>
+              <p className="mt-5 max-w-md text-sm text-muted">
+                We use your details only to reply to you. See our{' '}
+                <Link to="/privacy" className="underline hover:text-amber">
+                  Privacy Policy
+                </Link>
+                .
+              </p>
               <div role="status" aria-live="polite" className="mt-6 max-w-md text-lg">
                 {status === 'sent' && (
                   <p className="text-amber">Thank you. Your message has been sent and we will reply by email.</p>

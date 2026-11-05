@@ -14,8 +14,10 @@ const subscribe = (fn) => {
 
 export function applyContent(c = {}) {
   const contact = { ...contactDefault }
+  // A blank value saved in the dashboard falls back to the default in src/data/contact.js,
+  // so an old empty save can't hide the WhatsApp, Instagram or TikTok links.
   CONTACT_KEYS.forEach((k) => {
-    if (typeof c.contact?.[k] === 'string') contact[k] = c.contact[k]
+    if (typeof c.contact?.[k] === 'string' && c.contact[k].trim() !== '') contact[k] = c.contact[k]
   })
   state = {
     site: { ...siteDefault, ...(c.site || {}) },

@@ -2,6 +2,7 @@
 //   Public:  GET /api/content, POST /api/contact, GET /api/media/:id
 //   Private: /api/admin/*  (needs the password session cookie)
 // Needs: a KV binding named DB, and two secrets: ADMIN_PASSWORD and SESSION_SECRET.
+// Optional (new-enquiry alerts on Telegram): secrets TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID.
 
 const enc = new TextEncoder()
 const COOKIE = '__Host-session'
@@ -183,8 +184,59 @@ const sniff = (b) => {
 
 const randomHex = (n) => hex(crypto.getRandomValues(new Uint8Array(n)))
 
+// ---------- new-enquiry alerts (Telegram) ----------
+const alertsConfigured = (env) => Boolean(env.TELEGRAM_BOT_TOKEN && env.TELEGRAM_CHAT_ID)
+
+// Kenyan numbers like 0712345678 become 254712345678 so the WhatsApp link works.
+const waDigits = (p) => {
+  const d = (p || '').replace(/\D/g, '')
+  if (/^0\d{9}$/.test(d)) return `254${d.slice(1)}`
+  if (/^[17]\d{8}$/.test(d)) return `254${d}`
+  return d
+}
+
+async function sendTelegram(env, text) {
+  if (!alertsConfigured(env)) return { ok: false, error: 'Alerts are not set up yet.' }
+  try {
+    const res = await fetch(`https://api.telegram.org/bot${env.TELEGRAM_BOT_TOKEN}/sendMessage`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ chat_id: env.TELEGRAM_CHAT_ID, text, disable_web_page_preview: true }),
+    })
+    if (res.ok) return { ok: true }
+    let why = `status ${res.status}`
+    try {
+      why = (await res.json()).description || why
+    } catch {
+      // not JSON
+    }
+    return { ok: false, error: `Telegram said: ${why}` }
+  } catch {
+    return { ok: false, error: 'Could not reach Telegram.' }
+  }
+}
+
+function enquiryAlert(m, origin) {
+  const wa = waDigits(m.phone)
+  const lines = [
+    'New enquiry from your website',
+    '',
+    `Name: ${m.name}`,
+    `Email: ${m.email}`,
+    m.phone ? `Phone: ${m.phone}` : null,
+    m.company ? `Company: ${m.company}` : null,
+    m.service ? `Needs: ${m.service}` : null,
+    '',
+    m.message.length > 1200 ? `${m.message.slice(0, 1200)}...` : m.message,
+    '',
+    wa.length >= 10 ? `Reply on WhatsApp: https://wa.me/${wa}` : null,
+    `Open inbox: ${origin}/admin`,
+  ]
+  return lines.filter((l) => l !== null).join('\n')
+}
+
 // ---------- the router ----------
-export async function onRequest({ request, env }) {
+export async function onRequest({ request, env, waitUntil }) {
   const u = new URL(request.url)
   const path = u.pathname.replace(/^\/api\/?/, '').replace(/\/$/, '')
   const parts = path.split('/')
@@ -224,6 +276,9 @@ export async function onRequest({ request, env }) {
         read: false,
       }
       await env.DB.put(`msg:${id}`, JSON.stringify(m), { metadata: metaOf(m) })
+      // Tell the owner right away. This never delays or breaks the visitor's form.
+      const alert = sendTelegram(env, enquiryAlert(m, u.origin))
+      if (typeof waitUntil === 'function') waitUntil(alert)
       return json({ ok: true })
     }
 
@@ -269,6 +324,37 @@ export async function onRequest({ request, env }) {
       if (path === 'admin/me' && method === 'GET') return json({ ok: true })
 
       if (path === 'admin/content' && method === 'GET') return json(await getContent(env))
+
+      if (path === 'admin/alerts' && method === 'GET') return json({ configured: alertsConfigured(env) })
+
+      if (path === 'admin/alerts/test' && method === 'POST') {
+        if (!alertsConfigured(env)) throw new HttpError(400, 'Alerts are not set up yet. Add TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID in Cloudflare, then redeploy.')
+        const r = await sendTelegram(env, 'Test alert from your Apex Studios dashboard. New enquiries will arrive here.')
+        if (!r.ok) throw new HttpError(502, r.error)
+        return json({ ok: true })
+      }
+
+      // Backup: the browser calls this in pages of 40 messages (KV limits how much one request may read).
+      if (path === 'admin/export' && method === 'GET') {
+        const cursor = u.searchParams.get('cursor') || undefined
+        const page = await env.DB.list({ prefix: 'msg:', limit: 40, cursor })
+        const messages = (
+          await Promise.all(
+            page.keys.map(async (k) => {
+              try {
+                return JSON.parse(await env.DB.get(k.name))
+              } catch {
+                return null
+              }
+            }),
+          )
+        ).filter(Boolean)
+        return json({
+          content: cursor ? undefined : await getContent(env),
+          messages,
+          cursor: page.list_complete ? null : page.cursor,
+        })
+      }
 
       if (path === 'admin/content' && method === 'PUT') {
         const merged = { ...(await getContent(env)), ...cleanContent(await readJson(request)) }

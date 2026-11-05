@@ -441,6 +441,95 @@ function ProjectsEditor({ content, reload }) {
   )
 }
 
+function Tools() {
+  const [alerts, setAlerts] = useState(null) // null = checking, true/false = configured
+  const [alertMsg, setAlertMsg] = useState('')
+  const [backupMsg, setBackupMsg] = useState('')
+  const [busy, setBusy] = useState('')
+
+  useEffect(() => {
+    let alive = true
+    api('alerts')
+      .then((d) => alive && setAlerts(d.configured))
+      .catch(() => alive && setAlerts(false))
+    return () => {
+      alive = false
+    }
+  }, [])
+
+  const testAlert = async () => {
+    setBusy('alert')
+    setAlertMsg('')
+    try {
+      await send('alerts/test', 'POST', {})
+      setAlertMsg('Sent. Check Telegram.')
+    } catch (x) {
+      setAlertMsg(x.message)
+    }
+    setBusy('')
+  }
+
+  const backup = async () => {
+    setBusy('backup')
+    setBackupMsg('')
+    try {
+      let cursor = ''
+      let content = null
+      const messages = []
+      do {
+        const d = await api(`export${cursor ? `?cursor=${encodeURIComponent(cursor)}` : ''}`)
+        if (d.content) content = d.content
+        messages.push(...d.messages)
+        cursor = d.cursor || ''
+      } while (cursor)
+      const file = { exportedAt: new Date().toISOString(), content, messages }
+      const blob = new Blob([JSON.stringify(file, null, 2)], { type: 'application/json' })
+      const a = document.createElement('a')
+      a.href = URL.createObjectURL(blob)
+      a.download = `apex-studios-backup-${new Date().toISOString().slice(0, 10)}.json`
+      a.click()
+      URL.revokeObjectURL(a.href)
+      setBackupMsg(`Downloaded ${messages.length} message${messages.length === 1 ? '' : 's'} and your site settings.`)
+    } catch (x) {
+      setBackupMsg(x.message)
+    }
+    setBusy('')
+  }
+
+  return (
+    <div className="space-y-6">
+      <section className={`${box} space-y-4`}>
+        <h2 className="text-xl">New-enquiry alerts</h2>
+        <p className="text-sm text-muted">
+          {alerts === null && 'Checking...'}
+          {alerts === true && 'Telegram alerts are on. Every new enquiry is sent to your Telegram.'}
+          {alerts === false &&
+            'Telegram alerts are off. Add TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID as secrets in Cloudflare Pages (Settings, Variables and secrets), then redeploy.'}
+        </p>
+        <div className="flex items-center gap-4">
+          <button className={btn} disabled={!alerts || busy === 'alert'} onClick={testAlert}>
+            {busy === 'alert' ? 'Sending...' : 'Send a test alert'}
+          </button>
+          <span className="text-sm text-muted">{alertMsg}</span>
+        </div>
+      </section>
+      <section className={`${box} space-y-4`}>
+        <h2 className="text-xl">Backup</h2>
+        <p className="text-sm text-muted">
+          Downloads your site settings, projects and every enquiry as one file. Images you uploaded here are not included, so
+          keep the original files.
+        </p>
+        <div className="flex items-center gap-4">
+          <button className={btn} disabled={busy === 'backup'} onClick={backup}>
+            {busy === 'backup' ? 'Preparing...' : 'Download backup'}
+          </button>
+          <span className="text-sm text-muted">{backupMsg}</span>
+        </div>
+      </section>
+    </div>
+  )
+}
+
 function Dashboard({ onLogout }) {
   const [tab, setTab] = useState('inbox')
   const [content, setContent] = useState(null)
@@ -466,6 +555,7 @@ function Dashboard({ onLogout }) {
     ['inbox', `Inbox${unread ? ` (${unread})` : ''}`],
     ['site', 'Site and contact'],
     ['projects', 'Projects'],
+    ['tools', 'Alerts and backup'],
   ]
   return (
     <main className="mx-auto max-w-4xl px-6 py-10">
@@ -485,9 +575,10 @@ function Dashboard({ onLogout }) {
       </nav>
       {err && <p className="text-amber">{err}</p>}
       {tab === 'inbox' && <Inbox onCount={setUnread} />}
-      {tab !== 'inbox' && !content && !err && <p className="text-muted">Loading...</p>}
+      {tab !== 'inbox' && tab !== 'tools' && !content && !err && <p className="text-muted">Loading...</p>}
       {tab === 'site' && content && <SiteSettings content={content} reload={reload} />}
       {tab === 'projects' && content && <ProjectsEditor content={content} reload={reload} />}
+      {tab === 'tools' && <Tools />}
     </main>
   )
 }

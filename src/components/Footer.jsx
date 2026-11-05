@@ -113,6 +113,14 @@ export default function Footer() {
 
       <div className="mx-auto mt-16 flex max-w-[2000px] flex-wrap items-center justify-between gap-2 border-t border-paper/10 pt-6 text-xs text-muted">
         <p>© {new Date().getFullYear()} APEX STUDIOS. All rights reserved.</p>
+        <nav aria-label="Legal" className="flex gap-5">
+          <Link to="/privacy" className="transition-colors hover:text-amber">
+            Privacy
+          </Link>
+          <Link to="/terms" className="transition-colors hover:text-amber">
+            Terms
+          </Link>
+        </nav>
         <p>{site.location}</p>
       </div>
     </footer>
