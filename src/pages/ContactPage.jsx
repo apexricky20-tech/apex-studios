@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { contact } from '../data/contact'
-import { site } from '../data/site'
+import { useContact, useSite } from '../lib/content'
 
 const services = [
   'Website Design',
@@ -75,6 +74,8 @@ function Card({ icon, title, value, href }) {
 }
 
 export default function ContactPage() {
+  const contact = useContact()
+  const site = useSite()
   const [status, setStatus] = useState('idle') // idle | sending | sent | mailto | error
   const started = useRef(0)
   useEffect(() => {

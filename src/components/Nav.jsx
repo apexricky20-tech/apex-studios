@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
 import Logo from './Logo'
-import { contact } from '../data/contact'
+import { useContact } from '../lib/content'
 
 const links = [
   ['Home', '/'],
@@ -32,6 +32,7 @@ const linkClass = (isActive) =>
   }`
 
 export default function Nav() {
+  const contact = useContact()
   const { pathname } = useLocation()
   const onServices = ['/services', '/website-design', '/google-business-profile', '/development', '/automation', '/branding'].some((p) => pathname.startsWith(p))
   const [open, setOpen] = useState(false)

@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { visibleProjects } from '../data/projects'
+import { useVisibleProjects } from '../lib/content'
 
 function Card({ project }) {
   return (
@@ -28,7 +28,7 @@ function Card({ project }) {
 }
 
 export default function WorkPage() {
-  const all = visibleProjects()
+  const all = useVisibleProjects()
   const groups = [...new Set(all.map((p) => p.group))]
   const [filter, setFilter] = useState('All')
   const shown = filter === 'All' ? all : all.filter((p) => p.group === filter)

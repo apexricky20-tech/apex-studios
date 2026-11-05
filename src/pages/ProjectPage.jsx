@@ -1,5 +1,5 @@
 import { Link, useParams } from 'react-router-dom'
-import { visibleProjects } from '../data/projects'
+import { useVisibleProjects } from '../lib/content'
 import NotFound from './NotFound'
 
 function Row({ label, children }) {
@@ -13,7 +13,7 @@ function Row({ label, children }) {
 
 export default function ProjectPage() {
   const { slug } = useParams()
-  const list = visibleProjects()
+  const list = useVisibleProjects()
   const project = list.find((p) => p.slug === slug)
   if (!project) return <NotFound />
   const next = list[(list.indexOf(project) + 1) % list.length]

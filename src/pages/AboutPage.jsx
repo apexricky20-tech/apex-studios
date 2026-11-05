@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import Marquee from '../components/Marquee'
-import { site } from '../data/site'
+import { useSite } from '../lib/content'
 
 const stats = [
   ['3', 'Projects in our portfolio'],
@@ -19,6 +19,7 @@ const values = [
 const mask = 'radial-gradient(ellipse at center, black 50%, transparent 100%)'
 
 export default function AboutPage() {
+  const site = useSite()
   return (
     <main>
       <title>About Apex Studios | Websites for Hotels, Lodges and Restaurants in Kenya</title>

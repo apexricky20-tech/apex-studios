@@ -1,9 +1,10 @@
 import { Link } from 'react-router-dom'
-import { contact } from '../data/contact'
+import { useContact } from '../lib/content'
 
 const cols = { 3: 'md:grid-cols-3', 4: 'md:grid-cols-4' }
 
 export default function ServicePage({ page }) {
+  const contact = useContact()
   const faqLd = {
     '@context': 'https://schema.org',
     '@type': 'FAQPage',

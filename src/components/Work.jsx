@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { visibleProjects } from '../data/projects'
+import { useVisibleProjects } from '../lib/content'
 
 function Card({ project, index }) {
   const external = false
@@ -38,7 +38,7 @@ function Card({ project, index }) {
 }
 
 export default function Work() {
-  const projects = visibleProjects()
+  const projects = useVisibleProjects()
   return (
     <section id="work" className="relative">
       <div className="sticky top-0 flex h-svh items-center justify-center overflow-hidden px-gutter">

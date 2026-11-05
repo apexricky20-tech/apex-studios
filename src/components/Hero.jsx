@@ -1,9 +1,10 @@
 import { Link } from 'react-router-dom'
-import { site } from '../data/site'
+import { useSite } from '../lib/content'
 
 const fade = 'linear-gradient(to bottom, black 70%, transparent 100%)'
 
 export default function Hero() {
+  const site = useSite()
   return (
     <>
       {/* Layer 1: the portrait stays pinned while the page scrolls over it */}
@@ -47,6 +48,7 @@ export default function Hero() {
         </div>
 
         <ul className="hero-rise mt-6 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs text-paper/70" style={{ animationDelay: '550ms' }}>
+          {site.available !== false && (
           <li className="flex items-center gap-2 text-paper">
             <span className="relative flex h-2 w-2" aria-hidden="true">
               <span className="absolute inline-flex h-full w-full rounded-full bg-[#12b76a] opacity-75 motion-safe:animate-ping" />
@@ -54,6 +56,7 @@ export default function Hero() {
             </span>
             {site.availability}
           </li>
+          )}
           <li>{site.role}</li>
           <li>{site.location}</li>
         </ul>

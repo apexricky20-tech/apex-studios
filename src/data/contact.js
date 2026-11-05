@@ -7,5 +7,5 @@ export const contact = {
   // Where the contact form POSTs JSON (your dashboard inbox).
   // Leave empty and the form opens the visitor's email app instead.
   // Payload: { name, email, company, service, message, page, elapsedMs, sentAt }
-  endpoint: '',
+  endpoint: '/api/contact',
 }
