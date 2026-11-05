@@ -1,3 +1,11 @@
+import { Link } from 'react-router-dom'
+
+// Add a line here when a service gets its own page
+const pages = {
+  'Website Design': '/website-design',
+  'Google Business Profile': '/google-business-profile',
+}
+
 const services = [
   {
     title: 'Website Design',
@@ -68,12 +76,16 @@ export default function Services() {
       <ul className="border-t border-paper/15">
         {services.map((s, i) => {
           const flipped = i % 2 === 1
+          const to = pages[s.title]
+          const Row = to ? Link : 'div'
+          const rowProps = to ? { to } : {}
           return (
             <li
               key={s.title}
               className="group border-b border-paper/15"
             >
-              <div
+              <Row
+                {...rowProps}
                 className={`flex flex-col gap-8 py-12 md:items-center md:gap-16 md:py-16 ${
                   flipped ? 'md:flex-row-reverse' : 'md:flex-row'
                 }`}
@@ -99,7 +111,7 @@ export default function Services() {
                     ))}
                   </ul>
                 </div>
-              </div>
+              </Row>
             </li>
           )
         })}

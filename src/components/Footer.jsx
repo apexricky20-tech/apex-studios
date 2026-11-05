@@ -16,7 +16,7 @@ const columns = [
   {
     title: 'Services',
     links: [
-      ['Website Design', '/services'],
+      ['Website Design', '/website-design'],
       ['Development', '/services'],
       ['Automation', '/services'],
       ['Branding', '/services'],

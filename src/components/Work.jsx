@@ -53,6 +53,14 @@ export default function Work() {
         {projects.map((p, i) => (
           <Card key={p.slug} project={p} index={i} />
         ))}
+        <div className="text-center">
+          <Link
+            to="/work"
+            className="inline-block rounded-full border border-paper/25 px-8 py-4 text-sm font-semibold transition-colors hover:border-amber hover:text-amber"
+          >
+            View all work
+          </Link>
+        </div>
       </div>
     </section>
   )

@@ -44,7 +44,7 @@ export const googleBusinessProfile = {
         { h: 'Makes contact easy', p: 'Call, directions and website buttons sit right on the listing, which suits customers who are already on the road.' },
         { h: 'Builds trust', p: 'Reviews, recent photos and accurate details signal that a business is open, active and worth a visit.' },
         { h: 'Shows what is working', p: 'The profile reports how many people called, asked for directions or visited your website, so you can see the effect.' },
-        { h: 'Proof from Bullhead', p: 'The two Bullhead Hotel & Butchery branches each have their own profile. Over a 28-day window they recorded 106 and 86 interactions, 192 combined.' },
+        { h: 'Proof from Bullhead', p: 'The two Bullhead Hotel & Butchery branches each have their own profile. Over a 28-day window they recorded 106 and 86 interactions, 192 combined.', link: { to: '/work', label: 'View the work' } },
       ],
     },
     {

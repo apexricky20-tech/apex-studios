@@ -13,8 +13,10 @@ function Row({ label, children }) {
 
 export default function ProjectPage() {
   const { slug } = useParams()
-  const project = visibleProjects().find((p) => p.slug === slug)
+  const list = visibleProjects()
+  const project = list.find((p) => p.slug === slug)
   if (!project) return <NotFound />
+  const next = list[(list.indexOf(project) + 1) % list.length]
 
   const isGbp = project.group === 'Google Business Profile'
   const cta = isGbp
@@ -33,7 +35,17 @@ export default function ProjectPage() {
       <meta name="description" content={project.summary} />
 
       <div className="mx-auto max-w-[1220px]">
-        <p className="text-sm uppercase tracking-widest text-muted">{project.group}</p>
+        <Link
+          to="/work"
+          className="inline-block text-sm text-muted transition-colors hover:text-amber"
+        >
+          &larr; All work
+        </Link>
+        <p className="mt-10 text-sm uppercase tracking-widest text-muted">
+          <Link to="/work" className="transition-colors hover:text-amber">
+            {project.group}
+          </Link>
+        </p>
         <h1 className="mt-8 text-[clamp(3rem,7vw,6.5rem)] font-medium">{project.title}</h1>
         <p className="mt-10 max-w-3xl text-xl leading-relaxed text-muted md:text-2xl">
           {project.summary}
@@ -64,6 +76,16 @@ export default function ProjectPage() {
               ))}
             </Row>
           )}
+          {project.service && (
+            <Row label="Service">
+              <Link
+                to={project.service.to}
+                className="inline-block rounded-full border border-paper/25 px-6 py-3 text-sm font-semibold transition-colors hover:border-amber hover:text-amber"
+              >
+                {project.service.label}
+              </Link>
+            </Row>
+          )}
           {project.location && <Row label="Location">{project.location}</Row>}
           {project.year && <Row label="Year">{project.year}</Row>}
           {project.live && (
@@ -92,6 +114,25 @@ export default function ProjectPage() {
           >
             Start a project
           </Link>
+        </div>
+
+        <div className="mt-32 flex flex-wrap items-center justify-between gap-6 border-t border-paper/15 pt-10">
+          <Link to="/work" className="text-sm text-muted transition-colors hover:text-amber">
+            &larr; All work
+          </Link>
+          {next && next.slug !== project.slug && (
+            <Link
+              to={`/work/${next.slug}`}
+              className="group text-right"
+            >
+              <span className="block text-xs uppercase tracking-widest text-muted">
+                Next project
+              </span>
+              <span className="mt-2 block text-3xl transition-colors group-hover:text-amber md:text-4xl">
+                {next.title} &rarr;
+              </span>
+            </Link>
+          )}
         </div>
       </div>
     </main>
