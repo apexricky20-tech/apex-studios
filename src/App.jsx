@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Layout from './components/Layout'
 import Home from './pages/Home'
 import WorkPage from './pages/WorkPage'
+import ProjectPage from './pages/ProjectPage'
 import ServicesPage from './pages/ServicesPage'
 import WebsiteDesignPage from './pages/WebsiteDesignPage'
 import ProcessPage from './pages/ProcessPage'
@@ -18,6 +19,7 @@ export default function App() {
         <Route element={<Layout />}>
           <Route index element={<Home />} />
           <Route path="work" element={<WorkPage />} />
+          <Route path="work/:slug" element={<ProjectPage />} />
           <Route path="services" element={<ServicesPage />} />
           <Route path="website-design" element={<WebsiteDesignPage />} />
           <Route path="process" element={<ProcessPage />} />

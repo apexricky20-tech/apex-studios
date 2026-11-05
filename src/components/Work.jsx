@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom'
 import { visibleProjects } from '../data/projects'
 
 function Card({ project, index }) {
-  const external = project.href.startsWith('http')
+  const external = false
   const cls = `group relative block aspect-[4/3] w-full overflow-hidden rounded-2xl border border-paper/10 bg-gradient-to-br from-neutral-800 to-neutral-950 md:w-[46%] ${
     index % 2 ? 'md:ml-auto' : ''
   }`
@@ -31,7 +31,7 @@ function Card({ project, index }) {
       {inner}
     </a>
   ) : (
-    <Link to={project.href} className={cls}>
+    <Link to={`/work/${project.slug}`} className={cls}>
       {inner}
     </Link>
   )
