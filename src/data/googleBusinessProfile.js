@@ -1,0 +1,120 @@
+export const googleBusinessProfile = {
+  path: '/google-business-profile',
+  title: 'Google Business Profile Setup and Management in Kenya | Apex Studios',
+  description:
+    'Google Business Profile setup, optimisation and management for businesses across Kenya. Be found on Google Maps and Search with accurate hours, photos and contact options.',
+  label: 'Services',
+  h1: 'Google Business Profile in Kenya',
+  intro:
+    'When someone nearby searches for a hotel, restaurant or shop, your Google Business Profile is often the first thing they see. We set it up, complete it and keep it active, so customers can find you, call you and get directions in a few taps.',
+  sections: [
+    {
+      id: 'what-we-do',
+      nav: 'What we do',
+      title: 'What we do',
+      intro:
+        'We take care of the listing that appears on Google Maps and Search, whether you are starting from nothing or fixing a profile that is incomplete.',
+      blocks: [
+        { h: 'Setup', p: 'We create your profile, choose the right categories and enter your business details accurately.' },
+        { h: 'Optimisation', p: 'Description, services, products, hours and attributes are filled in properly, so Google and customers understand what you offer.' },
+        { h: 'Ongoing care', p: 'Posts, photos, questions and reviews are kept up to date, so the profile never looks abandoned.' },
+        { h: 'Connected to your website', p: 'The profile links to a fast website with the same details, so what people see on Google matches what they find when they click.' },
+      ],
+    },
+    {
+      id: 'what-setup-includes',
+      nav: 'What setup includes',
+      title: 'What setup includes',
+      intro: 'The scope depends on the business. Most profiles cover these parts.',
+      blocks: [
+        { h: 'Verification', p: 'Google asks businesses to prove they are real. We guide you through the verification method offered for your listing.' },
+        { h: 'Business details', p: 'Name, address, map pin, phone number, website and opening hours, including special hours for holidays.' },
+        { h: 'Categories and services', p: 'A main category and supporting ones that match how customers search, plus a list of services or products.' },
+        { h: 'Photos', p: 'Your logo, cover image and real photos of the place, food, rooms or team, organised so the best ones show first.' },
+        { h: 'Multiple branches', p: 'Each branch gets its own profile with its own address and details, linked to the right page of your website.' },
+      ],
+    },
+    {
+      id: 'what-it-does',
+      nav: 'What it does for the business',
+      title: 'What it does for the business',
+      intro: 'A strong profile turns searches into calls, visits and website clicks.',
+      blocks: [
+        { h: 'Helps people find you', p: 'Customers searching on Google Maps or Search see your location, hours and photos without opening any website.' },
+        { h: 'Makes contact easy', p: 'Call, directions and website buttons sit right on the listing, which suits customers who are already on the road.' },
+        { h: 'Builds trust', p: 'Reviews, recent photos and accurate details signal that a business is open, active and worth a visit.' },
+        { h: 'Shows what is working', p: 'The profile reports how many people called, asked for directions or visited your website, so you can see the effect.' },
+        { h: 'Proof from Bullhead', p: 'The two Bullhead Hotel & Butchery branches each have their own profile. Over a 28-day window they recorded 106 and 86 interactions, 192 combined.' },
+      ],
+    },
+    {
+      id: 'businesses-across-kenya',
+      nav: 'Businesses across Kenya',
+      title: 'Businesses across Kenya',
+      intro: 'Any business with a physical location or a service area can use a profile. Setup is handled remotely, over calls and WhatsApp.',
+      blocks: [
+        { h: 'Hotels and lodges', p: 'Rooms, photos and booking contacts shown to travellers searching along highways and around towns.' },
+        { h: 'Restaurants and butcheries', p: 'Menus, opening hours and delivery details visible when hungry customers search nearby.' },
+        { h: 'Shops and services', p: 'Clinics, schools, garages, salons and contractors that depend on local customers.' },
+      ],
+    },
+    {
+      id: 'how-it-runs',
+      nav: 'How it runs',
+      title: 'How it runs',
+      intro: 'A simple sequence, with your approval at each step.',
+      blocks: [
+        { h: 'First call', p: 'We talk about your business, your locations and who you want to reach. A quote follows after the call.' },
+        { h: 'Audit', p: 'If a profile already exists, we check what is missing, wrong or duplicated.' },
+        { h: 'Setup and optimisation', p: 'Details, categories, services and photos are completed and shared with you for approval.' },
+        { h: 'Verification and launch', p: 'We guide you through verification and confirm the profile is live and correct.' },
+        { h: 'Ongoing updates', p: 'If you choose ongoing care, posts, photos and reviews are handled on a regular schedule.' },
+      ],
+    },
+    {
+      id: 'what-we-need',
+      nav: 'What we need from you',
+      title: 'What we need from you',
+      intro: 'Setup moves fastest when these are ready.',
+      blocks: [
+        { h: 'Business details', p: 'Exact name, address, phone number, website and opening hours for each location.' },
+        { h: 'Photos', p: 'Real photos of the exterior, interior, products and team. They matter more than any other part of the profile.' },
+        { h: 'Access', p: 'The Google account that should own the profile, so it stays under your control and not ours.' },
+        { h: 'A way to verify', p: 'Someone at the business who can receive the verification call, code or video request from Google.' },
+      ],
+    },
+    {
+      id: 'after-setup',
+      nav: 'After setup',
+      title: 'After setup',
+      intro: 'A profile works best when it stays active.',
+      blocks: [
+        { h: 'Posts and updates', p: 'Offers, events, new menu items and holiday hours posted where customers will see them.' },
+        { h: 'Reviews', p: 'New reviews flagged and replies drafted, so customers see that the business answers.' },
+        { h: 'Reports', p: 'A clear summary of calls, direction requests and website clicks, so you know what the profile is doing.' },
+      ],
+    },
+    {
+      id: 'before-you-ask',
+      nav: 'Before you ask',
+      title: 'Before you ask',
+      intro: 'Short answers to common questions.',
+      faq: true,
+      blocks: [
+        { h: 'How much does it cost?', p: 'It depends on the number of locations and whether you want ongoing care. We quote after a first call and give a clear figure before any work starts.' },
+        { h: 'Will I own the profile?', p: 'Yes. The profile belongs to your Google account, and we work with the access you give us.' },
+        { h: 'Can you fix a profile that already exists?', p: 'Yes. We audit it, correct wrong details, remove duplicates and complete what is missing.' },
+        { h: 'Can you guarantee a top ranking?', p: 'No one can. Google decides rankings. A complete, accurate and active profile gives your business the best chance of being shown.' },
+        { h: 'Do you work outside Nairobi?', p: 'Yes. We work with businesses across Kenya over calls, WhatsApp and screen sharing.' },
+      ],
+    },
+    {
+      id: 'start',
+      nav: 'Start with an enquiry',
+      title: 'Get found on Google',
+      intro: 'Tell us about your business and where customers find you today. We will reply with the next step.',
+      blocks: [],
+      cta: { to: '/contact', label: 'Start a project' },
+    },
+  ],
+}

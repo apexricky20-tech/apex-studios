@@ -20,6 +20,7 @@ const columns = [
       ['Development', '/services'],
       ['Automation', '/services'],
       ['Branding', '/services'],
+      ['Google Business Profile', '/google-business-profile'],
     ],
   },
   {

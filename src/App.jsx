@@ -5,6 +5,7 @@ import WorkPage from './pages/WorkPage'
 import ProjectPage from './pages/ProjectPage'
 import ServicesPage from './pages/ServicesPage'
 import WebsiteDesignPage from './pages/WebsiteDesignPage'
+import GoogleBusinessProfilePage from './pages/GoogleBusinessProfilePage'
 import ProcessPage from './pages/ProcessPage'
 import AboutPage from './pages/AboutPage'
 import ContactPage from './pages/ContactPage'
@@ -22,6 +23,7 @@ export default function App() {
           <Route path="work/:slug" element={<ProjectPage />} />
           <Route path="services" element={<ServicesPage />} />
           <Route path="website-design" element={<WebsiteDesignPage />} />
+          <Route path="google-business-profile" element={<GoogleBusinessProfilePage />} />
           <Route path="process" element={<ProcessPage />} />
           <Route path="about" element={<AboutPage />} />
           <Route path="contact" element={<ContactPage />} />
