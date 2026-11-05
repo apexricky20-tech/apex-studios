@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom'
+
 export default function Hero() {
   return (
     <section
@@ -12,12 +14,12 @@ export default function Hero() {
           Apex Studios designs and builds fast, immersive websites for hotels, lodges and
           restaurants, so guests find you, trust you, and book.
         </p>
-        <a
-          href="#contact"
+        <Link
+          to="/contact"
           className="mt-10 inline-block rounded-full bg-amber px-8 py-4 font-semibold text-ink"
         >
           Start a project
-        </a>
+        </Link>
       </div>
       <div
         id="bell-slot"
