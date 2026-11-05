@@ -42,6 +42,14 @@ async function uploadImage(file) {
   return out.url
 }
 
+// Kenyan numbers like 0712345678 or 712345678 become 254712345678 for WhatsApp links.
+const waDigits = (p) => {
+  const d = (p || '').replace(/\D/g, '')
+  if (/^0\d{9}$/.test(d)) return `254${d.slice(1)}`
+  if (/^[17]\d{8}$/.test(d)) return `254${d}`
+  return d
+}
+
 const box = 'rounded-2xl border border-paper/15 p-5'
 const inp = 'w-full rounded-lg border border-paper/20 bg-transparent px-3 py-2 text-sm outline-none focus:border-amber'
 const btn = 'rounded-full border border-paper/25 px-4 py-2 text-sm transition-colors hover:border-amber hover:text-amber disabled:opacity-40'
@@ -192,11 +200,13 @@ function Inbox({ onCount }) {
                   <>
                     <p className="text-sm text-muted">
                       {msg.email}
+                      {msg.phone && ` · ${msg.phone}`}
                       {msg.company && ` · ${msg.company}`}
                     </p>
                     <p className="mt-3 whitespace-pre-wrap">{msg.message}</p>
                     <div className="mt-5 flex flex-wrap gap-2">
                       <a className={btnMain} href={`mailto:${msg.email}?subject=${encodeURIComponent('Re: your enquiry to Apex Studios')}`}>Reply by email</a>
+                      {msg.phone && <a className={btn} href={`https://wa.me/${waDigits(msg.phone)}`} target="_blank" rel="noreferrer">WhatsApp</a>}
                       <button className={btn} onClick={() => unread(m.id)}>Mark unread</button>
                       <button className={btn} onClick={() => del(m.id)}>Delete</button>
                     </div>

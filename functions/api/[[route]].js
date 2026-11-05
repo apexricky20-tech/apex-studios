@@ -215,6 +215,7 @@ export async function onRequest({ request, env }) {
         id,
         name,
         email,
+        phone: str(b.phone, 30).replace(/[^\d+()\-\s]/g, ''),
         company: str(b.company, 150),
         service: str(b.service, 60),
         message,

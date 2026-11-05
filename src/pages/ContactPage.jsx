@@ -93,6 +93,7 @@ export default function ContactPage() {
     const payload = {
       name: d.name,
       email: d.email,
+      phone: d.phone || '',
       company: d.company || '',
       service: d.service || '',
       message: d.message || '',
@@ -105,6 +106,7 @@ export default function ContactPage() {
       const body = [
         `Name: ${payload.name}`,
         `Email: ${payload.email}`,
+        payload.phone && `Phone: ${payload.phone}`,
         payload.company && `Company: ${payload.company}`,
         payload.service && `Need: ${payload.service}`,
         '',
@@ -161,7 +163,7 @@ export default function ContactPage() {
         </p>
 
         <h2 className="mt-32 text-[clamp(2.5rem,5vw,4.5rem)] font-medium md:mt-44">Send a message</h2>
-        <p className="mt-4 text-muted">All fields are required except company.</p>
+        <p className="mt-4 text-muted">All fields are required except company and phone.</p>
 
         <form onSubmit={onSubmit} className="mt-14">
           <div className="hidden" aria-hidden="true">
@@ -181,6 +183,10 @@ export default function ContactPage() {
               <label className={label}>
                 Email
                 <input required type="email" name="email" autoComplete="email" className={input} />
+              </label>
+              <label className={label}>
+                Phone or WhatsApp (optional)
+                <input type="tel" name="phone" autoComplete="tel" className={input} />
               </label>
               <label className={label}>
                 Company (optional)
