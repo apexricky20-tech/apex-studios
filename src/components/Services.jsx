@@ -69,7 +69,7 @@ export default function Services() {
                 }`}
               >
                 <h3
-                  className={`text-[clamp(2.75rem,7.2vw,8.5rem)] transition-colors duration-300 hover:text-amber md:flex-1 ${
+                  className={`text-[clamp(2.75rem,7.2vw,8.5rem)] transition-[color,text-shadow] duration-300 group-hover:text-amber group-hover:[text-shadow:0_0_40px_rgba(245,165,36,0.55)] md:flex-1 ${
                     flipped ? 'md:text-right' : ''
                   }`}
                 >
