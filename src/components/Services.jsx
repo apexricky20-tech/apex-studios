@@ -61,7 +61,7 @@ export default function Services() {
           return (
             <li
               key={s.title}
-              className="group border-b border-paper/15 transition-colors duration-300 hover:bg-paper/[0.03]"
+              className="group border-b border-paper/15"
             >
               <div
                 className={`flex flex-col gap-8 py-12 md:items-center md:gap-16 md:py-16 ${
@@ -69,7 +69,7 @@ export default function Services() {
                 }`}
               >
                 <h3
-                  className={`text-[clamp(2.75rem,7.2vw,8.5rem)] transition-colors duration-300 group-hover:text-amber md:flex-1 ${
+                  className={`text-[clamp(2.75rem,7.2vw,8.5rem)] transition-colors duration-300 hover:text-amber md:flex-1 ${
                     flipped ? 'md:text-right' : ''
                   }`}
                 >
@@ -81,7 +81,7 @@ export default function Services() {
                     {s.items.map((item) => (
                       <li key={item} className="flex items-center gap-3">
                         <span
-                          className="h-px w-4 shrink-0 bg-paper/30 transition-colors duration-300 group-hover:bg-amber"
+                          className="h-px w-4 shrink-0 bg-paper/30"
                           aria-hidden="true"
                         />
                         {item}
