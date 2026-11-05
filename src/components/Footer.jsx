@@ -19,7 +19,7 @@ const columns = [
       ['Website Design', '/website-design'],
       ['Development', '/development'],
       ['Automation', '/automation'],
-      ['Branding', '/services'],
+      ['Branding', '/branding'],
       ['Google Business Profile', '/google-business-profile'],
     ],
   },

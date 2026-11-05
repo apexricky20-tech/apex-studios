@@ -6,6 +6,7 @@ const pages = {
   'Google Business Profile': '/google-business-profile',
   Development: '/development',
   Automation: '/automation',
+  Branding: '/branding',
 }
 
 const services = [

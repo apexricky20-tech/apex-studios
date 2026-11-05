@@ -1,0 +1,86 @@
+export const branding = {
+  path: '/branding',
+  title: 'Branding for Hotels, Restaurants and Businesses in Kenya | Apex Studios',
+  description:
+    'Logo, colour, typography and brand guidelines for hotels, lodges, restaurants and local businesses in Kenya. Built to look consistent on signboards, menus, social media and your website.',
+  label: 'Services',
+  h1: 'Branding in Kenya',
+  intro:
+    'A brand is how people recognise your business before they have tasted, stayed or spoken to anyone. We build identities for hotels, lodges, restaurants and local businesses, so the name on your signboard, menu, Google listing and website all feel like one place.',
+  sections: [
+    {
+      id: 'what-we-build',
+      nav: 'What we build',
+      title: 'What we build',
+      intro: 'A clear identity, and the rules that keep it clear as the business grows.',
+      blocks: [
+        { h: 'Identity', p: 'We start with who the business is, who it serves and what makes it different, so the look that follows has a reason behind it.' },
+        { h: 'Logo and lettering', p: 'A logo and typography that stay readable on a highway signboard, a phone screen and a printed menu.' },
+        { h: 'Colour and visual style', p: 'A palette, type choices and a visual style that decide how everything you publish looks and feels.' },
+        { h: 'Guidelines', p: 'The rules written down, so a printer, a designer or a new staff member can keep the brand consistent without guessing.' },
+        { h: 'Everyday touchpoints', p: 'Menus, signboards, social media posts and cards, designed to follow the same identity. We confirm which of these a project covers on the first call.' },
+      ],
+    },
+    {
+      id: 'what-you-receive',
+      nav: 'What you receive',
+      title: 'What you receive',
+      intro: 'The exact list depends on the project. Most identities include these parts.',
+      blocks: [
+        { h: 'Logo files', p: 'Your logo in the formats needed for the web, print and social media, including versions for light and dark backgrounds.' },
+        { h: 'Colour palette', p: 'The main colours and supporting colours, with the exact values for screen and print.' },
+        { h: 'Typography', p: 'The typefaces to use for headings and body text, and how to use them.' },
+        { h: 'Brand guide', p: 'A short document that explains the logo, colours, type and how to use them, with simple do and do not examples.' },
+        { h: 'Ready-to-use pieces', p: 'Where the project includes them, templates for social posts, menus or signage, so you can keep publishing in the same style.' },
+      ],
+    },
+    {
+      id: 'how-we-deliver',
+      nav: 'How we deliver',
+      title: 'How we deliver',
+      intro: 'A simple sequence with your approval at each step.',
+      blocks: [
+        { h: 'First call', p: 'We talk about your business, your customers and where the brand will appear. A quote follows after the call.' },
+        { h: 'Discovery', p: 'We look at your place, your competitors and the people you want to reach, then agree the direction in plain words before any design.' },
+        { h: 'Design', p: 'Logo and visual direction are shared with you for feedback, and refined with your comments.' },
+        { h: 'Guide and files', p: 'Once the identity is approved, we prepare the files and the guide.' },
+        { h: 'Handover', p: 'You receive everything, with a walkthrough of how to use it, and the files are yours.' },
+      ],
+    },
+    {
+      id: 'why-it-matters',
+      nav: 'Why a brand is worth it',
+      title: 'Why a brand is worth the investment',
+      intro: 'Most guests choose between places that offer similar rooms, menus or prices. The brand is often what tips the decision.',
+      blocks: [
+        { h: 'Be recognised', p: 'A clear name and look are easier to spot, remember and recommend, from the roadside to the search results.' },
+        { h: 'Build trust', p: 'A consistent look signals a business that is organised and cares about the details, before a customer walks in.' },
+        { h: 'Save on reprints', p: 'With the rules agreed once, new menus, signs and posts are quicker and cheaper to produce, and no one has to start from scratch.' },
+        { h: 'Connect everything else', p: 'The same identity carries through your website and your Google Business Profile, so every place a customer finds you feels like the same business.', link: { to: '/website-design', label: 'See Website Design' } },
+      ],
+    },
+    {
+      id: 'before-you-ask',
+      nav: 'Before you ask',
+      title: 'Before you ask',
+      intro: 'Short answers to common questions.',
+      faq: true,
+      blocks: [
+        { h: 'How much does branding cost?', p: 'It depends on what the business needs and how much of it you want covered. We quote after a first call and give a clear figure before any work starts.' },
+        { h: 'How long does it take?', p: 'It depends on scope and how quickly feedback comes back. We agree a timeline on the first call.' },
+        { h: 'Can you refresh an existing logo?', p: 'Yes. If the current brand has value, we can keep what works and tidy up the rest instead of starting over.' },
+        { h: 'Who owns the files?', p: 'You do. The final files are handed over to you at the end of the project.' },
+        { h: 'Is a website required to get a brand?', p: 'No. Branding works on its own. It also pairs well with a website or Google Business Profile, if you want them later.' },
+        { h: 'Can you guarantee more customers?', p: 'No one can. A clear brand makes the business easier to recognise and trust, and what you do with it is up to you.' },
+      ],
+    },
+    {
+      id: 'start',
+      nav: 'Start with an enquiry',
+      title: 'A brand built around your business',
+      intro: 'Tell us about your business and where the brand will be seen. We will reply with the next step.',
+      blocks: [],
+      cta: { to: '/contact', label: 'Start a project' },
+    },
+  ],
+}
