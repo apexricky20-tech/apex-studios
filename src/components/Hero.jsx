@@ -26,10 +26,8 @@ export default function Hero() {
 
       {/* Layer 2: the text sits over the portrait, then scrolls away */}
       <div className="relative z-10 -mt-[100svh] flex h-svh flex-col items-center justify-end px-6 pb-8 text-center">
-        <h1 className="max-w-4xl text-[clamp(1.5rem,3.4vw,2.75rem)]">
-          Websites that <span className="text-amber">fill</span> your rooms and tables.
-        </h1>
-        <p className="mt-4 max-w-2xl text-sm text-paper/70 md:text-base">
+        <h1 className="sr-only">Websites for hotels, lodges and restaurants</h1>
+        <p className="max-w-2xl text-base text-paper/80 md:text-lg">
           I&apos;m {site.name}, founder of Apex Studios. I design and build fast, immersive
           websites for hotels, lodges and restaurants.
         </p>
