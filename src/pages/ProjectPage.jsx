@@ -16,6 +16,17 @@ export default function ProjectPage() {
   const project = visibleProjects().find((p) => p.slug === slug)
   if (!project) return <NotFound />
 
+  const isGbp = project.group === 'Google Business Profile'
+  const cta = isGbp
+    ? {
+        title: 'Want a profile like this?',
+        text: 'Tell us about your business and where customers find you today. We reply with the next step after a first call.',
+      }
+    : {
+        title: 'Want a website like this?',
+        text: 'Tell us about your business and what the website should do. We reply with the next step after a first call.',
+      }
+
   return (
     <main className="px-gutter pb-32 pt-40 md:pt-48">
       <title>{`${project.title} | Apex Studios`}</title>
@@ -56,7 +67,7 @@ export default function ProjectPage() {
           {project.location && <Row label="Location">{project.location}</Row>}
           {project.year && <Row label="Year">{project.year}</Row>}
           {project.live && (
-            <Row label="Live site">
+            <Row label={project.liveLabel || 'Live site'}>
               <a
                 href={project.href}
                 target="_blank"
@@ -71,10 +82,9 @@ export default function ProjectPage() {
         </div>
 
         <div className="mt-32">
-          <h2 className="text-5xl md:text-7xl">Want a website like this?</h2>
+          <h2 className="text-5xl md:text-7xl">{cta.title}</h2>
           <p className="mt-6 max-w-xl text-xl leading-relaxed text-muted">
-            Tell us about your business and what the website should do. We reply with the next
-            step after a first call.
+            {cta.text}
           </p>
           <Link
             to="/contact"

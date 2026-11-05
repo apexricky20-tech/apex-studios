@@ -62,14 +62,15 @@ export const projects = [
     category: 'Google Business Profile',
     group: 'Google Business Profile',
     image: '/projects/digital-guest-house.webp',
-    href: '/work',
-    live: '',
+    href: 'https://share.google/ZtsVqJmrTZV5EJ8Iq',
+    live: 'View on Google',
+    liveLabel: 'Live profile',
     summary:
       'Digital Guest House is a guest house in Rombo, Kenya. Apex Studios manages its verified Google Business Profile.',
     solution:
       'A verified Google Business Profile, so travellers searching around Rombo can find the guest house on Google Maps and Search, see where it is and get in touch.',
     location: 'Rombo, Kenya',
-    year: '',
+    year: '2026',
     results: [
       {
         label: 'Google Business Profile interactions, last 28 days',
@@ -85,14 +86,15 @@ export const projects = [
     category: 'Google Business Profile',
     group: 'Google Business Profile',
     image: '/projects/mt-betheli.webp',
-    href: '/work',
-    live: '',
+    href: 'https://share.google/wrDUZdhhk3oqKaa94',
+    live: 'View on Google',
+    liveLabel: 'Live profile',
     summary:
       'MT Betheli Digital Guest House B&B is a bed and breakfast in Rombo, Kenya. Apex Studios manages its verified Google Business Profile.',
     solution:
       'A verified Google Business Profile, so travellers searching around Rombo can find the B&B on Google Maps and Search, see where it is and get in touch.',
     location: 'Rombo, Kenya',
-    year: '',
+    year: '2026',
     results: [
       {
         label: 'Google Business Profile interactions, last 28 days',
