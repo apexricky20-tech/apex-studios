@@ -19,6 +19,7 @@ const serviceLinks = [
   ['Development', '/services'],
   ['Automation', '/services'],
   ['Branding', '/services'],
+  ['Google Business Profile', '/services'],
 ]
 
 const linkClass = (isActive) =>

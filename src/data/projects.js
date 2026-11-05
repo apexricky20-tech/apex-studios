@@ -13,12 +13,17 @@ export const projects = [
     solution:
       'A fast, mobile-first website with both branches clearly listed and a delivery ordering flow. Customers on the Mombasa highway can find both branches, and people who can only visit on weekends can order delivery instead.',
     location: 'Emali, Kenya',
-    year: '',
+    year: '2026',
     results: [
       {
         label: 'PageSpeed Insights, mobile',
         value: 'Performance 100 · Accessibility 96 · Best Practices 92 · SEO 100',
         note: 'Measured on 4 November 2026',
+      },
+      {
+        label: 'Google Business Profile interactions, last 28 days',
+        value: 'Branch 1: 106 · Branch 2: 86 · 192 combined',
+        note: 'Calls, direction requests, website clicks and other actions taken from the two Google listings',
       },
     ],
     published: true,

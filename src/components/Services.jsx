@@ -39,6 +39,16 @@ const services = [
       'Brand guidelines',
     ],
   },
+  {
+    title: 'Google Business Profile',
+    text: 'A complete, active Google Business Profile so customers find you on Maps and Search, with the right hours, photos, services and contact options.',
+    items: [
+      'Profile setup and verification',
+      'Hours, photos and service details',
+      'Posts, updates and review replies',
+      'Performance tracking and reports',
+    ],
+  },
 ]
 
 export default function Services() {
@@ -50,7 +60,7 @@ export default function Services() {
           <h2 className="mt-4 text-5xl md:text-7xl">What we build</h2>
         </div>
         <p className="max-w-md text-paper/70">
-          Four services with one goal: helping hotels, lodges and restaurants get found,
+          Five services with one goal: helping hotels, lodges and restaurants get found,
           trusted and booked.
         </p>
       </div>
