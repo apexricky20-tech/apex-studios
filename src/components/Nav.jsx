@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, NavLink } from 'react-router-dom'
 import Logo from './Logo'
+import { contact } from '../data/contact'
 
 const links = [
   ['Home', '/'],
@@ -27,8 +28,14 @@ export default function Nav() {
 
   return (
     <>
-      <header className="fixed inset-x-0 top-0 z-50 bg-gradient-to-b from-ink/90 to-transparent">
-        <div className="flex items-center justify-between px-gutter py-5 ">
+      <header
+        className={`fixed inset-x-0 top-0 z-50 transition-colors ${
+          open
+            ? 'border-b border-paper/10 bg-ink'
+            : 'bg-gradient-to-b from-ink/90 to-transparent'
+        }`}
+      >
+        <div className="flex items-center justify-between px-gutter py-5">
           <Link to="/" onClick={close} aria-label="Apex Studios home">
             <Logo />
           </Link>
@@ -67,26 +74,47 @@ export default function Nav() {
       {open && (
         <div
           id="site-menu"
-          className="fixed inset-0 z-40 flex flex-col justify-center bg-ink px-gutter "
+          className="fixed inset-0 z-40 flex flex-col justify-center bg-surface px-gutter pt-24"
         >
-          <nav className="flex flex-col gap-2">
-            {links.map(([label, to], i) => (
+          <nav className="flex flex-col">
+            {links.map(([label, to]) => (
               <NavLink
                 key={to}
                 to={to}
                 end={to === '/'}
                 onClick={close}
                 className={({ isActive }) =>
-                  `font-display text-5xl font-extrabold tracking-tight transition-colors hover:text-amber md:text-7xl ${isActive ? 'text-amber' : ''}`
+                  `w-fit font-display text-5xl font-bold leading-[1.3] tracking-tight transition-colors hover:text-paper md:text-7xl ${isActive ? 'text-paper' : 'text-muted'}`
                 }
               >
-                <span className="mr-4 align-top text-sm font-medium text-paper/40">
-                  0{i + 1}
-                </span>
                 {label}
               </NavLink>
             ))}
           </nav>
+
+          <div className="absolute bottom-10 right-gutter left-gutter flex flex-col gap-2 md:left-auto md:text-right">
+            {contact.email && (
+              <a
+                href={`mailto:${contact.email}`}
+                className="text-lg font-medium text-paper transition-colors hover:text-amber"
+              >
+                {contact.email}
+              </a>
+            )}
+            <p className="text-xs text-muted">Nairobi, Kenya</p>
+            <div className="mt-3 flex gap-5 text-sm text-muted md:justify-end">
+              {contact.instagram && (
+                <a href={contact.instagram} target="_blank" rel="noreferrer" className="transition-colors hover:text-amber">
+                  Instagram
+                </a>
+              )}
+              {contact.tiktok && (
+                <a href={contact.tiktok} target="_blank" rel="noreferrer" className="transition-colors hover:text-amber">
+                  TikTok
+                </a>
+              )}
+            </div>
+          </div>
         </div>
       )}
     </>
