@@ -22,6 +22,10 @@ const serviceLinks = [
   ['Google Business Profile', '/google-business-profile'],
 ]
 
+const Dot = () => (
+  <span aria-hidden="true" className="h-3 w-3 translate-y-1.5 rounded-full bg-amber md:h-4 md:w-4 md:translate-y-2" />
+)
+
 const linkClass = (isActive) =>
   `w-fit font-display text-5xl font-bold leading-[1.3] tracking-tight transition-colors hover:text-paper md:text-7xl ${
     isActive ? 'text-paper' : 'text-muted'
@@ -121,6 +125,7 @@ export default function Nav() {
                     >
                       <path d="M4 8l8 8 8-8" />
                     </svg>
+                    {onServices && <Dot />}
                   </button>
                   {servicesOpen && (
                     <ul id="services-submenu" className="mb-4 mt-2 flex flex-col gap-2 pl-1 md:pl-6">
@@ -149,9 +154,14 @@ export default function Nav() {
                   to={to}
                   end={to === '/'}
                   onClick={close}
-                  className={({ isActive }) => linkClass(isActive)}
+                  className={({ isActive }) => `${linkClass(isActive)} flex items-center gap-4`}
                 >
-                  {label}
+                  {({ isActive }) => (
+                    <>
+                      {label}
+                      {isActive && <Dot />}
+                    </>
+                  )}
                 </NavLink>
               ),
             )}
