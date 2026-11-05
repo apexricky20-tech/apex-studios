@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Link, NavLink } from 'react-router-dom'
+import { Link, NavLink, useLocation } from 'react-router-dom'
 import Logo from './Logo'
 import { contact } from '../data/contact'
 
@@ -12,8 +12,25 @@ const links = [
   ['Contact', '/contact'],
 ]
 
+// Point the unbuilt ones at their own page as each one is created
+const serviceLinks = [
+  ['All services', '/services'],
+  ['Website Design', '/website-design'],
+  ['Development', '/services'],
+  ['Automation', '/services'],
+  ['Branding', '/services'],
+]
+
+const linkClass = (isActive) =>
+  `w-fit font-display text-5xl font-bold leading-[1.3] tracking-tight transition-colors hover:text-paper md:text-7xl ${
+    isActive ? 'text-paper' : 'text-muted'
+  }`
+
 export default function Nav() {
+  const { pathname } = useLocation()
+  const onServices = pathname.startsWith('/services') || pathname.startsWith('/website-design')
   const [open, setOpen] = useState(false)
+  const [servicesOpen, setServicesOpen] = useState(false)
   const close = () => setOpen(false)
 
   useEffect(() => {
@@ -25,6 +42,11 @@ export default function Nav() {
       document.body.style.overflow = ''
     }
   }, [open])
+
+  const toggleMenu = () => {
+    if (!open) setServicesOpen(onServices)
+    setOpen(!open)
+  }
 
   return (
     <>
@@ -49,14 +71,14 @@ export default function Nav() {
             </Link>
             <button
               type="button"
-              onClick={() => setOpen(!open)}
+              onClick={toggleMenu}
               aria-expanded={open}
               aria-controls="site-menu"
               aria-label={open ? 'Close menu' : 'Open menu'}
               className="group flex items-center gap-3 text-xs font-semibold uppercase tracking-widest"
             >
               <span className="hidden sm:inline">{open ? 'Close' : 'Menu'}</span>
-              <span className="grid h-11 w-11 place-items-center rounded-full border border-paper/25 bg-surface transition-colors group-hover:border-amber">
+              <span className="grid h-11 w-11 place-items-center rounded-full border border-paper/25 bg-paper/5 transition-colors group-hover:border-amber">
                 <span className="flex flex-col gap-1.5">
                   <span
                     className={`block h-0.5 w-5 bg-paper transition-transform ${open ? 'translate-y-1 rotate-45' : ''}`}
@@ -74,25 +96,67 @@ export default function Nav() {
       {open && (
         <div
           id="site-menu"
-          className="fixed inset-0 z-40 flex flex-col justify-center bg-surface px-gutter pt-24"
+          className="fixed inset-0 z-40 flex flex-col overflow-y-auto bg-surface px-gutter pb-10 pt-32"
         >
-          <nav className="flex flex-col">
-            {links.map(([label, to]) => (
-              <NavLink
-                key={to}
-                to={to}
-                end={to === '/'}
-                onClick={close}
-                className={({ isActive }) =>
-                  `w-fit font-display text-5xl font-bold leading-[1.3] tracking-tight transition-colors hover:text-paper md:text-7xl ${isActive ? 'text-paper' : 'text-muted'}`
-                }
-              >
-                {label}
-              </NavLink>
-            ))}
+          <nav className="my-auto flex flex-col">
+            {links.map(([label, to]) =>
+              label === 'Services' ? (
+                <div key={to}>
+                  <button
+                    type="button"
+                    onClick={() => setServicesOpen(!servicesOpen)}
+                    aria-expanded={servicesOpen}
+                    aria-controls="services-submenu"
+                    className={`flex items-center gap-4 ${linkClass(servicesOpen || onServices)}`}
+                  >
+                    Services
+                    <svg
+                      viewBox="0 0 24 24"
+                      className={`mt-2 h-7 w-7 transition-transform duration-300 md:h-10 md:w-10 ${servicesOpen ? 'rotate-180' : ''}`}
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                      aria-hidden="true"
+                    >
+                      <path d="M4 8l8 8 8-8" />
+                    </svg>
+                  </button>
+                  {servicesOpen && (
+                    <ul id="services-submenu" className="mb-4 mt-2 flex flex-col gap-2 pl-1 md:pl-6">
+                      {serviceLinks.map(([name, href], i) => (
+                        <li key={`${name}-${i}`}>
+                          <NavLink
+                            to={href}
+                            end
+                            onClick={close}
+                            className={({ isActive }) =>
+                              `text-xl transition-colors hover:text-paper md:text-2xl ${
+                                isActive && href !== '/services' ? 'text-paper' : 'text-muted'
+                              }`
+                            }
+                          >
+                            {name}
+                          </NavLink>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              ) : (
+                <NavLink
+                  key={to}
+                  to={to}
+                  end={to === '/'}
+                  onClick={close}
+                  className={({ isActive }) => linkClass(isActive)}
+                >
+                  {label}
+                </NavLink>
+              ),
+            )}
           </nav>
 
-          <div className="absolute bottom-10 right-gutter left-gutter flex flex-col gap-2 md:left-auto md:text-right">
+          <div className="mt-10 flex flex-col gap-2 md:ml-auto md:mt-0 md:text-right">
             {contact.email && (
               <a
                 href={`mailto:${contact.email}`}
