@@ -1,3 +1,4 @@
+import Motion from './Motion'
 import { useEffect } from 'react'
 import { Outlet, useLocation } from 'react-router-dom'
 import Nav from './Nav'
@@ -15,6 +16,7 @@ export default function Layout() {
   return (
     <>
       <ScrollToTop />
+      <Motion />
       <Nav />
       <main>
         <Outlet />
