@@ -27,6 +27,17 @@ export default function ServicePage({ page }) {
           {page.intro}
         </p>
 
+        {page.visual && (
+          <figure className="mt-16">
+            <img
+              src={page.visual.src}
+              alt={page.visual.alt}
+              className="w-full rounded-2xl border border-paper/10"
+            />
+            <figcaption className="mt-4 text-xs text-muted">{page.visual.caption}</figcaption>
+          </figure>
+        )}
+
         {page.sections.map((s) => (
           <section key={s.title} className="mt-32 md:mt-40">
             <h2 className="text-5xl md:text-7xl">{s.title}</h2>

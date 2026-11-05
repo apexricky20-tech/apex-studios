@@ -6,6 +6,12 @@ export const automation = {
   h1: 'Automation',
   intro:
     'Software and integrations that take over the repetitive work, like orders, enquiries and confirmations, so your team gets its hours back for guests.',
+  visual: {
+    src: '/automation-workflow.svg',
+    alt: 'Example workflow: a website order is recorded, routed to the right branch, the branch is alerted on WhatsApp, and the order is logged on an admin dashboard',
+    caption:
+      'An example workflow for a two-branch restaurant. Every flow is planned around the business it serves.',
+  },
   sections: [
     {
       title: 'What we automate',

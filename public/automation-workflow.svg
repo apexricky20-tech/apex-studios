@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1270 520" role="img" aria-label="Example workflow: a website order is recorded, routed to the right branch, the branch is alerted on WhatsApp, and the order is logged on an admin dashboard">
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0 1 L9 5 L0 9 z" fill="#ff8200"/>
+    </marker>
+    <pattern id="g" width="26" height="26" patternUnits="userSpaceOnUse">
+      <circle cx="1" cy="1" r="1" fill="#ffffff" fill-opacity="0.06"/>
+    </pattern>
+  </defs>
+  <rect width="1270" height="520" fill="#141414"/>
+  <rect width="1270" height="520" fill="url(#g)"/>
+  <g fill="none" stroke="#ffffff" stroke-opacity="0.35" stroke-width="2" marker-end="url(#a)">
+    <path d="M220 260 H285"/>
+    <path d="M475 260 H540"/>
+    <path d="M730 260 C765 260 765 118 795 118"/>
+    <path d="M730 260 C765 260 765 402 795 402"/>
+    <path d="M985 118 C1020 118 1020 260 1050 260"/>
+    <path d="M985 402 C1020 402 1020 260 1050 260"/>
+  </g>
+  <g font-family="Helvetica, Arial, sans-serif">
+    <g>
+      <rect x="30" y="212" width="190" height="96" rx="16" fill="#000" stroke="#fff" stroke-opacity="0.15"/>
+      <circle cx="56" cy="238" r="5" fill="#ff8200"/>
+      <text x="72" y="243" fill="#9a9a9a" font-size="12" letter-spacing="1.5">TRIGGER</text>
+      <text x="50" y="270" fill="#fff" font-size="19" font-weight="700">New order</text>
+      <text x="50" y="292" fill="#9a9a9a" font-size="13">From the website menu</text>
+    </g>
+    <g>
+      <rect x="285" y="212" width="190" height="96" rx="16" fill="#000" stroke="#fff" stroke-opacity="0.15"/>
+      <text x="305" y="270" fill="#fff" font-size="19" font-weight="700">Order recorded</text>
+      <text x="305" y="292" fill="#9a9a9a" font-size="13">Details checked</text>
+    </g>
+    <g>
+      <rect x="540" y="212" width="190" height="96" rx="16" fill="#000" stroke="#ff8200" stroke-opacity="0.7"/>
+      <text x="560" y="270" fill="#fff" font-size="19" font-weight="700">Which branch?</text>
+      <text x="560" y="292" fill="#9a9a9a" font-size="13">Routed by location</text>
+    </g>
+    <g>
+      <rect x="795" y="70" width="190" height="96" rx="16" fill="#000" stroke="#fff" stroke-opacity="0.15"/>
+      <text x="815" y="128" fill="#fff" font-size="19" font-weight="700">Branch 1 alerted</text>
+      <text x="815" y="150" fill="#9a9a9a" font-size="13">WhatsApp message</text>
+    </g>
+    <g>
+      <rect x="795" y="354" width="190" height="96" rx="16" fill="#000" stroke="#fff" stroke-opacity="0.15"/>
+      <text x="815" y="412" fill="#fff" font-size="19" font-weight="700">Branch 2 alerted</text>
+      <text x="815" y="434" fill="#9a9a9a" font-size="13">WhatsApp message</text>
+    </g>
+    <g>
+      <rect x="1050" y="212" width="190" height="96" rx="16" fill="#000" stroke="#fff" stroke-opacity="0.15"/>
+      <text x="1070" y="270" fill="#fff" font-size="19" font-weight="700">Admin dashboard</text>
+      <text x="1070" y="292" fill="#9a9a9a" font-size="13">Order logged</text>
+    </g>
+  </g>
+</svg>
