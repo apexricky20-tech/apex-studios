@@ -70,7 +70,13 @@ export const projects = [
       'A verified Google Business Profile, so travellers searching around Rombo can find the guest house on Google Maps and Search, see where it is and get in touch.',
     location: 'Rombo, Kenya',
     year: '',
-    results: [],
+    results: [
+      {
+        label: 'Google Business Profile interactions, last 28 days',
+        value: '169 customer interactions',
+        note: 'Total actions taken from the profile, as reported in Google Business Profile',
+      },
+    ],
     published: true,
   },
   {
@@ -87,7 +93,13 @@ export const projects = [
       'A verified Google Business Profile, so travellers searching around Rombo can find the B&B on Google Maps and Search, see where it is and get in touch.',
     location: 'Rombo, Kenya',
     year: '',
-    results: [],
+    results: [
+      {
+        label: 'Google Business Profile interactions, last 28 days',
+        value: '234 customer interactions',
+        note: 'Total actions taken from the profile, as reported in Google Business Profile',
+      },
+    ],
     published: true,
   },
 ]
