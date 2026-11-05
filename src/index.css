@@ -6,6 +6,7 @@
   --color-amber: #f5a524;
   --font-display: "Syne", sans-serif;
   --font-body: "Inter", sans-serif;
+  --font-signature: "Herr Von Muellerhoff", cursive;
 }
 
 html { scroll-behavior: smooth; }
@@ -13,6 +14,7 @@ body {
   background: var(--color-ink);
   color: var(--color-paper);
   font-family: var(--font-body);
+  --font-signature: "Herr Von Muellerhoff", cursive;
 }
 h1, h2, h3 {
   font-family: var(--font-display);
