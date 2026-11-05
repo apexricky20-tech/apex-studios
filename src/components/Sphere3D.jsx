@@ -55,7 +55,7 @@ function Globe({ progress, count }) {
       </points>
       <mesh>
         <sphereGeometry args={[1, 40, 28, -Math.PI / 2, Math.PI]} />
-        <meshBasicMaterial wireframe color="#f4f1ea" transparent opacity={0.18} />
+        <meshBasicMaterial wireframe color="#ffffff" transparent opacity={0.18} />
       </mesh>
     </group>
   )

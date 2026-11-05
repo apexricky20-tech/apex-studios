@@ -83,7 +83,7 @@ export default function Footer() {
                 {contact.email}
               </a>
             ) : (
-              <span className="truncate text-sm text-paper/50">Tell me about your project</span>
+              <span className="truncate text-sm text-muted">Tell me about your project</span>
             )}
             <Link
               to="/contact"
@@ -108,7 +108,7 @@ export default function Footer() {
         ))}
       </div>
 
-      <div className="mx-auto mt-16 flex max-w-[2000px] flex-wrap items-center justify-between gap-2 border-t border-paper/10 pt-6 text-xs text-paper/50">
+      <div className="mx-auto mt-16 flex max-w-[2000px] flex-wrap items-center justify-between gap-2 border-t border-paper/10 pt-6 text-xs text-muted">
         <p>© {new Date().getFullYear()} APEX STUDIOS. All rights reserved.</p>
         <p>{site.location}</p>
       </div>

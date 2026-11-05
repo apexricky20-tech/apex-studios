@@ -68,7 +68,7 @@ export default function WhyChooseUs() {
     <section ref={sectionRef} className="relative overflow-hidden px-gutter py-24 md:py-40">
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 top-0 h-[60vh] bg-[radial-gradient(ellipse_at_50%_0%,rgba(245,165,36,0.12),transparent_65%)]"
+        className="pointer-events-none absolute inset-x-0 top-0 h-[60vh] bg-[radial-gradient(ellipse_at_50%_0%,rgba(255, 130, 0,0.12),transparent_65%)]"
       />
       <h2 className="relative text-center text-5xl font-bold md:text-8xl">Why choose us?</h2>
 

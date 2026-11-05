@@ -9,7 +9,7 @@ export default function ArticlePage() {
   return (
     <article className="mx-auto max-w-3xl px-gutter pb-24 pt-40">
       <title>{`${article.title} | Apex Studios`}</title>
-      <time dateTime={article.date} className="text-sm text-paper/50">
+      <time dateTime={article.date} className="text-sm text-muted">
         {formatDate(article.date)}
       </time>
       <h1 className="mt-4 text-4xl font-bold md:text-6xl">{article.title}</h1>

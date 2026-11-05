@@ -18,7 +18,7 @@ export default function ArticleCard({ article }) {
           }}
         />
       </div>
-      <time dateTime={article.date} className="mt-5 text-xs text-paper/50">
+      <time dateTime={article.date} className="mt-5 text-xs text-muted">
         {formatDate(article.date)}
       </time>
       <h3 className="mt-2 text-2xl leading-tight transition-colors group-hover:text-amber md:text-3xl">

@@ -8,7 +8,7 @@ export default function Hero() {
     <>
       {/* Layer 1: the portrait stays pinned while the page scrolls over it */}
       <div className="sticky top-0 z-0 h-svh overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_35%,rgba(245,165,36,0.12),transparent_60%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_35%,rgba(255, 130, 0,0.12),transparent_60%)]" />
         <div className="absolute inset-x-0 bottom-[46svh] top-20 flex justify-center md:bottom-[36svh]">
           <img
             src={site.portrait}
@@ -47,7 +47,7 @@ export default function Hero() {
           </Link>
         </div>
 
-        <ul className="mt-6 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs text-paper/50">
+        <ul className="mt-6 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs text-muted">
           <li className="flex items-center gap-2 text-paper">
             <span className="h-2 w-2 rounded-full bg-emerald-500" aria-hidden="true" />
             {site.availability}

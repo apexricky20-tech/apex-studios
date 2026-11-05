@@ -56,7 +56,7 @@ export default function Nav() {
               className="group flex items-center gap-3 text-xs font-semibold uppercase tracking-widest"
             >
               <span className="hidden sm:inline">{open ? 'Close' : 'Menu'}</span>
-              <span className="grid h-11 w-11 place-items-center rounded-full border border-paper/25 bg-paper/5 transition-colors group-hover:border-amber">
+              <span className="grid h-11 w-11 place-items-center rounded-full border border-paper/25 bg-surface transition-colors group-hover:border-amber">
                 <span className="flex flex-col gap-1.5">
                   <span
                     className={`block h-0.5 w-5 bg-paper transition-transform ${open ? 'translate-y-1 rotate-45' : ''}`}
