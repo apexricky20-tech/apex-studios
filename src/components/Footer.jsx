@@ -83,7 +83,7 @@ export default function Footer() {
                 {contact.email}
               </a>
             ) : (
-              <span className="truncate text-sm text-muted">Tell me about your project</span>
+              <span className="truncate text-sm text-muted">Tell us about your project</span>
             )}
             <Link
               to="/contact"

@@ -1,7 +1,7 @@
 const faqs = [
   ['What does it cost?', 'Every project is quoted after a first call, once the scope is clear. Nothing is priced from a form.'],
   ['How long does it take?', 'It depends on the size of the site. You get a timeline with your quote.'],
-  ['Can I update it myself?', 'Yes. You get a simple dashboard for posting updates, no developer needed.'],
+  ['Can the website be updated without a developer?', 'Yes. You get a simple dashboard for posting updates, no developer needed.'],
   ['Will it work on phones?', 'Every site is built mobile-first and tested on real devices.'],
   ['Do you work with businesses outside Kenya?', 'Yes. We work remotely and the process is the same wherever you are.'],
 ]

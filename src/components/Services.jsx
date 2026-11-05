@@ -47,7 +47,7 @@ export default function Services() {
       <div className="sr-only">
         <div>
           <p className="text-sm uppercase tracking-widest text-amber">Services</p>
-          <h2 className="mt-4 text-5xl md:text-7xl">What I build</h2>
+          <h2 className="mt-4 text-5xl md:text-7xl">What we build</h2>
         </div>
         <p className="max-w-md text-paper/70">
           Four services with one goal: helping hotels, lodges and restaurants get found,

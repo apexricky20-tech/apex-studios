@@ -9,11 +9,11 @@ export const websiteDesign = {
     'Website design for businesses across Kenya, from Nairobi and Mombasa to the towns along the highways. One designer for the layout, the build and the launch, with a direct path from enquiry to conversation.',
   sections: [
     {
-      id: 'what-i-build',
-      nav: 'What I build',
-      title: 'What I build',
+      id: 'what-we-build',
+      nav: 'What we build',
+      title: 'What we build',
       intro:
-        'For a new business website or a redesign, I start with your services, your customers and the action a visitor should take.',
+        'For a new business website or a redesign, We start with your services, your customers and the action a visitor should take.',
       blocks: [
         {
           h: 'See the work',
@@ -63,7 +63,7 @@ export const websiteDesign = {
       id: 'businesses-across-kenya',
       nav: 'Businesses across Kenya',
       title: 'Businesses across Kenya',
-      intro: 'I work with businesses in Nairobi and across the country. Calls, WhatsApp and screen sharing mean location is not a barrier.',
+      intro: 'We work with businesses in Nairobi and across the country. Calls, WhatsApp and screen sharing mean location is not a barrier.',
       blocks: [
         { h: 'Hotels and lodges', p: 'Rooms, rates, galleries and booking enquiries presented so a guest can decide and reach you in a few taps.' },
         { h: 'Restaurants and butcheries', p: 'Menus, locations, opening hours and delivery or ordering flows that work on a phone.' },
@@ -84,12 +84,12 @@ export const websiteDesign = {
       ],
     },
     {
-      id: 'what-i-need',
-      nav: 'What I need from you',
-      title: 'What I need from you',
+      id: 'what-we-need',
+      nav: 'What we need from you',
+      title: 'What we need from you',
       intro: 'Projects move fastest when these are ready.',
       blocks: [
-        { h: 'Your brand', p: 'Logo and colours if you have them. If not, tell me and we can talk about branding.' },
+        { h: 'Your brand', p: 'Logo and colours if you have them. If not, tell us and we can talk about branding.' },
         { h: 'Photos', p: 'Real photos of your place, food, rooms or team. They make a bigger difference than any design trick.' },
         { h: 'Business details', p: 'Services, menu or rates, locations, hours and contact numbers.' },
         { h: 'One decision maker', p: 'One person who can approve designs and answer questions, so feedback stays clear.' },
@@ -112,10 +112,10 @@ export const websiteDesign = {
       intro: 'Short answers to common questions.',
       faq: true,
       blocks: [
-        { h: 'How much does a website cost?', p: 'It depends on the pages, content and features. I quote after a first call and give you a clear figure before any work starts.' },
+        { h: 'How much does a website cost?', p: 'It depends on the pages, content and features. We quote after a first call and give you a clear figure before any work starts.' },
         { h: 'How long does a build take?', p: 'It depends on scope and how quickly content arrives. We agree a timeline on the first call.' },
-        { h: 'Do you work outside Nairobi?', p: 'Yes. I work with businesses across Kenya over calls, WhatsApp and screen sharing.' },
-        { h: 'Can I update the website myself?', p: 'Yes, where the project includes a content dashboard. We confirm this when we plan the build.' },
+        { h: 'Do you work outside Nairobi?', p: 'Yes. We work with businesses across Kenya over calls, WhatsApp and screen sharing.' },
+        { h: 'Can the website be updated without a developer?', p: 'Yes, where the project includes a content dashboard. We confirm this when we plan the build.' },
         { h: 'Will it work on phones?', p: 'Yes. Every page is designed for phones first and tested on real devices.' },
       ],
     },
@@ -123,7 +123,7 @@ export const websiteDesign = {
       id: 'start',
       nav: 'Start with an enquiry',
       title: 'A website built around a real enquiry',
-      intro: 'Tell me about your business and what you want the website to do. I will reply with the next step.',
+      intro: 'Tell us about your business and what you want the website to do. We will reply with the next step.',
       blocks: [],
       cta: { to: '/contact', label: 'Start a project' },
     },
