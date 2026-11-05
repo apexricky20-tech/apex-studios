@@ -1,3 +1,5 @@
+import Marquee from './Marquee'
+
 const steps = [
   ['01', 'Discovery call', 'We learn your place, your guests, and what a booking is worth to you.'],
   ['02', 'Plan and design', 'Structure, copy, and a design drawn around your brand.'],
@@ -7,6 +9,8 @@ const steps = [
 
 export default function Process() {
   return (
+    <>
+    <Marquee />
     <section id="process" className="mx-auto max-w-[2000px] px-gutter py-24  md:py-32">
       <p className="text-sm uppercase tracking-widest text-amber">How a build runs</p>
       <div className="mt-12 grid gap-6 md:grid-cols-4">
@@ -19,5 +23,6 @@ export default function Process() {
         ))}
       </div>
     </section>
+    </>
   )
 }
