@@ -3,7 +3,7 @@ import { useLocation } from 'react-router-dom'
 import Lenis from 'lenis'
 
 const SELECTOR = 'h2, h3, p, li, a[class*="rounded-full"]'
-const SKIP = 'header, #site-menu, .animate-marquee, .sr-only'
+const SKIP = 'header, #site-menu, .animate-marquee, .sr-only, [data-hero]'
 const reduced = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
 export default function Motion() {

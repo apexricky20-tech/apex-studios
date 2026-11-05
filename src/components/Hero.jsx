@@ -7,14 +7,13 @@ export default function Hero() {
   return (
     <>
       {/* Layer 1: the portrait stays pinned while the page scrolls over it */}
-      <div className="sticky top-0 z-0 h-svh overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_35%,rgba(255, 130, 0,0.12),transparent_60%)]" />
+      <div className="sticky top-0 z-0 h-svh overflow-hidden bg-ink">
         <div className="absolute inset-x-0 bottom-[46svh] top-20 flex justify-center md:bottom-[36svh]">
           <img
             src={site.portrait}
             alt={`Portrait of ${site.name}, founder of Apex Studios`}
             fetchPriority="high"
-            className="h-full w-auto max-w-full object-contain"
+            className="hero-portrait h-full w-auto max-w-full object-contain"
             style={{ maskImage: fade, WebkitMaskImage: fade }}
             onError={(e) => {
               e.currentTarget.style.display = 'none'
@@ -25,14 +24,14 @@ export default function Hero() {
       </div>
 
       {/* Layer 2: the text sits over the portrait, then scrolls away */}
-      <div className="relative z-10 -mt-[100svh] flex h-svh flex-col items-center justify-end px-gutter pb-8 text-center">
+      <div data-hero className="relative z-10 -mt-[100svh] flex h-svh flex-col items-center justify-end px-gutter pb-8 text-center">
         <h1 className="sr-only">Websites for hotels, lodges and restaurants</h1>
-        <p className="max-w-2xl text-base text-paper/80 md:text-lg">
+        <p className="hero-rise max-w-2xl text-base text-paper md:text-lg" style={{ animationDelay: '250ms' }}>
           I&apos;m {site.name}, founder of Apex Studios. I design and build fast, immersive
           websites for hotels, lodges and restaurants.
         </p>
 
-        <div className="mt-6 flex flex-wrap justify-center gap-3">
+        <div className="hero-rise mt-6 flex flex-wrap justify-center gap-3" style={{ animationDelay: '400ms' }}>
           <Link
             to="/contact"
             className="rounded-full bg-paper px-9 py-4 text-sm font-semibold uppercase tracking-wider text-ink transition-colors hover:bg-amber"
@@ -47,9 +46,9 @@ export default function Hero() {
           </Link>
         </div>
 
-        <ul className="mt-6 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs text-muted">
+        <ul className="hero-rise mt-6 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs text-paper/70" style={{ animationDelay: '550ms' }}>
           <li className="flex items-center gap-2 text-paper">
-            <span className="h-2 w-2 rounded-full bg-emerald-500" aria-hidden="true" />
+            <span className="h-2 w-2 rounded-full bg-[#12b76a]" aria-hidden="true" />
             {site.availability}
           </li>
           <li>{site.role}</li>
@@ -59,7 +58,7 @@ export default function Hero() {
         <button
           type="button"
           onClick={() => window.scrollTo({ top: window.innerHeight, behavior: 'smooth' })}
-          className="mt-6 flex items-center gap-2 text-xs font-medium text-paper/80 transition-colors hover:text-amber"
+          className="hero-rise mt-6 flex items-center gap-2 text-xs font-medium text-paper transition-colors hover:text-amber" style={{ animationDelay: '700ms' }}
         >
           <svg
             viewBox="0 0 24 24"
