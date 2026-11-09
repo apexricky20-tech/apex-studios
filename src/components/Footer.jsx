@@ -46,6 +46,8 @@ const makeColumns = (contact) => [
       contact.whatsapp && ['WhatsApp', `https://wa.me/${contact.whatsapp}`],
       contact.instagram && ['Instagram', contact.instagram],
       contact.tiktok && ['TikTok', contact.tiktok],
+      contact.youtube && ['Youtube', contact.youtube],
+
     ].filter(Boolean),
   },
 ]
