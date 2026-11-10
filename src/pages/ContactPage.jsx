@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useContact, useSite } from '../lib/content'
+import { getSource } from '../lib/utm'
 
 const services = [
   'Website Design',
@@ -99,6 +100,7 @@ export default function ContactPage() {
       service: d.service || '',
       message: d.message || '',
       page: window.location.pathname,
+      source: getSource(),
       elapsedMs: Date.now() - started.current,
       sentAt: new Date().toISOString(),
     }
@@ -147,7 +149,7 @@ export default function ContactPage() {
   ].filter(Boolean)
 
   return (
-    <main className="px-gutter pb-32 pt-40 md:pt-48">
+    <div className="px-gutter pb-32 pt-40 md:pt-48">
       <title>Contact Apex Studios | Start a Project in Kenya</title>
       <meta
         name="description"
@@ -284,6 +286,6 @@ export default function ContactPage() {
           ))}
         </div>
       </div>
-    </main>
+    </div>
   )
 }

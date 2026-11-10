@@ -19,9 +19,9 @@ function Card({ project }) {
           }}
         />
       </div>
-      <h3 className="mt-6 text-3xl transition-colors group-hover:text-amber md:text-4xl">
+      <h2 className="mt-6 text-3xl transition-colors group-hover:text-amber md:text-4xl">
         {project.title}
-      </h3>
+      </h2>
       <p className="mt-2 text-sm text-muted">{project.category}</p>
     </Link>
   )
@@ -36,7 +36,7 @@ export default function WorkPage() {
   const count = (t) => (t === 'All' ? all.length : all.filter((p) => p.group === t).length)
 
   return (
-    <main className="px-gutter pb-32 pt-40 md:pt-48">
+    <div className="px-gutter pb-32 pt-40 md:pt-48">
       <title>Our Work | Apex Studios</title>
       <meta
         name="description"
@@ -76,6 +76,6 @@ export default function WorkPage() {
           ))}
         </div>
       </div>
-    </main>
+    </div>
   )
 }

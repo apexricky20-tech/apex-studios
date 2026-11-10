@@ -10,15 +10,27 @@
     <meta name="description" content="Apex Studios designs and builds fast, immersive websites for hotels, lodges and restaurants." />
     <title>Apex Studios | Websites for Hotels, Lodges and Restaurants</title>
     <!--seo-->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Herr+Von+Muellerhoff&display=swap" rel="stylesheet" />
+    <link rel="preload" href="/fonts/herr-von-muellerhoff-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preconnect" href="https://api.fontshare.com" />
     <link rel="preconnect" href="https://cdn.fontshare.com" crossorigin />
     <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700&display=swap" rel="stylesheet" />
+    <style>
+      /* Plain-text version of each page, visible until the app loads (and for crawlers that skip JavaScript). */
+      .shell { max-width: 46rem; margin: 0 auto; padding: 7rem 1.25rem 3rem; font-family: Satoshi, Inter, system-ui, sans-serif; color: #fff; }
+      .shell h1 { font-size: 2.25rem; line-height: 1.05; letter-spacing: -0.04em; font-weight: 500; margin: 0; }
+      .shell p { color: #9a9a9a; line-height: 1.6; margin: 1rem 0 0; }
+      .shell ul { list-style: none; padding: 0; margin: 2rem 0 0; display: flex; flex-wrap: wrap; gap: 0.5rem 1.25rem; }
+      .shell a { color: #fff; }
+    </style>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root"><!--shell--></div>
+    <script>
+      (function () {
+        var s = document.querySelector(".shell");
+        if (s && s.getAttribute("data-path") !== (location.pathname.replace(/\/+$/, "") || "/")) s.remove();
+      })();
+    </script>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

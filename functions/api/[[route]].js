@@ -226,6 +226,7 @@ function enquiryAlert(m, origin) {
     m.phone ? `Phone: ${m.phone}` : null,
     m.company ? `Company: ${m.company}` : null,
     m.service ? `Needs: ${m.service}` : null,
+    m.source ? `Came from: ${m.source}` : null,
     '',
     m.message.length > 1200 ? `${m.message.slice(0, 1200)}...` : m.message,
     '',
@@ -272,6 +273,7 @@ export async function onRequest({ request, env, waitUntil }) {
         service: str(b.service, 60),
         message,
         page: str(b.page, 100),
+        source: str(b.source, 150).replace(/[\r\n]+/g, ' '),
         createdAt: new Date().toISOString(),
         read: false,
       }

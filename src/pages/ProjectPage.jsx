@@ -1,6 +1,8 @@
 import { Link, useParams } from 'react-router-dom'
 import { useVisibleProjects } from '../lib/content'
 import NotFound from './NotFound'
+import Breadcrumbs from '../components/Breadcrumbs'
+import { withUtm } from '../lib/utm'
 
 function Row({ label, children }) {
   return (
@@ -30,22 +32,12 @@ export default function ProjectPage() {
       }
 
   return (
-    <main className="px-gutter pb-32 pt-40 md:pt-48">
+    <div className="px-gutter pb-32 pt-40 md:pt-48">
       <title>{`${project.title} | Apex Studios`}</title>
       <meta name="description" content={project.summary} />
 
       <div className="mx-auto max-w-[1220px]">
-        <Link
-          to="/work"
-          className="inline-block text-sm text-muted transition-colors hover:text-amber"
-        >
-          &larr; All work
-        </Link>
-        <p className="mt-10 text-sm uppercase tracking-widest text-muted">
-          <Link to="/work" className="transition-colors hover:text-amber">
-            {project.group}
-          </Link>
-        </p>
+        <Breadcrumbs items={[{ name: 'Our Work', to: '/work' }, { name: project.title }]} />
         <h1 className="mt-8 text-[clamp(3rem,7vw,6.5rem)] font-medium">{project.title}</h1>
         <p className="mt-10 max-w-3xl text-xl leading-relaxed text-muted md:text-2xl">
           {project.summary}
@@ -91,7 +83,7 @@ export default function ProjectPage() {
           {project.live && (
             <Row label={project.liveLabel || 'Live site'}>
               <a
-                href={project.href}
+                href={withUtm(project.href)}
                 target="_blank"
                 rel="noreferrer"
                 className="inline-block rounded-full border border-paper/25 px-6 py-3 text-sm font-semibold transition-colors hover:border-amber hover:text-amber"
@@ -135,6 +127,6 @@ export default function ProjectPage() {
           )}
         </div>
       </div>
-    </main>
+    </div>
   )
 }

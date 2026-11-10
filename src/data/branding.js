@@ -1,8 +1,8 @@
 export const branding = {
   path: '/branding',
-  title: 'Branding for Hotels, Restaurants and Businesses in Kenya | Apex Studios',
+  title: 'Branding in Kenya for Hotels and Restaurants | Apex Studios',
   description:
-    'Logo, colour, typography and brand guidelines for hotels, lodges, restaurants and local businesses in Kenya. Built to look consistent on signboards, menus, social media and your website.',
+    'Logo, colour, typography and brand guidelines for hotels, lodges and restaurants in Kenya, consistent across signboards, menus, social media and your website.',
   label: 'Services',
   h1: 'Branding in Kenya',
   intro:

@@ -25,7 +25,7 @@ export default function PrivacyPage() {
         <p>
           <strong className="font-medium text-paper">When you send us a message.</strong> The contact form asks for your
           name and email address. You may also give a phone number, your company, the service you are interested in and
-          a message. We also record the page you sent it from and the date and time.
+          a message. We also record the page you sent it from, the date and time, and the link or site that brought you here (for example, an Instagram link), so we know which channels work.
         </p>
         <p>
           <strong className="font-medium text-paper">To stop spam and abuse.</strong> We briefly keep a counter linked to
@@ -49,8 +49,8 @@ export default function PrivacyPage() {
       'Where it is stored',
       <p key="a">
         Messages are stored with Cloudflare, which hosts this website. Cloudflare and our notification services may
-        process data on servers outside Kenya. This site also loads fonts from Google Fonts and Fontshare, so your browser
-        contacts those services and they receive your IP address.
+        process data on servers outside Kenya. This site also loads a font from Fontshare, so your browser contacts that
+        service and it receives your IP address.
       </p>,
     ],
     [

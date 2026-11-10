@@ -21,8 +21,8 @@ const mask = 'radial-gradient(ellipse at center, black 50%, transparent 100%)'
 export default function AboutPage() {
   const site = useSite()
   return (
-    <main>
-      <title>About Apex Studios | Websites for Hotels, Lodges and Restaurants in Kenya</title>
+    <div>
+      <title>About Apex Studios | Nairobi Web Design Studio</title>
       <meta
         name="description"
         content="Apex Studios is a Nairobi studio that designs and builds websites, Google Business Profiles and brands for hotels, lodges and restaurants across Kenya."
@@ -123,6 +123,6 @@ export default function AboutPage() {
           Get Started
         </Link>
       </section>
-    </main>
+    </div>
   )
 }

@@ -1,8 +1,11 @@
 import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
+import Breadcrumbs from './Breadcrumbs'
+import { serviceNames } from '../lib/crumbs'
 
 export default function ServiceLayout({ page }) {
   const { sections } = page
+  const { pathname } = useLocation()
   const [active, setActive] = useState(sections[0].id)
 
   useEffect(() => {
@@ -29,13 +32,13 @@ export default function ServiceLayout({ page }) {
   }
 
   return (
-    <main className="px-gutter pb-32 pt-40 md:pt-48">
+    <div className="px-gutter pb-32 pt-40 md:pt-48">
       <title>{page.title}</title>
       <meta name="description" content={page.description} />
       {faqLd && <script type="application/ld+json">{JSON.stringify(faqLd)}</script>}
 
       <div className="mx-auto max-w-[1240px]">
-        <p className="text-sm uppercase tracking-widest text-muted">{page.label}</p>
+        <Breadcrumbs items={[{ name: 'Services', to: '/services' }, { name: serviceNames[pathname] || page.h1 }]} />
         <h1 className="mt-8 text-[clamp(3rem,7vw,6.5rem)] font-medium">{page.h1}</h1>
         <p className="mt-10 max-w-3xl text-xl leading-relaxed text-muted md:text-2xl">
           {page.intro}
@@ -106,6 +109,6 @@ export default function ServiceLayout({ page }) {
           </div>
         </div>
       </div>
-    </main>
+    </div>
   )
 }

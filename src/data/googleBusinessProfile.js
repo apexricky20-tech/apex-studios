@@ -1,8 +1,8 @@
 export const googleBusinessProfile = {
   path: '/google-business-profile',
-  title: 'Google Business Profile Setup and Management in Kenya | Apex Studios',
+  title: 'Google Business Profile Management in Kenya | Apex Studios',
   description:
-    'Google Business Profile setup, optimisation and management for businesses across Kenya. Be found on Google Maps and Search with accurate hours, photos and contact options.',
+    'Google Business Profile setup and management for businesses across Kenya. Be found on Maps and Search with accurate hours, photos and contact options.',
   label: 'Services',
   h1: 'Google Business Profile in Kenya',
   intro:

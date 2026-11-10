@@ -1,7 +1,7 @@
 export const development = {
   title: 'Web Development in Kenya | Apex Studios',
   description:
-    'Fast, dependable websites and web apps built in code for hotels, restaurants and businesses across Kenya. Content dashboards, online ordering, speed and SEO built in.',
+    'Fast, dependable websites and web apps for hotels, restaurants and businesses across Kenya. Content dashboards, online ordering, speed and SEO built in.',
   label: 'Services',
   h1: 'Development',
   intro:

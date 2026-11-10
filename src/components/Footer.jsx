@@ -101,7 +101,7 @@ export default function Footer() {
 
         {columns.map((col) => (
           <nav key={col.title} aria-label={col.title}>
-            <h3 className="text-sm font-semibold tracking-normal">{col.title}</h3>
+            <p className="text-sm font-semibold leading-[0.95] tracking-normal">{col.title}</p>
             <ul className="mt-5 space-y-3">
               {col.links.map(([label, href]) => (
                 <li key={label}>

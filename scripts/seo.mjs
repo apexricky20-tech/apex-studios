@@ -2,7 +2,12 @@
 // It reads the built dist/index.html and writes, for every public page:
 //   - its own <title>, description, canonical link, Open Graph and Twitter tags
 //     straight into the HTML, so WhatsApp, Facebook and Google see them without running JavaScript
-// It also writes dist/robots.txt and dist/sitemap.xml and adds LocalBusiness data to the homepage.
+// It also writes dist/robots.txt, dist/sitemap.xml and dist/llms.txt, adds LocalBusiness data to the
+// homepage, breadcrumb data to inner pages, and a plain-text version of each page inside the HTML
+// (what search engines and AI crawlers that skip JavaScript read).
+//
+// Optional: set GOOGLE_SITE_VERIFICATION (the token from Google Search Console) to add the
+// verification tag to every page.
 //
 // When you get a custom domain, set SITE_URL in Cloudflare Pages
 // (Settings > Variables and secrets) to e.g. https://apexstudios.co.ke and redeploy.
@@ -15,6 +20,7 @@ import { fileURLToPath } from 'node:url'
 import { contact } from '../src/data/contact.js'
 import { projects } from '../src/data/projects.js'
 import { articles } from '../src/data/articles.js'
+import { serviceNames, pageNames } from '../src/lib/crumbs.js'
 import { websiteDesign } from '../src/data/websiteDesign.js'
 import { development } from '../src/data/development.js'
 import { automation } from '../src/data/automation.js'
@@ -49,7 +55,7 @@ const servicePages = [
 ]
 
 const routes = [
-  { path: '/', title: HOME_TITLE, description: HOME_DESCRIPTION },
+  { path: '/', title: HOME_TITLE, description: HOME_DESCRIPTION, h1: 'Websites for hotels, lodges and restaurants' },
   {
     path: '/work',
     title: 'Our Work | Apex Studios',
@@ -69,7 +75,7 @@ const routes = [
   },
   {
     path: '/about',
-    title: 'About Apex Studios | Websites for Hotels, Lodges and Restaurants in Kenya',
+    title: 'About Apex Studios | Nairobi Web Design Studio',
     description:
       'Apex Studios is a Nairobi studio that designs and builds websites, Google Business Profiles and brands for hotels, lodges and restaurants across Kenya.',
   },
@@ -115,7 +121,7 @@ const jsonLd = (obj) =>
 const urlFor = (path) => (path === '/' ? `${SITE_URL}/` : `${SITE_URL}${path}`)
 
 function businessData() {
-  const sameAs = [contact.instagram, contact.tiktok].filter(Boolean)
+  const sameAs = [contact.instagram, contact.tiktok, contact.youtube].filter(Boolean)
   return {
     '@context': 'https://schema.org',
     '@graph': [
@@ -151,6 +157,55 @@ function businessData() {
   }
 }
 
+const stripBrand = (t) => t.replace(/ \| Apex Studios$/, '')
+
+function breadcrumbData(route) {
+  const p = route.path
+  if (p === '/') return null
+  let trail
+  if (serviceNames[p]) trail = [['Services', '/services'], [serviceNames[p], p]]
+  else if (p.startsWith('/work/')) trail = [['Our Work', '/work'], [stripBrand(route.title), p]]
+  else if (p.startsWith('/articles/')) trail = [['Articles', '/articles'], [stripBrand(route.title), p]]
+  else trail = [[pageNames[p] || stripBrand(route.title), p]]
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [['Home', '/'], ...trail].map(([name, path], i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      name,
+      item: urlFor(path),
+    })),
+  }
+}
+
+// A plain-text version of the page. It sits inside #root, so it shows until the app loads and is
+// what crawlers that do not run JavaScript read. The app replaces it as soon as it starts.
+const shellLinks = [
+  ['Home', '/'],
+  ['Our work', '/work'],
+  ['Services', '/services'],
+  ['Our process', '/process'],
+  ['About', '/about'],
+  ['Contact', '/contact'],
+  ['Privacy', '/privacy'],
+]
+function shell(route) {
+  const links = shellLinks.map(([label, to]) => `<li><a href="${attr(to)}">${text(label)}</a></li>`).join('')
+  const reach = [
+    contact.email && `<a href="mailto:${attr(contact.email)}">${text(contact.email)}</a>`,
+    contact.whatsapp && `<a href="https://wa.me/${attr(contact.whatsapp)}">WhatsApp</a>`,
+  ].filter(Boolean)
+  return (
+    `<div class="shell" data-path="${attr(route.path)}">` +
+    `<h1>${text(route.h1 || stripBrand(route.title))}</h1>` +
+    `<p>${text(route.description)}</p>` +
+    `<nav aria-label="Main"><ul>${links}</ul></nav>` +
+    (reach.length ? `<p>${reach.join(' &middot; ')}</p>` : '') +
+    `</div>`
+  )
+}
+
 function headBlock(route) {
   const url = urlFor(route.path)
   const lines = [
@@ -170,13 +225,18 @@ function headBlock(route) {
     `<meta name="twitter:description" content="${attr(route.description)}" />`,
     `<meta name="twitter:image" content="${attr(SHARE_IMAGE)}" />`,
   ]
+  if (process.env.GOOGLE_SITE_VERIFICATION) {
+    lines.push(`<meta name="google-site-verification" content="${attr(process.env.GOOGLE_SITE_VERIFICATION)}" />`)
+  }
   if (route.path === '/') lines.push(jsonLd(businessData()))
+  const crumbs = breadcrumbData(route)
+  if (crumbs) lines.push(jsonLd(crumbs))
   return lines.join('\n    ')
 }
 
 const html = readFileSync(template, 'utf8')
-if (!html.includes('<!--seo-->')) {
-  console.error('seo: the <!--seo--> marker is missing from index.html.')
+if (!html.includes('<!--seo-->') || !html.includes('<!--shell-->')) {
+  console.error('seo: the <!--seo--> or <!--shell--> marker is missing from index.html.')
   process.exit(1)
 }
 
@@ -185,6 +245,7 @@ function render(route) {
     .replace(/<title>[\s\S]*?<\/title>/, `<title>${text(route.title)}</title>`)
     .replace(/<meta name="description"[^>]*>/, `<meta name="description" content="${attr(route.description)}" />`)
     .replace('<!--seo-->', headBlock(route))
+    .replace('<!--shell-->', shell(route))
 }
 
 for (const route of routes) {
@@ -207,5 +268,27 @@ writeFileSync(
   join(dist, 'sitemap.xml'),
   `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${entries}\n</urlset>\n`,
 )
+
+// ---------- llms.txt (a short, plain description of the site for AI assistants) ----------
+const llmsLines = [
+  `# ${SITE_NAME}`,
+  '',
+  `> ${SITE_NAME} is a web design and development studio in Nairobi, Kenya. It builds websites, Google Business Profiles, automation and branding for hotels, lodges and restaurants.`,
+  '',
+  '## Services',
+  ...servicePages.map(([path, p]) => `- [${serviceNames[path]}](${urlFor(path)}): ${p.description}`),
+  '',
+  '## Work',
+  ...projects.filter((p) => p.published).map((p) => `- [${p.title}](${urlFor(`/work/${p.slug}`)}): ${p.summary}`),
+  '',
+  '## About and contact',
+  `- [About](${urlFor('/about')}): Who we are and how we work`,
+  `- [Process](${urlFor('/process')}): How a project runs from first call to handover`,
+  `- [Contact](${urlFor('/contact')}): Send a message to start a project`,
+  ...(contact.email ? [`- Email: ${contact.email}`] : []),
+  ...(contact.whatsapp ? [`- WhatsApp: https://wa.me/${contact.whatsapp}`] : []),
+  '',
+]
+writeFileSync(join(dist, 'llms.txt'), llmsLines.join('\n'))
 
 console.log(`seo: ${routes.length} pages written for ${SITE_URL}`)

@@ -15,10 +15,16 @@ function ScrollToTop() {
 export default function Layout() {
   return (
     <>
+      <a
+        href="#main-content"
+        className="skip-link"
+      >
+        Skip to content
+      </a>
       <ScrollToTop />
       <Motion />
       <Nav />
-      <main>
+      <main id="main-content" tabIndex={-1} className="outline-none">
         <Outlet />
       </main>
       <Footer />

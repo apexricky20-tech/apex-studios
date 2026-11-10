@@ -62,13 +62,15 @@ const services = [
   },
 ]
 
-export default function Services() {
+export default function Services({ asPage = false }) {
+  const Heading = asPage ? 'h1' : 'h2'
+  const Title = asPage ? 'h2' : 'h3'
   return (
     <section id="services" className="mx-auto max-w-[2000px] px-gutter py-24  md:py-32">
       <div className="sr-only">
         <div>
           <p className="text-sm uppercase tracking-widest text-amber">Services</p>
-          <h2 className="mt-4 text-5xl md:text-7xl">What we build</h2>
+          <Heading className="mt-4 text-5xl md:text-7xl">{asPage ? 'Our services' : 'What we build'}</Heading>
         </div>
         <p className="max-w-md text-paper/70">
           Five services with one goal: helping hotels, lodges and restaurants get found,
@@ -93,13 +95,13 @@ export default function Services() {
                   flipped ? 'md:flex-row-reverse' : 'md:flex-row'
                 }`}
               >
-                <h3
+                <Title
                   className={`text-[clamp(2.75rem,7.2vw,8.5rem)] transition-colors duration-200 group-hover:text-amber md:flex-1 ${
                     flipped ? 'md:text-right' : ''
                   }`}
                 >
                   {s.title}
-                </h3>
+                </Title>
                 <div className="md:w-[38%] lg:w-[30%]">
                   <p className="text-paper/80">{s.text}</p>
                   <ul className="mt-5 space-y-2 text-sm text-muted">

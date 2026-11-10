@@ -4,7 +4,7 @@ export default function ServicesPage() {
   return (
     <div className="pt-20">
       <title>Services | Apex Studios</title>
-      <Services />
+      <Services asPage />
     </div>
   )
 }

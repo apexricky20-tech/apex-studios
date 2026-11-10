@@ -1,4 +1,3 @@
-import React from 'react';
 
 export default function Logo({ className = "w-auto h-10 text-white", ...props }) {
   return (
