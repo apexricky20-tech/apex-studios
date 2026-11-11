@@ -7,6 +7,9 @@ const pages = {
   Development: '/development',
   Automation: '/automation',
   Branding: '/branding',
+  'M-Pesa Payments': '/mpesa-payments',
+  'WhatsApp Automation': '/whatsapp-automation',
+  'Care Plans': '/care-plans',
 }
 
 const services = [
@@ -60,6 +63,36 @@ const services = [
       'Performance tracking and reports',
     ],
   },
+  {
+    title: 'M-Pesa Payments',
+    text: 'Let guests pay the way they already do. A prompt on their phone settles a booking deposit or an order, and the payment is confirmed on your side automatically.',
+    items: [
+      'Pay prompts on the customer phone',
+      'Booking deposits and order payments',
+      'Automatic payment confirmation',
+      'Payments dashboard',
+    ],
+  },
+  {
+    title: 'WhatsApp Automation',
+    text: 'Turn the chats you already get into an organised system. Common questions are answered at once, and bookings and orders are captured properly.',
+    items: [
+      'Instant replies and menus',
+      'Booking and order capture',
+      'Staff alerts',
+      'Follow-ups and reminders',
+    ],
+  },
+  {
+    title: 'Care Plans',
+    text: 'Your website, looked after every month. Updates, security, backups and small changes, with a person to message when something needs fixing.',
+    items: [
+      'Updates and security',
+      'Uptime and speed checks',
+      'Backups',
+      'Small content changes',
+    ],
+  },
 ]
 
 export default function Services({ asPage = false }) {
@@ -73,7 +106,7 @@ export default function Services({ asPage = false }) {
           <Heading className="mt-4 text-5xl md:text-7xl">{asPage ? 'Our services' : 'What we build'}</Heading>
         </div>
         <p className="max-w-md text-paper/70">
-          Five services with one goal: helping hotels, lodges and restaurants get found,
+          Eight services with one goal: helping hotels, lodges and restaurants get found,
           trusted and booked.
         </p>
       </div>

@@ -10,6 +10,9 @@ const SERVICES = [
   ['Automation', '/automation'],
   ['Branding', '/branding'],
   ['Google Business Profile', '/google-business-profile'],
+  ['M-Pesa Payments', '/mpesa-payments'],
+  ['WhatsApp Automation', '/whatsapp-automation'],
+  ['Care Plans', '/care-plans'],
 ]
 
 async function api(path, opts = {}) {

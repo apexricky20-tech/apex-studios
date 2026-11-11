@@ -20,6 +20,9 @@ const serviceLinks = [
   ['Automation', '/automation'],
   ['Branding', '/branding'],
   ['Google Business Profile', '/google-business-profile'],
+  ['M-Pesa Payments', '/mpesa-payments'],
+  ['WhatsApp Automation', '/whatsapp-automation'],
+  ['Care Plans', '/care-plans'],
 ]
 
 const Dot = () => (
@@ -34,7 +37,7 @@ const linkClass = (isActive) =>
 export default function Nav() {
   const contact = useContact()
   const { pathname } = useLocation()
-  const onServices = ['/services', '/website-design', '/google-business-profile', '/development', '/automation', '/branding'].some((p) => pathname.startsWith(p))
+  const onServices = ['/services', '/website-design', '/google-business-profile', '/development', '/automation', '/branding', '/mpesa-payments', '/whatsapp-automation', '/care-plans'].some((p) => pathname.startsWith(p))
   const [open, setOpen] = useState(false)
   const [servicesOpen, setServicesOpen] = useState(false)
   const close = () => setOpen(false)

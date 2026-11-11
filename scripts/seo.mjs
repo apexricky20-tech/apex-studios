@@ -26,6 +26,9 @@ import { development } from '../src/data/development.js'
 import { automation } from '../src/data/automation.js'
 import { branding } from '../src/data/branding.js'
 import { googleBusinessProfile } from '../src/data/googleBusinessProfile.js'
+import { mpesaPayments } from '../src/data/mpesaPayments.js'
+import { whatsappAutomation } from '../src/data/whatsappAutomation.js'
+import { carePlans } from '../src/data/carePlans.js'
 
 const DEFAULT_SITE_URL = 'https://apex-studios-8xq.pages.dev'
 const SITE_URL = (process.env.SITE_URL || DEFAULT_SITE_URL).replace(/\/+$/, '')
@@ -52,6 +55,9 @@ const servicePages = [
   ['/automation', automation],
   ['/branding', branding],
   ['/google-business-profile', googleBusinessProfile],
+  ['/mpesa-payments', mpesaPayments],
+  ['/whatsapp-automation', whatsappAutomation],
+  ['/care-plans', carePlans],
 ]
 
 const routes = [
@@ -65,7 +71,7 @@ const routes = [
     path: '/services',
     title: 'Services | Apex Studios',
     description:
-      'Website design, development, automation, branding and Google Business Profile services for hotels, lodges and restaurants in Kenya.',
+      'Website design, development, automation, M-Pesa payments, WhatsApp automation, branding, Google Business Profile and website care plans for hotels, lodges and restaurants in Kenya.',
   },
   ...servicePages.map(([path, p]) => ({ path, title: p.title, description: p.description })),
   {

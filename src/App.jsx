@@ -10,6 +10,9 @@ import GoogleBusinessProfilePage from './pages/GoogleBusinessProfilePage'
 import DevelopmentPage from './pages/DevelopmentPage'
 import AutomationPage from './pages/AutomationPage'
 import BrandingPage from './pages/BrandingPage'
+import MpesaPaymentsPage from './pages/MpesaPaymentsPage'
+import WhatsAppAutomationPage from './pages/WhatsAppAutomationPage'
+import CarePlansPage from './pages/CarePlansPage'
 import ProcessPage from './pages/ProcessPage'
 import AboutPage from './pages/AboutPage'
 import ContactPage from './pages/ContactPage'
@@ -36,6 +39,9 @@ export default function App() {
           <Route path="development" element={<DevelopmentPage />} />
           <Route path="automation" element={<AutomationPage />} />
           <Route path="branding" element={<BrandingPage />} />
+          <Route path="mpesa-payments" element={<MpesaPaymentsPage />} />
+          <Route path="whatsapp-automation" element={<WhatsAppAutomationPage />} />
+          <Route path="care-plans" element={<CarePlansPage />} />
           <Route path="process" element={<ProcessPage />} />
           <Route path="about" element={<AboutPage />} />
           <Route path="contact" element={<ContactPage />} />

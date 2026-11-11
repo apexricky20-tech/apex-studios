@@ -9,6 +9,9 @@ const services = [
   'Automation',
   'Branding',
   'Google Business Profile',
+  'M-Pesa Payments',
+  'WhatsApp Automation',
+  'Care Plans',
   'Not sure yet',
 ]
 

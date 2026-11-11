@@ -5,6 +5,9 @@ export const serviceNames = {
   '/automation': 'Automation',
   '/branding': 'Branding',
   '/google-business-profile': 'Google Business Profile',
+  '/mpesa-payments': 'M-Pesa Payments',
+  '/whatsapp-automation': 'WhatsApp Automation',
+  '/care-plans': 'Care Plans',
 }
 
 export const pageNames = {
