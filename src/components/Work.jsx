@@ -42,10 +42,10 @@ export default function Work() {
   return (
     <section id="work" className="relative">
       <div className="sticky top-0 flex h-svh items-center justify-center overflow-hidden px-gutter">
-        <h2 className="whitespace-nowrap text-[15vw] font-bold leading-none tracking-[-0.05em]">
+        <h2 className="work-title whitespace-nowrap text-[17.5vw] leading-none">
           <span className="sr-only">Latest work</span>
           <span aria-hidden="true">
-            Latest<span className="text-outline">work</span>
+            Latest<span className="text-outline ml-[0.16em]">work</span>
           </span>
         </h2>
       </div>
