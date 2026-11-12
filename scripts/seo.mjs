@@ -212,7 +212,7 @@ function articleData(route) {
     mainEntityOfPage: urlFor(route.path),
     datePublished: a.date,
     dateModified: a.updated || a.date,
-    image: a.image ? `${SITE_URL}${a.image}` : SHARE_IMAGE,
+    image: a.image && existsSync(join(root, 'public', a.image)) ? `${SITE_URL}${a.image}` : SHARE_IMAGE,
     author: { '@id': `${SITE_URL}/#business` },
     publisher: { '@id': `${SITE_URL}/#business` },
   }
