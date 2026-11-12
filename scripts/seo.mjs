@@ -269,6 +269,11 @@ function shell(route) {
 
 function headBlock(route) {
   const url = urlFor(route.path)
+  // Articles share with their own picture when the file exists, otherwise the site-wide share image.
+  const own = route.article?.image && existsSync(join(root, 'public', route.article.image))
+  const image = own ? `${SITE_URL}${route.article.image}` : SHARE_IMAGE
+  const imageHeight = own ? 750 : 630
+  const imageAlt = own ? route.article.title : SHARE_IMAGE_ALT
   const lines = [
     `<link rel="canonical" href="${attr(url)}" />`,
     `<meta property="og:type" content="${route.article ? 'article' : 'website'}" />`,
@@ -277,14 +282,14 @@ function headBlock(route) {
     `<meta property="og:title" content="${attr(route.title)}" />`,
     `<meta property="og:description" content="${attr(route.description)}" />`,
     `<meta property="og:url" content="${attr(url)}" />`,
-    `<meta property="og:image" content="${attr(SHARE_IMAGE)}" />`,
+    `<meta property="og:image" content="${attr(image)}" />`,
     `<meta property="og:image:width" content="1200" />`,
-    `<meta property="og:image:height" content="630" />`,
-    `<meta property="og:image:alt" content="${attr(SHARE_IMAGE_ALT)}" />`,
+    `<meta property="og:image:height" content="${imageHeight}" />`,
+    `<meta property="og:image:alt" content="${attr(imageAlt)}" />`,
     `<meta name="twitter:card" content="summary_large_image" />`,
     `<meta name="twitter:title" content="${attr(route.title)}" />`,
     `<meta name="twitter:description" content="${attr(route.description)}" />`,
-    `<meta name="twitter:image" content="${attr(SHARE_IMAGE)}" />`,
+    `<meta name="twitter:image" content="${attr(image)}" />`,
   ]
   if (process.env.GOOGLE_SITE_VERIFICATION) {
     lines.push(`<meta name="google-site-verification" content="${attr(process.env.GOOGLE_SITE_VERIFICATION)}" />`)
