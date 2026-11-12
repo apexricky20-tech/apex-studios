@@ -103,7 +103,7 @@ a:focus-visible, button:focus-visible, summary:focus-visible {
 
 /* ---- print: white page, no navigation, links spelled out ---- */
 @media print {
-  header, footer, .skip-link, .animate-marquee, canvas,
+  header, footer, .skip-link, .back-to-top, .animate-marquee, canvas,
   a[aria-label*="WhatsApp"], form { display: none !important; }
   html, body { background: #fff !important; }
   * {

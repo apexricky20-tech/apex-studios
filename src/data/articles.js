@@ -1,4 +1,6 @@
 // Only published articles appear on the live site. Drafts show in dev.
+// Optional per article: `updated` ('YYYY-MM-DD', shown as "Updated ..." and used in the sitemap)
+// and `description` (search snippet; defaults to the first paragraph).
 export const articles = [
   {
     slug: 'what-a-hotel-website-needs',
