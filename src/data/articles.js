@@ -1,28 +1,67 @@
 // Only published articles appear on the live site. Drafts show in dev.
+// Optional per article: `updated` ('YYYY-MM-DD', shown as "Updated ..." and used in the sitemap)
+// and `description` (search snippet; defaults to the first paragraph).
 export const articles = [
   {
     slug: 'what-a-hotel-website-needs',
     title: 'What a Hotel Website Needs to Turn Visitors into Bookings',
+    description:
+      'The rooms, prices, photos, payment details and contact options a hotel or guesthouse website needs so visitors book instead of leaving.',
     date: '2026-11-05',
     image: '/articles/hotel-website.webp',
-    body: ['Draft. Write this article here.'],
-    published: false,
+    body: [
+      'A guest looking at your website is rarely looking only at yours. They usually have two or three other places open in other tabs, and they are quietly asking the same questions of each: what are the rooms like, what will it cost, is it easy to get to, and how do I book? The place that answers those questions fastest tends to get the booking.',
+      'Start with the rooms. Show every room type with real photos, what is included (breakfast, Wi-Fi, parking, hot water), how many people it sleeps and what it costs. If you cannot put exact prices online because they change with the season, show a "from" price and say what affects it. A site that hides its prices sends visitors to a competitor who does not.',
+      'Use your own photos. Guests can spot stock images quickly, and they trust a slightly imperfect photo of the real room more than a polished picture of a room that is not yours. Show the bed, the bathroom, the view, the compound and the entrance. If a photo would disappoint a guest on arrival, leave it out.',
+      'Make booking possible from a phone. Most of your visitors will arrive on one, often on a mobile connection that is not fast. Put a call button and a WhatsApp button where thumbs can reach them, and keep the enquiry form short: dates, number of guests, name and phone number. Asking guests to create an account before they can enquire is the quickest way to lose them.',
+      'Say how guests pay. Explain whether you take M-Pesa, cards or cash, whether you ask for a deposit and how much, and what happens if plans change. A plain two-line cancellation policy removes a worry that otherwise stops people from booking.',
+      'Help people find you. Include the full address, a map, the nearest landmarks, how long it takes from the airport or town centre, and whether there is secure parking. For many guests, knowing the last stretch of road is safe and easy is the final push they need.',
+      'Show proof. Real guest comments, a link to your Google reviews and a few recent photos taken by guests all tell a new visitor that other people have stayed and been happy. Keep it current: a review from three years ago says less than one from last month.',
+      'Keep your details consistent. The name, phone number and address on your website should match your Google Business Profile and social pages exactly. Mismatches confuse both guests and search engines.',
+      'Finally, the basics: the site should load quickly, show the secure padlock in the browser, and be easy to update when rates or rooms change. If you have to wait a week for a developer to change a price, the site will drift out of date, and out-of-date sites lose bookings.',
+      'If you want a site built around these points, see how we design websites for hotels, lodges and guesthouses, or send us a message and tell us about your property.',
+    ],
+    published: true,
   },
   {
     slug: 'restaurant-ordering-page',
     title: 'Why Your Restaurant Needs Its Own Ordering Page, Not Just Social Media',
+    description:
+      'Why a restaurant should own its menu and ordering page instead of relying on Instagram and WhatsApp alone, and what that page should include.',
     date: '2026-11-05',
     image: '/articles/ordering-page.webp',
-    body: ['Draft. Write this article here.'],
-    published: false,
+    body: [
+      'Instagram and WhatsApp are good places to show off your food. They are poor places to run your ordering. Posts disappear down the feed, prices change and nobody updates the old caption, and every order becomes a back-and-forth chat that someone on your team has to answer by hand.',
+      'The deeper problem is that you do not own those channels. An algorithm change, a suspended account or a lost phone can cut you off from the customers you spent years building. A page on your own domain stays yours, and it is the one link you can put everywhere: your bio, your Google Business Profile, your receipts and your signage.',
+      'A good ordering page starts with the menu. Keep it as readable text rather than a photo of a printed menu, so it loads fast, works on small screens, can be searched by Google and is easy for you to edit. Group items clearly, show prices, and mark what is unavailable today instead of leaving customers to find out after they have ordered.',
+      'Make the next step obvious. Whether customers order through a simple form, a WhatsApp message that is pre-filled with their selection, or a full online checkout, there should be one clear button that gets them there. Fewer taps means fewer abandoned orders.',
+      'Take payment the way your customers already pay. In Kenya that usually means M-Pesa. When the order and the payment are connected, you stop chasing screenshots and confirmation messages, and fewer orders are lost to confusion about whether someone has paid.',
+      'Spell out the practical details. Say where you deliver, what delivery costs, your opening hours, how long orders usually take and how to reach a person if something goes wrong. Customers who know what to expect order more often and complain less.',
+      'An ordering page also helps people find you. When someone searches for a restaurant near them, Google reads your site and your Google Business Profile together. A page with your real menu, address and hours gives it far more to work with than a social media link ever will.',
+      'You do not have to give up social media. Keep posting there, but use every post to send people to your own page. Think of Instagram as the shop window and your website as the till.',
+      'If you would like an ordering page for your restaurant, with your menu, M-Pesa payments and WhatsApp orders in one place, get in touch and we will tell you what it would take.',
+    ],
+    published: true,
   },
   {
     slug: 'mobile-speed-and-bookings',
     title: 'Why Mobile Speed Decides Whether Guests Book or Leave',
+    description:
+      'How a slow mobile website costs hotels, lodges and restaurants bookings, and the practical fixes that make a site feel fast on a phone.',
     date: '2026-11-05',
     image: '/articles/mobile-speed.webp',
-    body: ['Draft. Write this article here.'],
-    published: false,
+    body: [
+      'When someone taps your link from Instagram, WhatsApp or Google, they are usually on a phone, and often on a connection that is far from perfect. If your page takes too long to appear, they do not wait politely. They go back and tap the next result, which may well be your competitor.',
+      'Speed matters because it is the first impression. Before a guest has read a word or seen a single room, the site has already told them whether you are careful and professional or not. A page that jumps around while it loads, or shows a blank screen for several seconds, makes people doubt the rest of your business.',
+      'Google also pays attention. It measures how quickly the main content appears, how soon the page responds to a tap and whether the layout shifts as things load. These are known as Core Web Vitals, and they are one of several signals used when ranking sites. Speed alone will not put you at the top, but a slow site makes it harder to get there.',
+      'The most common cause of a slow site is images. A single photo straight from a phone can be several megabytes, far more than a small screen needs. Resize photos to the size they are actually shown, save them in modern formats such as WebP, and load photos below the fold only when the visitor scrolls to them.',
+      'The second cause is too much extras: chat widgets, sliders, autoplay videos, several font families and tracking scripts that nobody looks at. Each one adds weight and waiting. Keep what earns its place and remove the rest.',
+      'Third, avoid layout shifts. When images and buttons move after the page appears, guests tap the wrong thing and get frustrated. Reserving space for images and loading fonts sensibly keeps everything where it should be.',
+      'Do not judge your site on your own phone and Wi-Fi. Test it on a mid-range Android phone over a mobile connection, because that is closer to what many of your guests will use. Google PageSpeed Insights is free and shows what to fix first.',
+      'Speed is not a one-time job. Every new photo, plugin or page can slow the site down again, which is why we build sites that are fast from the start and keep them fast as they grow.',
+      'If your site feels slow, tell us the address and we will take a look and explain what is holding it back.',
+    ],
+    published: true,
   },
 ]
 

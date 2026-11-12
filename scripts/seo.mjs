@@ -114,7 +114,13 @@ if (publishedArticles.length) {
     description: 'Practical articles on websites for hotels, lodges and restaurants in Kenya.',
   })
   for (const a of publishedArticles) {
-    routes.push({ path: `/articles/${a.slug}`, title: `${a.title} | Apex Studios`, description: a.title })
+    routes.push({
+      path: `/articles/${a.slug}`,
+      title: `${a.title} | Apex Studios`,
+      description: a.description || a.body?.[0] || a.title,
+      article: a,
+      lastmod: a.updated || a.date,
+    })
   }
 }
 
@@ -160,6 +166,55 @@ function businessData() {
         publisher: { '@id': `${SITE_URL}/#business` },
       },
     ],
+  }
+}
+
+
+const faqs = [
+  ['What does it cost?', 'Every project is quoted after a first call, once the scope is clear. Nothing is priced from a form.'],
+  ['How long does it take?', 'It depends on the size of the site. You get a timeline with your quote.'],
+  ['Can the website be updated without a developer?', 'Yes. You get a simple dashboard for posting updates, no developer needed.'],
+  ['Will it work on phones?', 'Every site is built mobile-first and tested on real devices.'],
+  ['Do you work with businesses outside Kenya?', 'Yes. We work remotely and the process is the same wherever you are.'],
+]
+
+function faqData() {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqs.map(([q, a]) => ({
+      '@type': 'Question',
+      name: q,
+      acceptedAnswer: { '@type': 'Answer', text: a },
+    })),
+  }
+}
+
+function serviceData(route) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Service',
+    name: serviceNames[route.path],
+    description: route.description,
+    url: urlFor(route.path),
+    provider: { '@id': `${SITE_URL}/#business` },
+    areaServed: { '@type': 'Country', name: 'Kenya' },
+  }
+}
+
+function articleData(route) {
+  const a = route.article
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: a.title,
+    description: route.description,
+    mainEntityOfPage: urlFor(route.path),
+    datePublished: a.date,
+    dateModified: a.updated || a.date,
+    image: a.image && existsSync(join(root, 'public', a.image)) ? `${SITE_URL}${a.image}` : SHARE_IMAGE,
+    author: { '@id': `${SITE_URL}/#business` },
+    publisher: { '@id': `${SITE_URL}/#business` },
   }
 }
 
@@ -214,27 +269,37 @@ function shell(route) {
 
 function headBlock(route) {
   const url = urlFor(route.path)
+  // Articles share with their own picture when the file exists, otherwise the site-wide share image.
+  const own = route.article?.image && existsSync(join(root, 'public', route.article.image))
+  const image = own ? `${SITE_URL}${route.article.image}` : SHARE_IMAGE
+  const imageHeight = own ? 750 : 630
+  const imageAlt = own ? route.article.title : SHARE_IMAGE_ALT
   const lines = [
     `<link rel="canonical" href="${attr(url)}" />`,
-    `<meta property="og:type" content="website" />`,
+    `<meta property="og:type" content="${route.article ? 'article' : 'website'}" />`,
     `<meta property="og:site_name" content="${attr(SITE_NAME)}" />`,
     `<meta property="og:locale" content="en_KE" />`,
     `<meta property="og:title" content="${attr(route.title)}" />`,
     `<meta property="og:description" content="${attr(route.description)}" />`,
     `<meta property="og:url" content="${attr(url)}" />`,
-    `<meta property="og:image" content="${attr(SHARE_IMAGE)}" />`,
+    `<meta property="og:image" content="${attr(image)}" />`,
     `<meta property="og:image:width" content="1200" />`,
-    `<meta property="og:image:height" content="630" />`,
-    `<meta property="og:image:alt" content="${attr(SHARE_IMAGE_ALT)}" />`,
+    `<meta property="og:image:height" content="${imageHeight}" />`,
+    `<meta property="og:image:alt" content="${attr(imageAlt)}" />`,
     `<meta name="twitter:card" content="summary_large_image" />`,
     `<meta name="twitter:title" content="${attr(route.title)}" />`,
     `<meta name="twitter:description" content="${attr(route.description)}" />`,
-    `<meta name="twitter:image" content="${attr(SHARE_IMAGE)}" />`,
+    `<meta name="twitter:image" content="${attr(image)}" />`,
   ]
   if (process.env.GOOGLE_SITE_VERIFICATION) {
     lines.push(`<meta name="google-site-verification" content="${attr(process.env.GOOGLE_SITE_VERIFICATION)}" />`)
   }
-  if (route.path === '/') lines.push(jsonLd(businessData()))
+  if (route.path === '/') {
+    lines.push(jsonLd(businessData()))
+    lines.push(jsonLd(faqData()))
+  }
+  if (serviceNames[route.path]) lines.push(jsonLd(serviceData(route)))
+  if (route.article) lines.push(jsonLd(articleData(route)))
   const crumbs = breadcrumbData(route)
   if (crumbs) lines.push(jsonLd(crumbs))
   return lines.join('\n    ')
@@ -268,7 +333,7 @@ writeFileSync(
 
 const today = new Date().toISOString().slice(0, 10)
 const entries = routes
-  .map((r) => `  <url>\n    <loc>${text(urlFor(r.path))}</loc>\n    <lastmod>${today}</lastmod>\n  </url>`)
+  .map((r) => `  <url>\n    <loc>${text(urlFor(r.path))}</loc>\n    <lastmod>${r.lastmod || today}</lastmod>\n  </url>`)
   .join('\n')
 writeFileSync(
   join(dist, 'sitemap.xml'),

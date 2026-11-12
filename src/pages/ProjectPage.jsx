@@ -47,6 +47,8 @@ export default function ProjectPage() {
           <img
             src={project.image}
             alt={`${project.title} website`}
+            fetchPriority="high"
+            decoding="async"
             className="h-full w-full object-cover"
             onError={(e) => {
               e.currentTarget.style.display = 'none'

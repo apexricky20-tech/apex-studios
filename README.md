@@ -1,4 +1,3 @@
-
 # Apex Studios
 
 The website for **Apex Studios**, a Nairobi studio that designs and builds websites, Google Business Profiles, payments and automation for hotels, lodges and restaurants in Kenya.
