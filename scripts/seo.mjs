@@ -17,8 +17,8 @@ import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'node:fs'
 import { join, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
-import { contact } from '../src/data/contact.js'
-import { projects } from '../src/data/projects.js'
+import { contact as contactDefault } from '../src/data/contact.js'
+import { projects as projectsDefault } from '../src/data/projects.js'
 import { articles } from '../src/data/articles.js'
 import { serviceNames, pageNames } from '../src/lib/crumbs.js'
 import { websiteDesign } from '../src/data/websiteDesign.js'
@@ -37,6 +37,30 @@ const SITE_URL = (process.env.SITE_URL || DEFAULT_SITE_URL).replace(/\/+$/, '')
 const SITE_NAME = 'Apex Studios'
 const SHARE_IMAGE = `${SITE_URL}/og-image.png`
 const SHARE_IMAGE_ALT = 'Apex Studios: websites for hotels, lodges and restaurants'
+
+// Pages the owner edited in the dashboard live in KV, not in src/data. So the build asks the live site
+// for them (GET /api/content is public and only returns published projects) and uses them instead of the
+// built-in defaults. If the site cannot be reached (first deploy, offline build) the defaults are used.
+// Set CONTENT_URL to read from somewhere else, or CONTENT_URL=off to skip this.
+async function liveContent() {
+  const src = process.env.CONTENT_URL ?? `${SITE_URL}/api/content`
+  if (!src || src === 'off') return {}
+  try {
+    const res = await fetch(src, { signal: AbortSignal.timeout(8000) })
+    if (!res.ok) throw new Error(`status ${res.status}`)
+    return await res.json()
+  } catch (e) {
+    console.warn(`seo: could not read dashboard content (${e.message}); using built-in defaults`)
+    return {}
+  }
+}
+const live = await liveContent()
+const contact = { ...contactDefault }
+for (const k of ['email', 'whatsapp', 'instagram', 'tiktok']) {
+  if (typeof live.contact?.[k] === 'string' && live.contact[k].trim()) contact[k] = live.contact[k]
+}
+const projects = Array.isArray(live.projects) ? live.projects : projectsDefault
+if (Array.isArray(live.projects)) console.log(`seo: using ${live.projects.length} published project(s) from the dashboard`)
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..')
 const dist = join(root, 'dist')

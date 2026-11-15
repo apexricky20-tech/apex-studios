@@ -3,10 +3,11 @@
 //   Private: /api/admin/*  (needs the password session cookie)
 // Needs: a KV binding named DB, and two secrets: ADMIN_PASSWORD and SESSION_SECRET.
 // Optional (new-enquiry alerts on Telegram): secrets TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID.
+// Optional (dashboard "Publish changes" button): secret DEPLOY_HOOK_URL, a free Cloudflare Pages deploy hook.
 
-const enc = new TextEncoder()
+import { HttpError, json, randomHex, sha256, safeEqual, hmac, sameOrigin, bump, isAuthed, REVOKE_KEY, SESSION_DAYS } from '../_lib/shared.js'
+
 const COOKIE = '__Host-session'
-const SESSION_DAYS = 7
 const MAX_MEDIA = 2 * 1024 * 1024
 const INBOX_PAGE = 100
 const MAX_LEAD_PHOTO = 800 * 1024 // chat photos are shrunk in the browser first, so real ones are far smaller
@@ -15,8 +16,7 @@ const LEAD_PHOTOS_PER_IP_HOUR = 6
 const LEAD_PHOTOS_PER_DAY = 25
 const MAX_PHOTOS_PER_LEAD = 3
 const PHOTO_ID_RE = /^[a-f0-9]{16}$/
-const SESSION_MS = SESSION_DAYS * 86400000
-const REVOKE_KEY = 'auth:validAfter' // sessions issued before this time are no longer accepted
+const DEPLOY_HOOK_COOLDOWN = 120
 const FORM_MIN_MS = 2000 // a human cannot fill the form faster than this
 const FORM_MAX_MS = 12 * 3600 * 1000 // a form left open longer than this must be reloaded
 const CONTACT_PER_DAY = 100 // overall cap, so many connections together cannot flood the inbox or Telegram
@@ -25,53 +25,9 @@ const CONTACT_PER_DAY = 100 // overall cap, so many connections together cannot 
 // link and mail clients treat them as commands (for example ?bcc=).
 const EMAIL_RE = /^[A-Za-z0-9._+'-]+@[A-Za-z0-9-]+(\.[A-Za-z0-9-]+)*\.[A-Za-z]{2,}$/
 
-class HttpError extends Error {
-  constructor(status, message) {
-    super(message)
-    this.status = status
-  }
-}
-
-const json = (data, status = 200, headers = {}) =>
-  new Response(JSON.stringify(data), {
-    status,
-    headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store', ...headers },
-  })
-
-const hex = (buf) => [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, '0')).join('')
-const sha256 = async (s) => new Uint8Array(await crypto.subtle.digest('SHA-256', enc.encode(s)))
-
-function safeEqual(a, b) {
-  const x = typeof a === 'string' ? enc.encode(a) : a
-  const y = typeof b === 'string' ? enc.encode(b) : b
-  let diff = x.length ^ y.length
-  const n = Math.max(x.length, y.length)
-  for (let i = 0; i < n; i++) diff |= (x[i] || 0) ^ (y[i] || 0)
-  return diff === 0
-}
-
-async function hmac(secret, text) {
-  const key = await crypto.subtle.importKey('raw', enc.encode(secret), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign'])
-  return hex(await crypto.subtle.sign('HMAC', key, enc.encode(text)))
-}
-
 async function makeToken(env) {
   const exp = Date.now() + SESSION_DAYS * 86400000
   return `${exp}.${await hmac(env.SESSION_SECRET, String(exp))}`
-}
-
-async function isAuthed(request, env) {
-  if (!env.SESSION_SECRET) return false
-  const m = (request.headers.get('Cookie') || '').match(/(?:^|;\s*)__Host-session=([^;]+)/)
-  if (!m) return false
-  const [exp, sig] = m[1].split('.')
-  if (!exp || !sig || !(Number(exp) > Date.now())) return false
-  if (!safeEqual(sig, await hmac(env.SESSION_SECRET, exp))) return false
-  // The token was issued SESSION_MS before it expires. Logging out stores a "valid after" time,
-  // which cancels every session issued before it. (KV can take up to about a minute to spread that worldwide.)
-  const issuedAt = Number(exp) - SESSION_MS
-  const validAfter = Number(await env.DB.get(REVOKE_KEY)) || 0
-  return issuedAt > validAfter
 }
 
 // ---------- contact form token: proves the page was open for a moment before it was sent ----------
@@ -89,16 +45,6 @@ async function checkFormToken(env, token) {
   const age = Date.now() - Number(ts)
   if (age < 0 || age > FORM_MAX_MS) return 'expired'
   return age < FORM_MIN_MS ? 'fast' : 'ok'
-}
-
-function sameOrigin(request, url) {
-  const o = request.headers.get('Origin')
-  if (!o) return true
-  try {
-    return new URL(o).host === url.host
-  } catch {
-    return false
-  }
 }
 
 async function readJson(request) {
@@ -192,13 +138,6 @@ async function getContent(env) {
   }
 }
 
-async function bump(env, key, limit, ttl) {
-  const n = Number(await env.DB.get(key)) || 0
-  if (n >= limit) return false
-  await env.DB.put(key, String(n + 1), { expirationTtl: ttl })
-  return true
-}
-
 const metaOf = (m) => {
   const meta = {
     name: m.name.slice(0, 50),
@@ -220,8 +159,6 @@ const sniff = (b) => {
   if (u[0] === 0x52 && u[1] === 0x49 && u[8] === 0x57 && u[9] === 0x45) return 'image/webp'
   return null
 }
-
-const randomHex = (n) => hex(crypto.getRandomValues(new Uint8Array(n)))
 
 // ---------- new-enquiry alerts (Telegram) ----------
 const alertsConfigured = (env) => Boolean(env.TELEGRAM_BOT_TOKEN && env.TELEGRAM_CHAT_ID)
@@ -304,15 +241,16 @@ export async function onRequest({ request, env, waitUntil }) {
     if (path === 'lead-photo' && method === 'POST') {
       if (!sameOrigin(request, u)) throw new HttpError(403, 'Bad origin.')
       if (Number(request.headers.get('Content-Length') || 0) > MAX_LEAD_PHOTO) throw new HttpError(413, 'Photo is too large.')
-      const buf = await request.arrayBuffer()
-      if (!buf.byteLength) throw new HttpError(400, 'No photo received.')
-      if (buf.byteLength > MAX_LEAD_PHOTO) throw new HttpError(413, 'Photo is too large.')
-      if (!sniff(buf)) throw new HttpError(400, 'Only JPEG, PNG or WebP photos are allowed.')
+      // Limits first, so a flood is turned away before its body is read into memory.
       if (!(await bump(env, `rl:photo:${ip}`, LEAD_PHOTOS_PER_IP_HOUR, 3600))) throw new HttpError(429, 'Too many photos. Please try again later.')
       const day = new Date().toISOString().slice(0, 10)
       if (!(await bump(env, `rl:photo:day:${day}`, LEAD_PHOTOS_PER_DAY, 90000))) {
         throw new HttpError(429, 'Photo uploads are busy right now. You can send photos on WhatsApp instead.')
       }
+      const buf = await request.arrayBuffer()
+      if (!buf.byteLength) throw new HttpError(400, 'No photo received.')
+      if (buf.byteLength > MAX_LEAD_PHOTO) throw new HttpError(413, 'Photo is too large.')
+      if (!sniff(buf)) throw new HttpError(400, 'Only JPEG, PNG or WebP photos are allowed.')
       const id = randomHex(8)
       await env.DB.put(`leadphoto:${id}`, buf, { metadata: { type: sniff(buf) }, expirationTtl: LEAD_PHOTO_TTL })
       return json({ id })
@@ -361,11 +299,24 @@ export async function onRequest({ request, env, waitUntil }) {
         m.photos = [...new Set(b.photos.filter((x) => typeof x === 'string' && PHOTO_ID_RE.test(x)))].slice(0, MAX_PHOTOS_PER_LEAD)
         if (!m.photos.length) delete m.photos
       }
-      await env.DB.put(`msg:${id}`, JSON.stringify(m), { metadata: metaOf(m) })
-      // Tell the owner right away. This never delays or breaks the visitor's form.
-      const alert = sendTelegram(env, enquiryAlert(m, u.origin))
-      if (typeof waitUntil === 'function') waitUntil(alert)
-      return json({ ok: true })
+      // A real enquiry must never be lost. If KV refuses the write (free-plan daily write quota used up,
+      // or an outage), the Telegram alert, which carries the whole message, is the fallback copy.
+      let saved = true
+      try {
+        await env.DB.put(`msg:${id}`, JSON.stringify(m), { metadata: metaOf(m) })
+      } catch {
+        saved = false
+      }
+      const alertText = enquiryAlert(m, u.origin)
+      if (saved) {
+        // Tell the owner right away. This never delays or breaks the visitor's form.
+        const alert = sendTelegram(env, alertText)
+        if (typeof waitUntil === 'function') waitUntil(alert)
+        return json({ ok: true })
+      }
+      const r = await sendTelegram(env, `${alertText}\n\n(Not saved in the dashboard: storage was full. This message is the only copy.)`)
+      if (r.ok) return json({ ok: true })
+      throw new HttpError(503, 'We could not save your message right now. Please message us on WhatsApp instead.')
     }
 
     if (parts[0] === 'media' && parts[1] && method === 'GET') {
@@ -391,7 +342,7 @@ export async function onRequest({ request, env, waitUntil }) {
         const { password } = await readJson(request)
         const ok = typeof password === 'string' && safeEqual(await sha256(password), await sha256(env.ADMIN_PASSWORD))
         if (!ok) {
-          await bump(env, rl, 5, 900)
+          await bump(env, rl, 5, 900, { failClosed: true })
           throw new HttpError(401, 'Wrong password.')
         }
         await env.DB.delete(rl)
@@ -420,6 +371,23 @@ export async function onRequest({ request, env, waitUntil }) {
         if (!r.ok) throw new HttpError(502, r.error)
         return json({ ok: true })
       }
+
+      // Publish dashboard edits to the static pages (SEO tags, sitemap, prerendered text) by triggering a rebuild.
+      // Uses a Cloudflare Pages deploy hook (free). Builds are limited to once every two minutes.
+      if (path === 'admin/rebuild' && method === 'POST') {
+        if (!env.DEPLOY_HOOK_URL) throw new HttpError(400, 'Publishing is not set up yet. Add the DEPLOY_HOOK_URL secret in Cloudflare Pages (see the README).')
+        if (!(await bump(env, 'rl:rebuild', 1, DEPLOY_HOOK_COOLDOWN, { failClosed: true }))) throw new HttpError(429, 'A rebuild was just started. Wait two minutes before the next one.')
+        let res
+        try {
+          res = await fetch(env.DEPLOY_HOOK_URL, { method: 'POST' })
+        } catch {
+          throw new HttpError(502, 'Could not reach Cloudflare to start the rebuild.')
+        }
+        if (!res.ok) throw new HttpError(502, `Cloudflare refused the rebuild (status ${res.status}). Check the deploy hook URL.`)
+        return json({ ok: true })
+      }
+
+      if (path === 'admin/rebuild-status' && method === 'GET') return json({ configured: Boolean(env.DEPLOY_HOOK_URL) })
 
       // Backup: the browser calls this in pages of 40 messages (KV limits how much one request may read).
       if (path === 'admin/export' && method === 'GET') {

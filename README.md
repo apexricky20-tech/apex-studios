@@ -135,3 +135,19 @@ If you would rather not use Access, add a rate limiting rule instead (Security >
 ## Copyright
 
 Copyright (c) 2026 Apex Studios. All rights reserved.
+
+## Free-tier operations guide
+
+Everything here runs on Cloudflare's free plan. The one limit that matters is KV: about **1,000 writes per day for the whole site**.
+
+**What costs KV writes:** a contact message (3), a chat question (2, or 4 with a photo), a chat photo upload (3), saving in the dashboard (1). The rate-limit counters fail open: if the quota is used up, real enquiries still get through, and if even the message can't be stored it is sent to Telegram as the only copy. Set up Telegram alerts, they are your safety net.
+
+**Publish dashboard edits to Google:** Pages project > Settings > Builds > Deploy hooks > add one, copy the URL, and save it as the secret `DEPLOY_HOOK_URL`. Then the dashboard's *Rebuild the site now* button refreshes titles, descriptions and the sitemap. The build reads your saved projects from `/api/content` (set `CONTENT_URL=off` to skip).
+
+**Lock down /admin (free):** Cloudflare dashboard > Zero Trust > Access > Applications > add a Self-hosted app for `<your-site>/admin*` and `<your-site>/api/admin/*` with an email one-time-PIN policy for your address (free for up to 50 users). This puts a login in front of the password.
+
+**Spam/flood protection beyond KV (free):** Security > WAF > Rate limiting rules (free plan gets one rule): match `URI Path` starts with `/api/` and limit by IP, 20 requests per 10 seconds. This costs no KV writes.
+
+**When you add your custom domain:** Pages project > Custom domains > add it. Then set the variable `SITE_URL=https://yourdomain` (Settings > Variables) and redeploy; canonical links, sitemap and structured data all follow it. HSTS already covers subdomains.
+
+**Tests and CI:** `npm test` runs the backend helper tests; GitHub Actions runs lint, tests and build on every push.

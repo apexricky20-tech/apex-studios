@@ -2,28 +2,28 @@ import { lazy, Suspense } from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Layout from './components/Layout'
 import Home from './pages/Home'
-import WorkPage from './pages/WorkPage'
-import ProjectPage from './pages/ProjectPage'
-import ServicesPage from './pages/ServicesPage'
-import WebsiteDesignPage from './pages/WebsiteDesignPage'
-import GoogleBusinessProfilePage from './pages/GoogleBusinessProfilePage'
-import DevelopmentPage from './pages/DevelopmentPage'
-import AutomationPage from './pages/AutomationPage'
-import BrandingPage from './pages/BrandingPage'
-import MpesaPaymentsPage from './pages/MpesaPaymentsPage'
-import WhatsAppAutomationPage from './pages/WhatsAppAutomationPage'
-import AiAssistantPage from './pages/AiAssistantPage'
-import CarePlansPage from './pages/CarePlansPage'
-import ProcessPage from './pages/ProcessPage'
-import AboutPage from './pages/AboutPage'
-import ContactPage from './pages/ContactPage'
-import ArticlesPage from './pages/ArticlesPage'
-import ArticlePage from './pages/ArticlePage'
-import PrivacyPage from './pages/PrivacyPage'
-import TermsPage from './pages/TermsPage'
-import ReferPage from './pages/ReferPage'
-import NotFound from './pages/NotFound'
 
+const WorkPage = lazy(() => import('./pages/WorkPage'))
+const ProjectPage = lazy(() => import('./pages/ProjectPage'))
+const ServicesPage = lazy(() => import('./pages/ServicesPage'))
+const WebsiteDesignPage = lazy(() => import('./pages/WebsiteDesignPage'))
+const GoogleBusinessProfilePage = lazy(() => import('./pages/GoogleBusinessProfilePage'))
+const DevelopmentPage = lazy(() => import('./pages/DevelopmentPage'))
+const AutomationPage = lazy(() => import('./pages/AutomationPage'))
+const BrandingPage = lazy(() => import('./pages/BrandingPage'))
+const MpesaPaymentsPage = lazy(() => import('./pages/MpesaPaymentsPage'))
+const WhatsAppAutomationPage = lazy(() => import('./pages/WhatsAppAutomationPage'))
+const AiAssistantPage = lazy(() => import('./pages/AiAssistantPage'))
+const CarePlansPage = lazy(() => import('./pages/CarePlansPage'))
+const ProcessPage = lazy(() => import('./pages/ProcessPage'))
+const AboutPage = lazy(() => import('./pages/AboutPage'))
+const ContactPage = lazy(() => import('./pages/ContactPage'))
+const ArticlesPage = lazy(() => import('./pages/ArticlesPage'))
+const ArticlePage = lazy(() => import('./pages/ArticlePage'))
+const PrivacyPage = lazy(() => import('./pages/PrivacyPage'))
+const TermsPage = lazy(() => import('./pages/TermsPage'))
+const ReferPage = lazy(() => import('./pages/ReferPage'))
+const NotFound = lazy(() => import('./pages/NotFound'))
 const Admin = lazy(() => import('./admin/Admin'))
 
 export default function App() {

@@ -16,6 +16,7 @@ import {
   socialReply,
   withPhotoNote,
 } from '../../src/lib/assistantFacts.js'
+import { json, sameOrigin, bump, hmac, safeEqual, isAuthed } from '../_lib/shared.js'
 import { site as siteDefault } from '../../src/data/site.js'
 import { contact as contactDefault } from '../../src/data/contact.js'
 import { projects as projectsDefault } from '../../src/data/projects.js'
@@ -27,7 +28,7 @@ const PER_IP_PER_HOUR = 20
 const PER_DAY_TOTAL = 300
 const MAX_TURNS = 8
 const MAX_CHARS = 400
-const MAX_SEEN = 700
+const MAX_SEEN = 680 // + 17 characters of signature = 697, still inside the 700 the browser keeps
 // A photo question costs one vision run on top of the text run, so it has its own, tighter limits.
 const PER_IP_PHOTOS_PER_HOUR = 6
 const PER_DAY_PHOTOS = 60
@@ -36,29 +37,6 @@ const MAX_IMAGE_CHARS = 900_000
 const IMAGE_RE = /^data:image\/(jpeg|webp|png);base64,[A-Za-z0-9+/]+=*$/
 
 const fallback = (why) => json({ reply: FALLBACK_REPLY, fallback: true, why })
-
-const json = (data, status = 200) =>
-  new Response(JSON.stringify(data), {
-    status,
-    headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' },
-  })
-
-function sameOrigin(request, url) {
-  const o = request.headers.get('Origin')
-  if (!o) return true
-  try {
-    return new URL(o).host === url.host
-  } catch {
-    return false
-  }
-}
-
-async function bump(env, key, limit, ttl) {
-  const n = Number(await env.DB.get(key)) || 0
-  if (n >= limit) return false
-  await env.DB.put(key, String(n + 1), { expirationTtl: ttl })
-  return true
-}
 
 // Same merge the site itself uses: built-in defaults, overridden by what the dashboard saved.
 async function liveContent(env) {
@@ -84,6 +62,17 @@ const stripControl = (t) => [...t].filter((ch) => ch === '\n' || ch === '\t' || 
 
 // Never trust the browser: only user/assistant turns, short, recent. A visitor cannot inject a "system" message.
 // `seen` is the photo description this server returned earlier; only a user turn may carry one.
+// The photo description is signed by this server, so a visitor cannot write their own "description"
+// to smuggle instructions into the model's prompt. Format: "<16 hex signature>.<description>".
+const signSeen = async (env, text) => `${(await hmac(env.SESSION_SECRET || 'unsigned', `seen:${text}`)).slice(0, 16)}.${text}`
+async function verifySeen(env, value) {
+  const dot = typeof value === 'string' ? value.indexOf('.') : -1
+  if (dot !== 16) return ''
+  const text = cleanSeen(value.slice(17)).slice(0, MAX_SEEN)
+  const sig = (await hmac(env.SESSION_SECRET || 'unsigned', `seen:${text}`)).slice(0, 16)
+  return safeEqual(sig, value.slice(0, 16)) ? text : ''
+}
+
 function cleanMessages(input) {
   if (!Array.isArray(input)) return []
   return input
@@ -91,7 +80,7 @@ function cleanMessages(input) {
     .map((m) => ({
       role: m.role,
       content: stripControl(m.content).trim().slice(0, MAX_CHARS),
-      seen: m.role === 'user' && typeof m.seen === 'string' ? cleanSeen(m.seen).slice(0, MAX_SEEN) : '',
+      seen: m.role === 'user' && typeof m.seen === 'string' ? m.seen.slice(0, 720) : '',
     }))
     .filter((m) => m.content)
     .slice(-MAX_TURNS)
@@ -143,6 +132,7 @@ export async function onRequestPost({ request, env }) {
     }
     const messages = cleanMessages(body?.messages)
     if (!messages.length || messages[messages.length - 1].role !== 'user') return json({ error: 'Ask a question first.' }, 400)
+    for (const m of messages) m.seen = m.seen ? await verifySeen(env, m.seen) : ''
     const image = cleanImage(body?.image)
     if (image === 'bad') return json({ error: 'That photo could not be used. Please try a JPEG, PNG or WebP image.' }, 400)
 
@@ -170,7 +160,7 @@ export async function onRequestPost({ request, env }) {
     let seen = ''
     if (image) {
       try {
-        seen = await readPhoto(env, image, messages[messages.length - 1].content)
+        seen = (await readPhoto(env, image, messages[messages.length - 1].content)).slice(0, MAX_SEEN)
       } catch (err) {
         console.error('assistant: vision failed', String(err?.message || err).slice(0, 300))
       }
@@ -190,14 +180,15 @@ export async function onRequestPost({ request, env }) {
         console.error('assistant: model failed', model, String(err?.message || err).slice(0, 300))
       }
     }
-    return reply ? json(seen ? { reply, seen } : { reply }) : fallback('model-error')
+    return reply ? json(seen ? { reply, seen: await signSeen(env, seen) } : { reply }) : fallback('model-error')
   } catch (err) {
     console.error('assistant: unexpected error', String(err?.message || err).slice(0, 300))
     return fallback('error')
   }
 }
 
-// Open /api/assistant in a browser to check the setup. It only reports yes/no, never any secrets.
-export async function onRequestGet({ env }) {
+// Setup check for the owner only (it reveals which bindings exist). Sign in to /admin first, then open /api/assistant.
+export async function onRequestGet({ request, env }) {
+  if (!env.DB || !(await isAuthed(request, env))) return json({ error: 'Not found.' }, 404)
   return json({ ai: Boolean(env.AI), kv: Boolean(env.DB), model: MODEL, vision: VISION_MODEL })
 }

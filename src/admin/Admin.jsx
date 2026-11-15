@@ -535,6 +535,8 @@ function Tools() {
   const [alerts, setAlerts] = useState(null) // null = checking, true/false = configured
   const [alertMsg, setAlertMsg] = useState('')
   const [backupMsg, setBackupMsg] = useState('')
+  const [publish, setPublish] = useState(null) // null = checking, true/false = deploy hook configured
+  const [publishMsg, setPublishMsg] = useState('')
   const [busy, setBusy] = useState('')
 
   useEffect(() => {
@@ -542,6 +544,9 @@ function Tools() {
     api('alerts')
       .then((d) => alive && setAlerts(d.configured))
       .catch(() => alive && setAlerts(false))
+    api('rebuild-status')
+      .then((d) => alive && setPublish(d.configured))
+      .catch(() => alive && setPublish(false))
     return () => {
       alive = false
     }
@@ -555,6 +560,18 @@ function Tools() {
       setAlertMsg('Sent. Check Telegram.')
     } catch (x) {
       setAlertMsg(x.message)
+    }
+    setBusy('')
+  }
+
+  const rebuild = async () => {
+    setBusy('publish')
+    setPublishMsg('')
+    try {
+      await send('rebuild', 'POST', {})
+      setPublishMsg('Started. The updated pages go live in about two minutes.')
+    } catch (x) {
+      setPublishMsg(x.message)
     }
     setBusy('')
   }
@@ -601,6 +618,20 @@ function Tools() {
             {busy === 'alert' ? 'Sending...' : 'Send a test alert'}
           </button>
           <span className="text-sm text-muted">{alertMsg}</span>
+        </div>
+      </section>
+      <section className={`${box} space-y-4`}>
+        <h2 className="text-xl">Publish changes to Google</h2>
+        <p className="text-sm text-muted">
+          Edits you save here show on the site within a minute, but the search-engine copy of each page (titles, descriptions,
+          sitemap) is only rewritten when the site is rebuilt. Press this after adding or changing projects.
+          {publish === false && ' Not set up yet: add the DEPLOY_HOOK_URL secret in Cloudflare Pages (steps in the README).'}
+        </p>
+        <div className="flex items-center gap-4">
+          <button className={btn} disabled={!publish || busy === 'publish'} onClick={rebuild}>
+            {busy === 'publish' ? 'Starting...' : 'Rebuild the site now'}
+          </button>
+          <span className="text-sm text-muted">{publishMsg}</span>
         </div>
       </section>
       <section className={`${box} space-y-4`}>

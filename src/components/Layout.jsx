@@ -1,7 +1,7 @@
 import Motion from './Motion'
 import Fx from './Fx'
 import { FX } from '../lib/fx'
-import { useEffect } from 'react'
+import { Suspense, useEffect } from 'react'
 import { Outlet, useLocation } from 'react-router-dom'
 import Nav from './Nav'
 import Footer from './Footer'
@@ -36,7 +36,9 @@ export default function Layout() {
         tabIndex={-1}
         className={`outline-none${FX.pageFade && key !== 'default' ? ' page-in' : ''}`}
       >
-        <Outlet />
+        <Suspense fallback={<div style={{ minHeight: '60vh' }} aria-hidden="true" />}>
+          <Outlet />
+        </Suspense>
       </main>
       <Footer />
       <BackToTop />
