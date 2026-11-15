@@ -6,7 +6,7 @@ import { useSite } from '../lib/content'
 const stats = [
   ['3', 'Projects in our portfolio'],
   ['100', 'Bullhead mobile performance score (PageSpeed Insights, Nov 2026)'],
-  ['5', 'Services, one studio'],
+  ['12', 'Services, one studio'],
 ]
 
 const values = [
