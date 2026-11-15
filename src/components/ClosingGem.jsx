@@ -1,6 +1,7 @@
 import { Component, lazy, Suspense, useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { FX } from '../lib/fx'
+import ServiceOrbit from './ServiceOrbit'
 
 const Gem3D = lazy(() => import('./Gem3D'))
 
@@ -71,7 +72,7 @@ export default function ClosingGem() {
             Start a project
           </Link>
         </div>
-        <div role="img" aria-label="A slowly turning faceted crystal" className="mx-auto aspect-square w-full max-w-[460px]">
+        <ServiceOrbit running={near}>
           {use3d && near ? (
             <Boundary fallback={<GemSvg />}>
               <Suspense fallback={<GemSvg />}>
@@ -81,7 +82,7 @@ export default function ClosingGem() {
           ) : (
             <GemSvg />
           )}
-        </div>
+        </ServiceOrbit>
       </div>
     </section>
   )
