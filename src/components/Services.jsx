@@ -12,6 +12,9 @@ const pages = {
   'WhatsApp Automation': '/whatsapp-automation',
   'AI Assistant': '/ai-assistant',
   'Care Plans': '/care-plans',
+  '3D Creation': '/3d-creation',
+  'UI/UX Design': '/ui-ux-design',
+  'Motion Design': '/motion-design',
 }
 
 const services = [
@@ -105,6 +108,36 @@ const services = [
       'Small content changes',
     ],
   },
+  {
+    title: '3D Creation',
+    text: 'Show a room, a dish or a product before it exists, or from an angle a camera could never reach. Delivered as images, clips or interactive 3D for your website.',
+    items: [
+      'Product and dish renders',
+      'Rooms and spaces',
+      '3D logos and mockups',
+      'Interactive 3D for the web',
+    ],
+  },
+  {
+    title: 'UI/UX Design',
+    text: 'Screens and journeys designed around how customers use a phone, so finding you, choosing and booking takes as few taps as possible.',
+    items: [
+      'User flows and wireframes',
+      'Screen design',
+      'Clickable prototypes',
+      'Booking and ordering journeys',
+    ],
+  },
+  {
+    title: 'Motion Design',
+    text: 'Short animated pieces that make your brand and offers easier to notice: for social media, screens in your venue and your website.',
+    items: [
+      'Animated logos',
+      'Promo and social clips',
+      'Menu and price animations',
+      'Website animation',
+    ],
+  },
 ]
 
 export default function Services({ asPage = false }) {
@@ -118,7 +151,7 @@ export default function Services({ asPage = false }) {
           <Heading className="mt-4 text-5xl md:text-7xl">{asPage ? 'Our services' : 'What we build'}</Heading>
         </div>
         <p className="max-w-md text-paper/70">
-          Nine services with one goal: helping hotels, lodges and restaurants get found,
+          Twelve services with one goal: helping hotels, lodges and restaurants get found,
           trusted and booked.
         </p>
       </div>
@@ -160,7 +193,7 @@ export default function Services({ asPage = false }) {
                       </li>
                     ))}
                   </ul>
-                  <p className="mt-5 text-sm font-medium text-amber">{priceText(s.title)}</p>
+                  <p className="mt-5 text-sm font-medium text-amber">{priceText(s.title) || 'Quoted after a first call'}</p>
                 </div>
               </Row>
             </li>

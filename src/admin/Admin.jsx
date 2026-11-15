@@ -14,6 +14,9 @@ const SERVICES = [
   ['WhatsApp Automation', '/whatsapp-automation'],
   ['AI Assistant', '/ai-assistant'],
   ['Care Plans', '/care-plans'],
+  ['3D Creation', '/3d-creation'],
+  ['UI/UX Design', '/ui-ux-design'],
+  ['Motion Design', '/motion-design'],
 ]
 
 async function api(path, opts = {}) {

@@ -13,6 +13,9 @@ export const SERVICE_CHOICES = [
   'AI Assistant',
   'Branding',
   'Google Business Profile',
+  '3D Creation',
+  'UI/UX Design',
+  'Motion Design',
   'Not sure yet',
 ]
 export const WHEN_CHOICES = ['Today', 'Tomorrow', 'This week', 'Next week']

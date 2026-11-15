@@ -15,6 +15,9 @@ const MpesaPaymentsPage = lazy(() => import('./pages/MpesaPaymentsPage'))
 const WhatsAppAutomationPage = lazy(() => import('./pages/WhatsAppAutomationPage'))
 const AiAssistantPage = lazy(() => import('./pages/AiAssistantPage'))
 const CarePlansPage = lazy(() => import('./pages/CarePlansPage'))
+const ThreeDCreationPage = lazy(() => import('./pages/ThreeDCreationPage'))
+const UiUxDesignPage = lazy(() => import('./pages/UiUxDesignPage'))
+const MotionDesignPage = lazy(() => import('./pages/MotionDesignPage'))
 const ProcessPage = lazy(() => import('./pages/ProcessPage'))
 const AboutPage = lazy(() => import('./pages/AboutPage'))
 const ContactPage = lazy(() => import('./pages/ContactPage'))
@@ -45,6 +48,9 @@ export default function App() {
           <Route path="whatsapp-automation" element={<WhatsAppAutomationPage />} />
           <Route path="ai-assistant" element={<AiAssistantPage />} />
           <Route path="care-plans" element={<CarePlansPage />} />
+          <Route path="3d-creation" element={<ThreeDCreationPage />} />
+          <Route path="ui-ux-design" element={<UiUxDesignPage />} />
+          <Route path="motion-design" element={<MotionDesignPage />} />
           <Route path="process" element={<ProcessPage />} />
           <Route path="about" element={<AboutPage />} />
           <Route path="contact" element={<ContactPage />} />

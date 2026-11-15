@@ -9,6 +9,9 @@ import { mpesaPayments } from '../data/mpesaPayments.js'
 import { whatsappAutomation } from '../data/whatsappAutomation.js'
 import { aiAssistant } from '../data/aiAssistant.js'
 import { carePlans } from '../data/carePlans.js'
+import { threeDCreation } from '../data/threeDCreation.js'
+import { uiUxDesign } from '../data/uiUxDesign.js'
+import { motionDesign } from '../data/motionDesign.js'
 import { pricing, priceText, PRICE_NOTE } from '../data/pricing.js'
 
 const pages = [
@@ -21,6 +24,9 @@ const pages = [
   ['WhatsApp Automation', whatsappAutomation],
   ['AI Assistant', aiAssistant],
   ['Care Plans', carePlans],
+  ['3D Creation', threeDCreation],
+  ['UI/UX Design', uiUxDesign],
+  ['Motion Design', motionDesign],
 ]
 
 export const MODEL = '@cf/meta/llama-3.1-8b-instruct'
@@ -52,12 +58,13 @@ export function buildSystemPrompt({ site, contact, projects }) {
     `When the visitor wants a quote, wants to hire, or asks something you cannot answer, point them to WhatsApp or the contact form.`,
     '',
     'FACTS',
-    `Studio: We are Apex Studios. We build websites, Google Business Profiles, M-Pesa payments, WhatsApp automation, AI assistants and branding for hotels, lodges, restaurants and other local businesses, and we work remotely with clients across Kenya.`,
+    `Studio: We are Apex Studios. We build websites, Google Business Profiles, M-Pesa payments, WhatsApp automation, AI assistants, branding, 3D creation, UI/UX design and motion design for hotels, lodges, restaurants and other local businesses, and we work remotely with clients across Kenya.`,
     `Founder: ${site.name}. ${site.role || ''}`.trim(),
     'Services:',
     ...pages.map(([name, p]) => `- ${name}: ${short(p.description, 220)}`),
     'How a project runs: 1) a discovery call about the business and its guests, 2) plan and design, 3) build and test on real phones, 4) launch and handover with a walkthrough so the owner can update the site.',
     `Typical prices in Kenya shillings: ${Object.keys(pricing).map((n) => `${n} ${priceText(n)}`).join('; ')}. ${PRICE_NOTE} Only quote these ranges. Never give an exact price, a discount or a promise that a price can change, and say that ${first} confirms the final price personally after a first call.`,
+    `3D Creation, UI/UX Design and Motion Design have no listed price: never give a number for them, say the price depends on the scope, and say that ${first} quotes it personally after a first call. Their timelines also depend on the scope, so give no number of hours or days for them either.`,
     `TIMELINE: projects are typically delivered in 48 hours or less, and 72 hours at most, as long as the client sends their content and feedback quickly. A project is never measured in weeks, so never say weeks or months for building. Third-party approvals such as Safaricom or Meta are outside our control and can add waiting time. ${first} confirms the exact timeline personally after the first call.`,
     `Free digital check: the visitor sends the link to their website, Google listing or Instagram page, and ${first} replies with three quick fixes. It is free with no obligation.`,
   ]

@@ -16,6 +16,9 @@ const services = [
   'WhatsApp Automation',
   'AI Assistant',
   'Care Plans',
+  '3D Creation',
+  'UI/UX Design',
+  'Motion Design',
   'Not sure yet',
 ]
 

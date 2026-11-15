@@ -9,6 +9,9 @@ export const serviceNames = {
   '/whatsapp-automation': 'WhatsApp Automation',
   '/ai-assistant': 'AI Assistant',
   '/care-plans': 'Care Plans',
+  '/3d-creation': '3D Creation',
+  '/ui-ux-design': 'UI/UX Design',
+  '/motion-design': 'Motion Design',
 }
 
 export const pageNames = {

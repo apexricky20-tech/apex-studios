@@ -28,6 +28,9 @@ import { branding } from '../src/data/branding.js'
 import { googleBusinessProfile } from '../src/data/googleBusinessProfile.js'
 import { mpesaPayments } from '../src/data/mpesaPayments.js'
 import { whatsappAutomation } from '../src/data/whatsappAutomation.js'
+import { threeDCreation } from '../src/data/threeDCreation.js'
+import { uiUxDesign } from '../src/data/uiUxDesign.js'
+import { motionDesign } from '../src/data/motionDesign.js'
 import { aiAssistant } from '../src/data/aiAssistant.js'
 import { carePlans } from '../src/data/carePlans.js'
 import { COST_ANSWER } from '../src/data/pricing.js'
@@ -85,6 +88,9 @@ const servicePages = [
   ['/whatsapp-automation', whatsappAutomation],
   ['/ai-assistant', aiAssistant],
   ['/care-plans', carePlans],
+  ['/3d-creation', threeDCreation],
+  ['/ui-ux-design', uiUxDesign],
+  ['/motion-design', motionDesign],
 ]
 
 const routes = [
@@ -98,7 +104,7 @@ const routes = [
     path: '/services',
     title: 'Services | Apex Studios',
     description:
-      'Website design, development, automation, M-Pesa payments, WhatsApp automation, AI assistants, branding, Google Business Profile and website care plans for hotels, lodges and restaurants in Kenya.',
+      'Website design, development, automation, M-Pesa payments, WhatsApp automation, AI assistants, branding, Google Business Profile, website care plans, 3D creation, UI/UX design and motion design for hotels, lodges and restaurants in Kenya.',
   },
   ...servicePages.map(([path, p]) => ({ path, title: p.title, description: p.description })),
   {

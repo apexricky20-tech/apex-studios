@@ -24,6 +24,9 @@ const serviceLinks = [
   ['WhatsApp Automation', '/whatsapp-automation'],
   ['AI Assistant', '/ai-assistant'],
   ['Care Plans', '/care-plans'],
+  ['3D Creation', '/3d-creation'],
+  ['UI/UX Design', '/ui-ux-design'],
+  ['Motion Design', '/motion-design'],
 ]
 
 const Dot = () => (
@@ -38,7 +41,7 @@ const linkClass = (isActive) =>
 export default function Nav() {
   const contact = useContact()
   const { pathname } = useLocation()
-  const onServices = ['/services', '/website-design', '/google-business-profile', '/development', '/automation', '/branding', '/mpesa-payments', '/whatsapp-automation', '/ai-assistant', '/care-plans'].some((p) => pathname.startsWith(p))
+  const onServices = ['/services', '/website-design', '/google-business-profile', '/development', '/automation', '/branding', '/mpesa-payments', '/whatsapp-automation', '/ai-assistant', '/care-plans', '/3d-creation', '/ui-ux-design', '/motion-design'].some((p) => pathname.startsWith(p))
   const [open, setOpen] = useState(false)
   const [servicesOpen, setServicesOpen] = useState(false)
   const close = () => setOpen(false)

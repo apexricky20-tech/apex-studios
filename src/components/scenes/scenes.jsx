@@ -5,6 +5,7 @@ import {
   BufferGeometry,
   CatmullRomCurve3,
   ConeGeometry,
+  CubicBezierCurve3,
   CylinderGeometry,
   DoubleSide,
   EdgesGeometry,
@@ -16,6 +17,7 @@ import {
   Path,
   QuadraticBezierCurve3,
   Shape,
+  TorusKnotGeometry,
   Vector2,
   Vector3,
 } from 'three'
@@ -929,4 +931,124 @@ export function LostScene() {
 
 export function TermsScene() {
   return <SheetsScene seal />
+}
+
+// ---------- /3d-creation : a faceted model on a turntable, with its axes ----------
+
+const knot = once(() => new TorusKnotGeometry(0.55, 0.17, 28, 5, 2, 3))
+const axes = once(() => fromPoints([-1.3, 0, 0, 1.3, 0, 0, 0, -0.1, 0, 0, 1.3, 0, 0, 0, -1.3, 0, 0, 1.3]))
+
+export function ThreeDScene() {
+  const model = useRef(null)
+  const table = useRef(null)
+  useFrame(({ clock }) => {
+    const t = clock.elapsedTime
+    if (model.current) {
+      model.current.rotation.y = t * 0.45
+      model.current.position.y = 0.45 + Math.sin(t * 0.8) * 0.05
+    }
+    if (table.current) table.current.rotation.y = -t * 0.12
+  })
+  return (
+    <group rotation={[0.3, 0, 0]}>
+      <Wire ref={model} geometry={knot()} color={AMBER} opacity={0.85} fill={0.07} angle={4} />
+      <group ref={table} position={[0, -0.75, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+        <Ring radius={1.1} opacity={0.4} />
+        <Ring radius={1.45} opacity={0.2} />
+        <Ring radius={1.8} opacity={0.1} />
+        <Seg geometry={segments([[-1.1, 0, 0], [1.1, 0, 0]])} opacity={0.15} />
+        <Seg geometry={segments([[0, -1.1, 0], [0, 1.1, 0]])} opacity={0.15} />
+      </group>
+      <Seg geometry={axes()} position={[-1.5, -0.7, 0]} opacity={0.3} scale={0.5} />
+    </group>
+  )
+}
+
+// ---------- /ui-ux-design : two screens, and a tap that carries a user from one to the next ----------
+
+const tapPath = once(() => new QuadraticBezierCurve3(new Vector3(-0.45, -0.45, 0.1), new Vector3(0, 0.6, 0.5), new Vector3(0.95, -0.05, -0.1)))
+
+function Screen({ accent, flip }) {
+  return (
+    <group>
+      <Wire geometry={box(0.85, 1.55, 0.06)} opacity={0.55} fill={0.05} />
+      <Wire geometry={box(0.7, 0.12, 0.02)} position={[0, 0.62, 0.04]} opacity={0.35} />
+      <Wire geometry={box(0.7, 0.45, 0.02)} position={[0, 0.2, 0.04]} opacity={0.3} />
+      <Wire geometry={box(0.5, 0.05, 0.02)} position={[-0.1, -0.2, 0.04]} opacity={0.3} />
+      <Wire geometry={box(0.36, 0.05, 0.02)} position={[-0.17, -0.3, 0.04]} opacity={0.2} />
+      <Wire geometry={box(flip ? 0.3 : 0.56, 0.16, 0.02)} position={[0, -0.55, 0.04]} color={accent ? AMBER : PAPER} opacity={accent ? 0.9 : 0.35} fill={accent ? 0.15 : 0} />
+    </group>
+  )
+}
+
+export function UiUxScene() {
+  const tap = useRef(null)
+  const ripple = useRef(null)
+  useFrame(({ clock }) => {
+    const p = (clock.elapsedTime * 0.3) % 1
+    if (tap.current) tap.current.position.copy(tapPath().getPoint(Math.min(1, Math.max(0, (p - 0.2) / 0.6))))
+    if (ripple.current) {
+      const r = Math.min(1, p / 0.2)
+      ripple.current.scale.setScalar(0.4 + r)
+      ripple.current.material.opacity = (1 - r) * 0.7
+    }
+  })
+  return (
+    <group rotation={[0, -0.4, 0]}>
+      <group position={[-0.75, 0, 0]}>
+        <Screen accent />
+        <Ring ref={ripple} radius={0.16} color={AMBER} position={[0, -0.55, 0.1]} />
+      </group>
+      <group position={[0.75, 0.15, -0.3]}>
+        <Screen flip />
+      </group>
+      <Seg geometry={segments(tapPath().getPoints(30).map((q) => [q.x, q.y, q.z]))} opacity={0.18} />
+      <Dot ref={tap} size={0.07} />
+    </group>
+  )
+}
+
+// ---------- /motion-design : an easing curve, a keyframe timeline and a ball riding the curve ----------
+
+const ease = once(() => new CubicBezierCurve3(new Vector3(-1.5, -0.6, 0), new Vector3(-0.2, -0.6, 0), new Vector3(0.2, 0.9, 0), new Vector3(1.5, 0.9, 0)))
+const easeLine = once(() => segments(ease().getPoints(48).map((q) => [q.x, q.y, q.z])))
+const handles = once(() => fromPoints([-1.5, -0.6, 0, -0.2, -0.6, 0, 1.5, 0.9, 0, 0.2, 0.9, 0]))
+const KEYS = [-1.5, -0.75, 0, 0.75, 1.5]
+
+export function MotionScene() {
+  const ball = useRef(null)
+  const head = useRef(null)
+  const trail = useRef([])
+  useFrame(({ clock }) => {
+    const t = (clock.elapsedTime * 0.22) % 1
+    const at = (u) => ease().getPoint(Math.min(1, Math.max(0, u)))
+    if (ball.current) ball.current.position.copy(at(t))
+    trail.current.forEach((d, i) => {
+      if (d) d.position.copy(at(t - (i + 1) * 0.03))
+    })
+    if (head.current) head.current.position.x = -1.5 + t * 3
+  })
+  return (
+    <group rotation={[0, -0.25, 0]}>
+      <Seg geometry={easeLine()} color={PAPER} opacity={0.5} />
+      <Seg geometry={handles()} color={AMBER} opacity={0.35} />
+      <Seg geometry={segments([[-1.7, -1.1, 0], [1.7, -1.1, 0]])} opacity={0.25} />
+      {KEYS.map((x) => (
+        <Wire key={x} geometry={oct(0.07)} position={[x, -1.1, 0]} color={AMBER} opacity={0.9} fill={0.3} />
+      ))}
+      <Seg ref={head} geometry={segments([[0, -1.25, 0], [0, 1.1, 0]])} opacity={0.3} />
+      {[0, 1, 2, 3].map((i) => (
+        <Dot
+          key={i}
+          ref={(el) => {
+            trail.current[i] = el
+          }}
+          size={0.05 - i * 0.008}
+          color={PAPER}
+          opacity={0.5 - i * 0.1}
+        />
+      ))}
+      <Dot ref={ball} size={0.11} />
+    </group>
+  )
 }
