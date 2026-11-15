@@ -1,4 +1,5 @@
 import { Link, useParams } from 'react-router-dom'
+import Breadcrumbs from '../components/Breadcrumbs'
 import { formatDate, visibleArticles } from '../data/articles'
 import NotFound from './NotFound'
 
@@ -9,7 +10,13 @@ export default function ArticlePage() {
   return (
     <article className="mx-auto max-w-3xl px-gutter pb-24 pt-40">
       <title>{`${article.title} | Apex Studios`}</title>
-      <p className="text-sm text-muted">
+      <Breadcrumbs
+        items={[
+          { name: 'Articles', to: '/articles' },
+          { name: article.title.length > 46 ? `${article.title.slice(0, 44).trim()}…` : article.title },
+        ]}
+      />
+      <p className="mt-8 text-sm text-muted">
         <time dateTime={article.date}>{formatDate(article.date)}</time>
         {article.updated && article.updated !== article.date && (
           <>
@@ -31,9 +38,14 @@ export default function ArticlePage() {
           or <Link to="/contact" className="text-amber hover:underline">tell us about your project</Link>.
         </p>
       </aside>
-      <Link to="/articles" className="mt-12 inline-block font-semibold text-amber">
-        ← All articles
-      </Link>
+      <div className="mt-12 flex flex-wrap items-center gap-x-8 gap-y-3 font-semibold">
+        <Link to="/articles" className="text-amber hover:underline">
+          ← All articles
+        </Link>
+        <Link to="/" className="text-paper/80 hover:text-amber">
+          Back to home
+        </Link>
+      </div>
     </article>
   )
 }

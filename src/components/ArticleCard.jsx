@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { formatDate } from '../data/articles'
+import { formatDate, readMinutes } from '../data/articles'
 
 export default function ArticleCard({ article }) {
   return (
@@ -18,12 +18,17 @@ export default function ArticleCard({ article }) {
           }}
         />
       </div>
-      <time dateTime={article.date} className="mt-5 text-xs text-muted">
-        {formatDate(article.date)}
-      </time>
+      <p className="mt-5 text-xs text-muted">
+        <time dateTime={article.date}>{formatDate(article.date)}</time>
+        <span aria-hidden="true"> · </span>
+        {readMinutes(article)} min read
+      </p>
       <h3 className="mt-2 text-2xl leading-tight transition-colors group-hover:text-amber md:text-3xl">
         {article.title}
       </h3>
+      {article.description && (
+        <p className="mt-3 line-clamp-3 text-sm leading-relaxed text-muted">{article.description}</p>
+      )}
       <span className="mt-4 text-sm font-medium">Read Article →</span>
     </Link>
   )

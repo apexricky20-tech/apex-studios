@@ -312,6 +312,9 @@ export const articles = [
 export const visibleArticles = () =>
   articles.filter((a) => a.published || import.meta.env.DEV)
 
+// About 200 words a minute, never less than one.
+export const readMinutes = (a) => Math.max(1, Math.round(a.body.join(' ').split(/\s+/).length / 200))
+
 export const formatDate = (iso) =>
   new Date(iso).toLocaleDateString('en-GB', {
     day: 'numeric',

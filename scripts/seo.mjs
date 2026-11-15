@@ -92,6 +92,12 @@ const routes = [
       'Tell Apex Studios about your hotel, lodge or restaurant. Share what you need and we will reply with the next step.',
   },
   {
+    path: '/refer',
+    title: 'Refer a Client | Apex Studios',
+    description:
+      'Know a hotel, lodge or restaurant that needs a better website? Introduce them to Apex Studios and earn a reward when they become a client.',
+  },
+  {
     path: '/privacy',
     title: 'Privacy Policy | Apex Studios',
     description: 'What personal information the Apex Studios website collects, why, and how to ask us about it.',

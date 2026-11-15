@@ -207,6 +207,7 @@ function Inbox({ onCount }) {
                       {msg.company && ` · ${msg.company}`}
                     </p>
                     {msg.source && <p className="mt-1 text-xs text-muted">Came from: {msg.source}</p>}
+                    {msg.referrer && <p className="mt-1 text-xs text-amber">Referred by: {msg.referrer}</p>}
                     <p className="mt-3 whitespace-pre-wrap">{msg.message}</p>
                     <div className="mt-5 flex flex-wrap gap-2">
                       <a className={btnMain} href={`mailto:${msg.email}?subject=${encodeURIComponent('Re: your enquiry to Apex Studios')}`}>Reply by email</a>

@@ -20,6 +20,7 @@ import ArticlesPage from './pages/ArticlesPage'
 import ArticlePage from './pages/ArticlePage'
 import PrivacyPage from './pages/PrivacyPage'
 import TermsPage from './pages/TermsPage'
+import ReferPage from './pages/ReferPage'
 import NotFound from './pages/NotFound'
 
 const Admin = lazy(() => import('./admin/Admin'))
@@ -47,6 +48,7 @@ export default function App() {
           <Route path="contact" element={<ContactPage />} />
           <Route path="articles" element={<ArticlesPage />} />
           <Route path="articles/:slug" element={<ArticlePage />} />
+          <Route path="refer" element={<ReferPage />} />
           <Route path="privacy" element={<PrivacyPage />} />
           <Route path="terms" element={<TermsPage />} />
           <Route path="*" element={<NotFound />} />

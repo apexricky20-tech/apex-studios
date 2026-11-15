@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useContact, useSite } from '../lib/content'
-import { getSource } from '../lib/utm'
+import { getRef, getSource } from '../lib/utm'
 
 const services = [
   'Website Design',
@@ -104,6 +104,7 @@ export default function ContactPage() {
       message: d.message || '',
       page: window.location.pathname,
       source: getSource(),
+      referrer: d.referrer || '',
       elapsedMs: Date.now() - started.current,
       sentAt: new Date().toISOString(),
     }
@@ -115,6 +116,7 @@ export default function ContactPage() {
         payload.phone && `Phone: ${payload.phone}`,
         payload.company && `Company: ${payload.company}`,
         payload.service && `Need: ${payload.service}`,
+        payload.referrer && `Referred by: ${payload.referrer}`,
         '',
         payload.message,
       ]
@@ -197,6 +199,10 @@ export default function ContactPage() {
               <label className={label}>
                 Company (optional)
                 <input name="company" autoComplete="organization" className={input} />
+              </label>
+              <label className={label}>
+                Who referred you? (optional)
+                <input name="referrer" defaultValue={getRef()} maxLength={100} className={input} />
               </label>
             </div>
           </div>

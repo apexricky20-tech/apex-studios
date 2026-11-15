@@ -19,4 +19,5 @@ export const pageNames = {
   '/privacy': 'Privacy Policy',
   '/terms': 'Website Terms',
   '/articles': 'Articles',
+  '/refer': 'Refer a Client',
 }

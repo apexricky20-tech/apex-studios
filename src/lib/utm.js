@@ -1,6 +1,7 @@
 // Remembers where a visitor came from, so a new enquiry can say "Came from: instagram / bio".
 // Works with links you tag yourself, e.g. https://yoursite/?utm_source=instagram&utm_medium=bio
 const KEY = 'apex_source'
+const REF_KEY = 'apex_ref'
 
 export function captureSource() {
   try {
@@ -9,6 +10,8 @@ export function captureSource() {
       .map((k) => (q.get(k) || '').trim().slice(0, 40))
       .filter(Boolean)
       .join(' / ')
+    const ref = (q.get('ref') || '').replace(/[^\p{L}\p{N} ._@-]/gu, '').trim().slice(0, 40)
+    if (ref) sessionStorage.setItem(REF_KEY, ref)
     let found = tagged
     if (!found && document.referrer) {
       const host = new URL(document.referrer).hostname.replace(/^www\./, '')
@@ -17,6 +20,14 @@ export function captureSource() {
     if (found && (tagged || !sessionStorage.getItem(KEY))) sessionStorage.setItem(KEY, found)
   } catch {
     // storage blocked or odd referrer: not important
+  }
+}
+
+export function getRef() {
+  try {
+    return sessionStorage.getItem(REF_KEY) || ''
+  } catch {
+    return ''
   }
 }
 

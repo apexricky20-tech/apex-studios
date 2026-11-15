@@ -38,6 +38,7 @@ const makeColumns = (contact) => [
     title: 'Studio',
     links: [
       ['About', '/about'],
+      ['Refer a client', '/refer'],
       ["Let's Talk", '/contact'],
     ],
   },
