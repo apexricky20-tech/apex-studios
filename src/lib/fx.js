@@ -7,6 +7,7 @@ export const FX = {
   parallax: true, // hero portrait drifts slightly with the mouse (desktop only)
   pageFade: true, // gentle fade when moving between pages
   gem: true, // the 3D diamond near the bottom of the home page
+  scenes: true, // the faint 3D model behind each inner page
 }
 
 export const calm = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches
