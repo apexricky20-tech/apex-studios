@@ -113,7 +113,7 @@ export const websiteDesign = {
       faq: true,
       blocks: [
         { h: 'How much does a website cost?', p: 'It depends on the pages, content and features. We quote after a first call and give you a clear figure before any work starts.' },
-        { h: 'How long does a build take?', p: 'It depends on scope and how quickly content arrives. We agree a timeline on the first call.' },
+        { h: 'How long does a build take?', p: 'Most websites are delivered in 48 hours or less, and 72 hours at most, once your content and feedback arrive quickly. We confirm the exact timeline on the first call.' },
         { h: 'Do you work outside Nairobi?', p: 'Yes. We work with businesses across Kenya over calls, WhatsApp and screen sharing.' },
         { h: 'Can the website be updated without a developer?', p: 'Yes, where the project includes a content dashboard. We confirm this when we plan the build.' },
         { h: 'Will it work on phones?', p: 'Yes. Every page is designed for phones first and tested on real devices.' },

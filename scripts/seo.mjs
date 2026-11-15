@@ -207,7 +207,7 @@ function businessData() {
 
 const faqs = [
   ['What does it cost?', COST_ANSWER],
-  ['How long does it take?', 'It depends on the size of the site. You get a timeline with your quote.'],
+  ['How long does it take?', 'Most projects are delivered in 48 hours or less, and 72 hours at most, once you send your content and feedback quickly. You get the exact timeline with your quote.'],
   ['Can the website be updated without a developer?', 'Yes. You get a simple dashboard for posting updates, no developer needed.'],
   ['Will it work on phones?', 'Every site is built mobile-first and tested on real devices.'],
   ['Do you work with businesses outside Kenya?', 'Yes. We work remotely and the process is the same wherever you are.'],
