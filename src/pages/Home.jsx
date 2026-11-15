@@ -5,6 +5,7 @@ import Work from '../components/Work'
 import WhyChooseUs from '../components/WhyChooseUs'
 import Process from '../components/Process'
 import Faq from '../components/Faq'
+import ProofStrip from '../components/ProofStrip'
 import ArticlesSection from '../components/ArticlesSection'
 import ClosingGem from '../components/ClosingGem'
 
@@ -15,6 +16,7 @@ export default function Home() {
       <div className="relative">
         <Hero />
         <div className="relative z-10 rounded-t-3xl border-t border-paper/10 bg-ink">
+          <ProofStrip />
           <Services />
           <Marquee />
           <Work />

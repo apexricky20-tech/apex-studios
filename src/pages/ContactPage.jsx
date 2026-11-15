@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import { useContact, useSite } from '../lib/content'
 import { getRef, getSource } from '../lib/utm'
+import { waHref, waMessage } from '../lib/whatsapp'
 
 const services = [
   'Website Design',
@@ -83,6 +84,8 @@ export default function ContactPage() {
   const site = useSite()
   const [status, setStatus] = useState('idle') // idle | sending | sent | mailto | error
   const started = useRef(0)
+  const [params] = useSearchParams()
+  const freeCheck = params.get('offer') === 'free-check'
   useEffect(() => {
     started.current = Date.now()
   }, [])
@@ -95,12 +98,16 @@ export default function ContactPage() {
       setStatus('sent') // honeypot filled: a bot. Pretend, send nothing.
       return
     }
+    if (!(d.email || '').trim() && (d.phone || '').replace(/\D/g, '').length < 9) {
+      setStatus('need-contact')
+      return
+    }
     const payload = {
       name: d.name,
       email: d.email,
       phone: d.phone || '',
       company: d.company || '',
-      service: d.service || '',
+      service: d.service || 'Not sure yet',
       message: d.message || '',
       page: window.location.pathname,
       source: getSource(),
@@ -112,7 +119,7 @@ export default function ContactPage() {
     if (!contact.endpoint) {
       const body = [
         `Name: ${payload.name}`,
-        `Email: ${payload.email}`,
+        payload.email && `Email: ${payload.email}`,
         payload.phone && `Phone: ${payload.phone}`,
         payload.company && `Company: ${payload.company}`,
         payload.service && `Need: ${payload.service}`,
@@ -143,6 +150,7 @@ export default function ContactPage() {
     }
   }
 
+  const chat = waHref(contact.whatsapp, waMessage('/contact'))
   const insta = contact.instagram && { title: 'Instagram', value: handleOf(contact.instagram), href: contact.instagram, icon: 'insta' }
   const tiktok = contact.tiktok && { title: 'TikTok', value: handleOf(contact.tiktok), href: contact.tiktok, icon: 'tiktok' }
   const cards = [
@@ -169,9 +177,30 @@ export default function ContactPage() {
           Tell us about your business and what you want built. The more you share, the more useful
           our first reply will be.
         </p>
+        {chat && (
+          <a
+            href={chat}
+            target="_blank"
+            rel="noreferrer"
+            className="mt-10 inline-block rounded-full bg-paper px-9 py-4 text-sm font-semibold uppercase tracking-wider text-ink transition-colors hover:bg-amber"
+          >
+            Chat on WhatsApp
+          </a>
+        )}
+        {freeCheck && (
+          <div className="mt-10 max-w-2xl rounded-2xl border border-amber/60 bg-surface p-6">
+            <p className="text-lg font-semibold text-amber">Free website check</p>
+            <p className="mt-2 text-muted">
+              Paste the link to your website or Google listing in the message below, and tell me whether you want more
+              bookings, orders or calls. I&apos;ll reply with three quick fixes. No cost, no obligation.
+            </p>
+          </div>
+        )}
 
         <h2 className="mt-32 text-[clamp(2.5rem,5vw,4.5rem)] font-medium md:mt-44">Send a message</h2>
-        <p className="mt-4 text-muted">All fields are required except company and phone.</p>
+        <p className="mt-4 text-muted">
+          Add your name, a phone number or email so I can reply, and a short message. Everything else is optional.
+        </p>
 
         <form onSubmit={onSubmit} className="mt-14">
           <div className="hidden" aria-hidden="true">
@@ -189,12 +218,12 @@ export default function ContactPage() {
                 <input required name="name" autoComplete="name" className={input} />
               </label>
               <label className={label}>
-                Email
-                <input required type="email" name="email" autoComplete="email" className={input} />
+                Phone or WhatsApp
+                <input type="tel" name="phone" autoComplete="tel" className={input} />
               </label>
               <label className={label}>
-                Phone or WhatsApp (optional)
-                <input type="tel" name="phone" autoComplete="tel" className={input} />
+                Email (optional if you add a phone number)
+                <input type="email" name="email" autoComplete="email" className={input} />
               </label>
               <label className={label}>
                 Company (optional)
@@ -214,14 +243,10 @@ export default function ContactPage() {
                 What you need
                 <span className="relative block">
                   <select
-                    required
                     name="service"
-                    defaultValue=""
+                    defaultValue="Not sure yet"
                     className={`${input} cursor-pointer appearance-none pr-8 [&>option]:bg-ink`}
                   >
-                    <option value="" disabled>
-                      Choose one
-                    </option>
                     {services.map((s) => (
                       <option key={s} value={s}>
                         {s}
@@ -235,7 +260,17 @@ export default function ContactPage() {
               </label>
               <label className={label}>
                 Your project
-                <textarea required name="message" rows="6" className={`${input} resize-y`} />
+                <textarea
+                  required
+                  name="message"
+                  rows="6"
+                  placeholder={
+                    freeCheck
+                      ? 'Link to your website or Google listing, and what you want more of: bookings, orders or calls.'
+                      : 'For example: we run a 12-room lodge and want guests to book directly.'
+                  }
+                  className={`${input} resize-y`}
+                />
               </label>
             </div>
           </div>
@@ -259,13 +294,28 @@ export default function ContactPage() {
               </p>
               <div role="status" aria-live="polite" className="mt-6 max-w-md text-lg">
                 {status === 'sent' && (
-                  <p className="text-amber">Thank you. Your message has been sent and we will reply by email.</p>
+                  <p className="text-amber">
+                    Thank you, your message is in. I&apos;ll reply on WhatsApp or by email, usually within a day.
+                    {chat && (
+                      <>
+                        {' '}
+                        Want a faster answer?{' '}
+                        <a href={chat} target="_blank" rel="noreferrer" className="underline">
+                          Message me on WhatsApp
+                        </a>
+                        .
+                      </>
+                    )}
+                  </p>
                 )}
                 {status === 'mailto' && (
                   <p className="text-muted">
                     Your email app should have opened with the message ready to send. If it did not,
                     write to us at {contact.email}.
                   </p>
+                )}
+                {status === 'need-contact' && (
+                  <p className="text-amber">Please add a phone number or an email so I can reply to you.</p>
                 )}
                 {status === 'error' && (
                   <p className="text-muted">

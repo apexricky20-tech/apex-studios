@@ -1,5 +1,5 @@
-import { Link } from 'react-router-dom'
 import { useSite } from '../lib/content'
+import CtaButtons from './CtaButtons'
 
 const fade = 'linear-gradient(to bottom, black 70%, transparent 100%)'
 
@@ -29,24 +29,11 @@ export default function Hero() {
       <div data-hero className="relative z-10 -mt-[100svh] flex h-svh flex-col items-center justify-end px-gutter pb-8 text-center">
         <h1 className="sr-only">Websites for hotels, lodges and restaurants</h1>
         <p className="hero-rise max-w-2xl text-base text-paper md:text-lg" style={{ animationDelay: '250ms' }}>
-          I&apos;m {site.name}, founder of Apex Studios. I design and build fast, immersive
-          websites for hotels, lodges and restaurants.
+          I&apos;m {site.name}. I build websites for hotels, lodges and restaurants that turn
+          visitors into direct bookings and orders, with M-Pesa and WhatsApp connected.
         </p>
 
-        <div className="hero-rise mt-6 flex flex-wrap justify-center gap-3" style={{ animationDelay: '400ms' }}>
-          <Link
-            to="/contact"
-            className="rounded-full bg-paper px-9 py-4 text-sm font-semibold uppercase tracking-wider text-ink transition-colors hover:bg-amber"
-          >
-            Contact
-          </Link>
-          <Link
-            to="/work"
-            className="rounded-full border border-paper/25 px-9 py-4 text-sm font-semibold uppercase tracking-wider transition-colors hover:border-amber hover:text-amber"
-          >
-            Portfolio
-          </Link>
-        </div>
+        <CtaButtons className="hero-rise mt-6 justify-center" style={{ animationDelay: '400ms' }} />
 
         <ul className="hero-rise mt-6 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs text-paper/70" style={{ animationDelay: '550ms' }}>
           {site.available !== false && (

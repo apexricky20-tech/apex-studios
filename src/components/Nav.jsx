@@ -74,7 +74,7 @@ export default function Nav() {
             <Link
               to="/contact"
               onClick={close}
-              className="rounded-full border border-paper/25 px-5 py-2.5 text-sm font-medium transition-colors hover:border-amber hover:text-amber"
+              className="whitespace-nowrap rounded-full border border-paper/25 px-5 py-2.5 text-sm font-medium transition-colors hover:border-amber hover:text-amber"
             >
               Let&apos;s Talk
             </Link>

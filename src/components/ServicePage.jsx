@@ -1,12 +1,11 @@
-import { Link, useLocation } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 import Breadcrumbs from './Breadcrumbs'
 import { serviceNames } from '../lib/crumbs'
-import { useContact } from '../lib/content'
+import CtaButtons from './CtaButtons'
 
 const cols = { 3: 'md:grid-cols-3', 4: 'md:grid-cols-4' }
 
 export default function ServicePage({ page }) {
-  const contact = useContact()
   const { pathname } = useLocation()
   const faqLd = {
     '@context': 'https://schema.org',
@@ -108,21 +107,7 @@ export default function ServicePage({ page }) {
         <div className="mx-auto max-w-[1220px]">
           <h2 className="text-5xl md:text-7xl">{page.cta.title}</h2>
           <p className="mt-6 max-w-xl text-xl leading-relaxed text-muted">{page.cta.text}</p>
-          {contact.email ? (
-            <a
-              href={`mailto:${contact.email}`}
-              className="mt-10 inline-block rounded-full border border-paper/25 px-8 py-4 text-lg font-medium transition-colors hover:border-amber hover:text-amber"
-            >
-              {contact.email}
-            </a>
-          ) : (
-            <Link
-              to="/contact"
-              className="mt-10 inline-block rounded-full border border-paper/25 px-8 py-4 text-lg font-medium transition-colors hover:border-amber hover:text-amber"
-            >
-              Start a project
-            </Link>
-          )}
+          <CtaButtons className="mt-10" />
         </div>
       </div>
     </div>

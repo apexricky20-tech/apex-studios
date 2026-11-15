@@ -1,16 +1,17 @@
+import { useLocation } from 'react-router-dom'
 import { useContact } from '../lib/content'
-
-const MESSAGE = "Hi Apex Studios, I'd like to talk about a website for my business."
+import { waHref, waMessage } from '../lib/whatsapp'
 
 // Floating "chat on WhatsApp" button. Shows only when a WhatsApp number is set.
 // rounded-[50%] (not rounded-full) on purpose: Motion.jsx fades in every rounded-full link on each page change.
 export default function WhatsAppButton() {
   const { whatsapp } = useContact()
-  const digits = (whatsapp || '').replace(/\D/g, '')
-  if (!digits) return null
+  const { pathname } = useLocation()
+  const href = waHref(whatsapp, waMessage(pathname))
+  if (!href) return null
   return (
     <a
-      href={`https://wa.me/${digits}?text=${encodeURIComponent(MESSAGE)}`}
+      href={href}
       target="_blank"
       rel="noreferrer"
       aria-label="Chat with Apex Studios on WhatsApp"

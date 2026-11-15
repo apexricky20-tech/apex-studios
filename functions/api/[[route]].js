@@ -164,7 +164,7 @@ async function bump(env, key, limit, ttl) {
 const metaOf = (m) => {
   const meta = {
     name: m.name.slice(0, 50),
-    email: m.email.slice(0, 100),
+    email: (m.email || '').slice(0, 100),
     service: (m.service || '').slice(0, 40),
     createdAt: m.createdAt,
     read: m.read,
@@ -222,7 +222,7 @@ function enquiryAlert(m, origin) {
     'New enquiry from your website',
     '',
     `Name: ${m.name}`,
-    `Email: ${m.email}`,
+    m.email ? `Email: ${m.email}` : null,
     m.phone ? `Phone: ${m.phone}` : null,
     m.company ? `Company: ${m.company}` : null,
     m.service ? `Needs: ${m.service}` : null,
@@ -260,8 +260,13 @@ export async function onRequest({ request, env, waitUntil }) {
       const b = await readJson(request)
       const name = str(b.name, 100)
       const email = str(b.email, 200)
+      const phone = str(b.phone, 30).replace(/[^\d+()\-\s]/g, '')
       const message = str(b.message, 5000)
-      if (!name || !message || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) throw new HttpError(400, 'Please fill in your name, a valid email and a message.')
+      const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+      const phoneOk = phone.replace(/\D/g, '').length >= 9
+      if (!name || !message || (email && !emailOk) || (!emailOk && !phoneOk)) {
+        throw new HttpError(400, 'Please add your name, a message, and a valid phone number or email.')
+      }
       if (b.website || !(Number(b.elapsedMs) >= 2000)) return json({ ok: true }) // bot: pretend it worked
       if (!(await bump(env, `rl:contact:${ip}`, 5, 3600))) throw new HttpError(429, 'Too many messages. Please try again later.')
       const id = `${String(9999999999999 - Date.now()).padStart(13, '0')}-${randomHex(3)}`
@@ -269,7 +274,7 @@ export async function onRequest({ request, env, waitUntil }) {
         id,
         name,
         email,
-        phone: str(b.phone, 30).replace(/[^\d+()\-\s]/g, ''),
+        phone,
         company: str(b.company, 150),
         service: str(b.service, 60),
         message,

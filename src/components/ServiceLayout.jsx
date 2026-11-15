@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import Breadcrumbs from './Breadcrumbs'
 import { serviceNames } from '../lib/crumbs'
+import CtaButtons from './CtaButtons'
 
 export default function ServiceLayout({ page }) {
   const { sections } = page
@@ -108,6 +109,15 @@ export default function ServiceLayout({ page }) {
             ))}
           </div>
         </div>
+
+        <section className="mt-32 border-t border-paper/15 pt-20 md:mt-40">
+          <h2 className="text-4xl md:text-6xl">Want this for your business?</h2>
+          <p className="mt-6 max-w-xl text-xl leading-relaxed text-muted">
+            Send me your website or Google listing link and I&apos;ll reply with three quick fixes. It&apos;s free,
+            and there&apos;s no obligation to hire me.
+          </p>
+          <CtaButtons className="mt-10" />
+        </section>
       </div>
     </div>
   )
