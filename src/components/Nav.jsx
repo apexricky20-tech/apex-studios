@@ -109,7 +109,8 @@ export default function Nav() {
       {open && (
         <div
           id="site-menu"
-          className="fixed inset-0 z-40 flex flex-col overflow-y-auto bg-surface px-gutter pb-10 pt-32"
+          data-lenis-prevent
+          className="fixed inset-x-0 top-0 z-40 flex h-dvh flex-col overflow-y-auto overscroll-contain bg-surface px-gutter pb-28 pt-32"
         >
           <nav className="my-auto flex flex-col">
             {links.map(([label, to]) =>
