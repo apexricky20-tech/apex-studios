@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { projects as seedProjects } from '../data/projects'
 import { site as siteDefault } from '../data/site'
 import { contact as contactDefault } from '../data/contact'
@@ -33,14 +33,29 @@ async function api(path, opts = {}) {
 
 const send = (path, method, body) => api(path, { method, body: JSON.stringify(body) })
 
+const MAX_UPLOAD = 2 * 1024 * 1024 // must match MAX_MEDIA in functions/api/[[route]].js
+const MAX_SOURCE = 25 * 1024 * 1024 // refuse huge originals before decoding them in the browser
+
 async function uploadImage(file) {
-  const bmp = await createImageBitmap(file)
+  if (!file.type.startsWith('image/')) throw new Error('Please choose an image (JPEG, PNG or WebP).')
+  if (file.size > MAX_SOURCE) throw new Error('That photo is over 25 MB. Please choose a smaller one.')
+  let bmp
+  try {
+    bmp = await createImageBitmap(file)
+  } catch {
+    throw new Error('That file could not be read as an image. Try a JPEG, PNG or WebP.')
+  }
   const scale = Math.min(1, 1600 / Math.max(bmp.width, bmp.height))
   const c = document.createElement('canvas')
   c.width = Math.round(bmp.width * scale)
   c.height = Math.round(bmp.height * scale)
   c.getContext('2d').drawImage(bmp, 0, 0, c.width, c.height)
+  bmp.close?.()
   const blob = await new Promise((res) => c.toBlob(res, 'image/webp', 0.85))
+  if (!blob) throw new Error('This browser could not prepare the image. Try a different photo.')
+  if (blob.size > MAX_UPLOAD) {
+    throw new Error(`The prepared image is ${(blob.size / 1048576).toFixed(1)} MB. The limit is 2 MB, so please choose a simpler or smaller photo.`)
+  }
   const out = await api('media', { method: 'POST', body: blob, headers: { 'Content-Type': 'image/webp' } })
   return out.url
 }
@@ -122,24 +137,62 @@ function Login({ onDone }) {
 
 function Inbox({ onCount }) {
   const [list, setList] = useState(null)
+  const [cursor, setCursor] = useState(null) // where the next page starts; null = nothing older
+  const [more, setMore] = useState(false)
   const [open, setOpen] = useState(null)
   const [msg, setMsg] = useState(null)
   const [err, setErr] = useState('')
   const [tick, setTick] = useState(0)
+  const loaded = useRef(false)
 
+  // Count unread from whatever has loaded. With pages, this can undercount older unread mail.
+  const report = (items) => onCount(items.filter((m) => !m.read).length)
+
+  // Refresh = reload the newest page and keep any older pages already loaded.
   useEffect(() => {
     let alive = true
     api('messages')
       .then((d) => {
         if (!alive) return
-        setList(d)
-        onCount(d.filter((m) => !m.read).length)
+        setList((prev) => {
+          const fresh = d.items
+          let next = fresh
+          if (prev && fresh.length && d.cursor) {
+            // Older pages the owner already loaded stay; ids sort newest-first, so "older" means a larger id.
+            const lastFresh = fresh[fresh.length - 1].id
+            next = [...fresh, ...prev.filter((m) => m.id > lastFresh)]
+          }
+          report(next)
+          return next
+        })
+        setCursor((c) => (!d.cursor ? null : loaded.current ? c : d.cursor))
+        loaded.current = true
       })
       .catch((e) => alive && setErr(e.message))
     return () => {
       alive = false
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tick, onCount])
+
+  const loadMore = async () => {
+    if (!cursor || more) return
+    setMore(true)
+    try {
+      const d = await api(`messages?cursor=${encodeURIComponent(cursor)}`)
+      setList((prev) => {
+        const seen = new Set(prev.map((m) => m.id))
+        const next = [...prev, ...d.items.filter((m) => !seen.has(m.id))]
+        report(next)
+        return next
+      })
+      setCursor(d.cursor)
+    } catch (e) {
+      setErr(e.message)
+    } finally {
+      setMore(false)
+    }
+  }
 
   useEffect(() => {
     const t = setInterval(() => setTick((n) => n + 1), 60000)
@@ -155,6 +208,7 @@ function Inbox({ onCount }) {
       setMsg(m)
       if (!m.read) {
         await send(`messages/${id}`, 'PATCH', { read: true })
+        setList((prev) => prev && prev.map((x) => (x.id === id ? { ...x, read: true } : x)))
         setTick((n) => n + 1)
       }
     } catch (e) {
@@ -163,12 +217,14 @@ function Inbox({ onCount }) {
   }
   const unread = async (id) => {
     await send(`messages/${id}`, 'PATCH', { read: false })
+    setList((prev) => prev && prev.map((m) => (m.id === id ? { ...m, read: false } : m)))
     setOpen(null)
     setTick((n) => n + 1)
   }
   const del = async (id) => {
     if (!window.confirm('Delete this message for good?')) return
     await api(`messages/${id}`, { method: 'DELETE' })
+    setList((prev) => prev && prev.filter((m) => m.id !== id))
     setOpen(null)
     setTick((n) => n + 1)
   }
@@ -178,7 +234,10 @@ function Inbox({ onCount }) {
   return (
     <div>
       <div className="mb-4 flex items-center justify-between">
-        <p className="text-sm text-muted">{list.length} message{list.length === 1 ? '' : 's'} (newest first)</p>
+        <p className="text-sm text-muted">
+          {list.length}
+          {cursor ? '+' : ''} message{list.length === 1 && !cursor ? '' : 's'} (newest first)
+        </p>
         <button className={btn} onClick={() => setTick((n) => n + 1)}>Refresh</button>
       </div>
       {list.length === 0 && <p className={`${box} text-muted`}>No messages yet. New enquiries from the contact form appear here.</p>}
@@ -220,6 +279,13 @@ function Inbox({ onCount }) {
           </li>
         ))}
       </ul>
+      {cursor && (
+        <div className="mt-4 text-center">
+          <button className={btn} onClick={loadMore} disabled={more}>
+            {more ? 'Loading...' : 'Load older messages'}
+          </button>
+        </div>
+      )}
     </div>
   )
 }

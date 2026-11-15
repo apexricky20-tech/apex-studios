@@ -36,7 +36,8 @@ export default function PrivacyPage() {
           <strong className="font-medium text-paper">When you use the chat assistant.</strong> The chat on this site is an
           AI assistant, not a person. The questions you type are sent to Cloudflare&apos;s AI service, which writes the
           reply. We do not keep a copy of the conversation, and the assistant never needs your name, phone number or
-          payment details, so please do not type passwords, payment details or other private information into it. To
+          payment details, so please do not type passwords, payment details or other private information into it. If you tap the microphone button, your browser turns your speech into text. In some browsers, such as Chrome, that
+          is done by the browser maker&apos;s speech service, not by us, and we do not receive or keep any audio. To
           speak to a person, use WhatsApp or the contact form.
         </p>
         <p>

@@ -119,6 +119,8 @@ if (publishedArticles.length) {
     path: '/articles',
     title: 'Articles | Apex Studios',
     description: 'Practical articles on websites for hotels, lodges and restaurants in Kenya.',
+    // The index changes when its newest article does.
+    lastmod: publishedArticles.map((a) => a.updated || a.date).filter(Boolean).sort().pop(),
   })
   for (const a of publishedArticles) {
     routes.push({
@@ -338,10 +340,11 @@ writeFileSync(
   ['User-agent: *', 'Disallow: /admin', 'Disallow: /api/admin/', '', `Sitemap: ${SITE_URL}/sitemap.xml`, ''].join('\n'),
 )
 
-const today = new Date().toISOString().slice(0, 10)
-const entries = routes
-  .map((r) => `  <url>\n    <loc>${text(urlFor(r.path))}</loc>\n    <lastmod>${r.lastmod || today}</lastmod>\n  </url>`)
-  .join('\n')
+// <lastmod> is only written where we really know when the content changed (articles, and the articles index).
+// Stamping every page with the build date tells Google "everything changed today" on every deploy,
+// and Google learns to ignore the dates. A missing <lastmod> is fine; a wrong one is not.
+const lastmodTag = (d) => (/^\d{4}-\d{2}-\d{2}$/.test(d || '') ? `\n    <lastmod>${d}</lastmod>` : '')
+const entries = routes.map((r) => `  <url>\n    <loc>${text(urlFor(r.path))}</loc>${lastmodTag(r.lastmod)}\n  </url>`).join('\n')
 writeFileSync(
   join(dist, 'sitemap.xml'),
   `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${entries}\n</urlset>\n`,

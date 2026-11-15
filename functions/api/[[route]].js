@@ -8,6 +8,7 @@ const enc = new TextEncoder()
 const COOKIE = '__Host-session'
 const SESSION_DAYS = 7
 const MAX_MEDIA = 2 * 1024 * 1024
+const INBOX_PAGE = 100
 const SESSION_MS = SESSION_DAYS * 86400000
 const REVOKE_KEY = 'auth:validAfter' // sessions issued before this time are no longer accepted
 const FORM_MIN_MS = 2000 // a human cannot fill the form faster than this
@@ -417,9 +418,15 @@ export async function onRequest({ request, env, waitUntil }) {
         return json(merged)
       }
 
+      // The inbox loads in pages (newest first, because ids start with a reversed timestamp).
+      // Reply: { items: [...], cursor }. cursor is null on the last page; send it back as ?cursor= for the next one.
       if (path === 'admin/messages' && method === 'GET') {
-        const { keys } = await env.DB.list({ prefix: 'msg:', limit: 200 })
-        return json(keys.map((k) => ({ id: k.name.slice(4), ...(k.metadata || {}) })))
+        const cursor = u.searchParams.get('cursor') || undefined
+        const page = await env.DB.list({ prefix: 'msg:', limit: INBOX_PAGE, cursor })
+        return json({
+          items: page.keys.map((k) => ({ id: k.name.slice(4), ...(k.metadata || {}) })),
+          cursor: page.list_complete ? null : page.cursor,
+        })
       }
 
       if (parts[1] === 'messages' && parts[2]) {
@@ -441,7 +448,12 @@ export async function onRequest({ request, env, waitUntil }) {
       }
 
       if (path === 'admin/media' && method === 'POST') {
+        // Refuse by the declared size first, so an oversized body is never read into memory.
+        const declared = Number(request.headers.get('Content-Length') || 0)
+        if (declared > MAX_MEDIA) throw new HttpError(413, 'Image is over 2 MB.')
         const buf = await request.arrayBuffer()
+        // Content-Length can be missing or wrong, so check the real size too.
+        if (buf.byteLength === 0) throw new HttpError(400, 'No image received.')
         if (buf.byteLength > MAX_MEDIA) throw new HttpError(413, 'Image is over 2 MB.')
         const type = sniff(buf)
         if (!type) throw new HttpError(400, 'Only JPEG, PNG or WebP images are allowed.')
