@@ -6,7 +6,7 @@ import { Outlet, useLocation } from 'react-router-dom'
 import Nav from './Nav'
 import Footer from './Footer'
 import BackToTop from './BackToTop'
-import WhatsAppButton from './WhatsAppButton'
+import ChatLauncher from './ChatLauncher'
 
 function ScrollToTop() {
   const { pathname } = useLocation()
@@ -40,7 +40,7 @@ export default function Layout() {
       </main>
       <Footer />
       <BackToTop />
-      <WhatsAppButton />
+      <ChatLauncher />
     </>
   )
 }
