@@ -249,6 +249,7 @@ function Inbox({ onCount }) {
               <span className="min-w-0 flex-1">
                 <span className={`block ${m.read ? '' : 'font-semibold'}`}>
                   {m.name} <span className="font-normal text-muted">· {m.service || 'No service chosen'}</span>
+                  {m.via === 'chat' && <span className="ml-2 rounded-full border border-amber px-2 py-0.5 text-xs font-normal text-amber">Call request</span>}
                 </span>
                 <span className="block truncate text-sm text-muted">{m.preview}</span>
               </span>
@@ -266,6 +267,25 @@ function Inbox({ onCount }) {
                     {msg.source && <p className="mt-1 text-xs text-muted">Came from: {msg.source}</p>}
                     {msg.referrer && <p className="mt-1 text-xs text-amber">Referred by: {msg.referrer}</p>}
                     <p className="mt-3 whitespace-pre-wrap">{msg.message}</p>
+                    {msg.photos?.length > 0 && (
+                      <div className="mt-4">
+                        <div className="flex flex-wrap gap-3">
+                          {msg.photos.map((id) => (
+                            <a key={id} href={`/api/admin/lead-photo/${id}`} target="_blank" rel="noreferrer">
+                              <img
+                                src={`/api/admin/lead-photo/${id}`}
+                                alt="Photo from the visitor"
+                                className="h-24 w-24 rounded-lg border border-paper/20 object-cover"
+                                onError={(e) => {
+                                  e.currentTarget.alt = 'Photo expired'
+                                }}
+                              />
+                            </a>
+                          ))}
+                        </div>
+                        <p className="mt-2 text-xs text-muted">Photos are deleted automatically 30 days after they were sent. Save any you need.</p>
+                      </div>
+                    )}
                     <div className="mt-5 flex flex-wrap gap-2">
                       {msg.phone && <a className={btnMain} href={`https://wa.me/${waDigits(msg.phone)}`} target="_blank" rel="noreferrer">Reply on WhatsApp</a>}
                       {msg.email && <a className={msg.phone ? btn : btnMain} href={`mailto:${encodeURIComponent(msg.email).replace(/%40/g, '@')}?subject=${encodeURIComponent('Re: your enquiry to Apex Studios')}`}>Reply by email</a>}

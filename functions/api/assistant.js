@@ -9,7 +9,9 @@ import { contact as contactDefault } from '../../src/data/contact.js'
 import { projects as projectsDefault } from '../../src/data/projects.js'
 
 const PER_IP_PER_HOUR = 20
-const PER_DAY_TOTAL = 400
+// Each question costs 2 KV writes and the free plan allows 1,000 writes a day in total.
+// 300 questions = 600 writes, which leaves room for call requests, photos and the dashboard.
+const PER_DAY_TOTAL = 300
 const MAX_TURNS = 8
 const MAX_CHARS = 400
 

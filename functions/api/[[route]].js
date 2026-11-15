@@ -1,5 +1,5 @@
 // Cloudflare Pages Function: every /api/* route.
-//   Public:  GET /api/content, POST /api/contact, GET /api/media/:id
+//   Public:  GET /api/content, POST /api/contact, POST /api/lead-photo, GET /api/media/:id
 //   Private: /api/admin/*  (needs the password session cookie)
 // Needs: a KV binding named DB, and two secrets: ADMIN_PASSWORD and SESSION_SECRET.
 // Optional (new-enquiry alerts on Telegram): secrets TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID.
@@ -9,6 +9,12 @@ const COOKIE = '__Host-session'
 const SESSION_DAYS = 7
 const MAX_MEDIA = 2 * 1024 * 1024
 const INBOX_PAGE = 100
+const MAX_LEAD_PHOTO = 800 * 1024 // chat photos are shrunk in the browser first, so real ones are far smaller
+const LEAD_PHOTO_TTL = 30 * 86400 // photos delete themselves after 30 days, so the free 1 GB of KV never fills up
+const LEAD_PHOTOS_PER_IP_HOUR = 6
+const LEAD_PHOTOS_PER_DAY = 25
+const MAX_PHOTOS_PER_LEAD = 3
+const PHOTO_ID_RE = /^[a-f0-9]{16}$/
 const SESSION_MS = SESSION_DAYS * 86400000
 const REVOKE_KEY = 'auth:validAfter' // sessions issued before this time are no longer accepted
 const FORM_MIN_MS = 2000 // a human cannot fill the form faster than this
@@ -202,6 +208,7 @@ const metaOf = (m) => {
     read: m.read,
     preview: m.message.slice(0, 100),
   }
+  if (m.via === 'chat') meta.via = 'chat'
   if (JSON.stringify(meta).length > 900) delete meta.preview
   return meta
 }
@@ -251,7 +258,7 @@ async function sendTelegram(env, text) {
 function enquiryAlert(m, origin) {
   const wa = waDigits(m.phone)
   const lines = [
-    'New enquiry from your website',
+    m.via === 'chat' ? 'New call request from the chat assistant' : 'New enquiry from your website',
     '',
     `Name: ${m.name}`,
     m.email ? `Email: ${m.email}` : null,
@@ -260,6 +267,7 @@ function enquiryAlert(m, origin) {
     m.service ? `Needs: ${m.service}` : null,
     m.source ? `Came from: ${m.source}` : null,
     m.referrer ? `Referred by: ${m.referrer}` : null,
+    m.photos?.length ? `Photos attached: ${m.photos.length} (open the dashboard to see them)` : null,
     '',
     m.message.length > 1200 ? `${m.message.slice(0, 1200)}...` : m.message,
     '',
@@ -290,6 +298,24 @@ export async function onRequest({ request, env, waitUntil }) {
     if (path === 'form-token' && method === 'GET') {
       // Without SESSION_SECRET there is nothing to sign with; the form then skips the timing check.
       return json({ token: env.SESSION_SECRET ? await makeFormToken(env) : '' })
+    }
+
+    // A visitor attaches a photo in the chat. Stored privately (only the dashboard can open it) and auto-deleted.
+    if (path === 'lead-photo' && method === 'POST') {
+      if (!sameOrigin(request, u)) throw new HttpError(403, 'Bad origin.')
+      if (Number(request.headers.get('Content-Length') || 0) > MAX_LEAD_PHOTO) throw new HttpError(413, 'Photo is too large.')
+      const buf = await request.arrayBuffer()
+      if (!buf.byteLength) throw new HttpError(400, 'No photo received.')
+      if (buf.byteLength > MAX_LEAD_PHOTO) throw new HttpError(413, 'Photo is too large.')
+      if (!sniff(buf)) throw new HttpError(400, 'Only JPEG, PNG or WebP photos are allowed.')
+      if (!(await bump(env, `rl:photo:${ip}`, LEAD_PHOTOS_PER_IP_HOUR, 3600))) throw new HttpError(429, 'Too many photos. Please try again later.')
+      const day = new Date().toISOString().slice(0, 10)
+      if (!(await bump(env, `rl:photo:day:${day}`, LEAD_PHOTOS_PER_DAY, 90000))) {
+        throw new HttpError(429, 'Photo uploads are busy right now. You can send photos on WhatsApp instead.')
+      }
+      const id = randomHex(8)
+      await env.DB.put(`leadphoto:${id}`, buf, { metadata: { type: sniff(buf) }, expirationTtl: LEAD_PHOTO_TTL })
+      return json({ id })
     }
 
     if (path === 'contact' && method === 'POST') {
@@ -329,6 +355,11 @@ export async function onRequest({ request, env, waitUntil }) {
         referrer: str(b.referrer, 100).replace(/[\r\n]+/g, ' '),
         createdAt: new Date().toISOString(),
         read: false,
+      }
+      if (b.via === 'chat') m.via = 'chat'
+      if (Array.isArray(b.photos)) {
+        m.photos = [...new Set(b.photos.filter((x) => typeof x === 'string' && PHOTO_ID_RE.test(x)))].slice(0, MAX_PHOTOS_PER_LEAD)
+        if (!m.photos.length) delete m.photos
       }
       await env.DB.put(`msg:${id}`, JSON.stringify(m), { metadata: metaOf(m) })
       // Tell the owner right away. This never delays or breaks the visitor's form.
@@ -436,6 +467,7 @@ export async function onRequest({ request, env, waitUntil }) {
         const m = JSON.parse(raw)
         if (method === 'GET') return json(m)
         if (method === 'DELETE') {
+          await Promise.all((m.photos || []).filter((x) => PHOTO_ID_RE.test(x)).map((x) => env.DB.delete(`leadphoto:${x}`)))
           await env.DB.delete(key)
           return json({ ok: true })
         }
@@ -445,6 +477,19 @@ export async function onRequest({ request, env, waitUntil }) {
           await env.DB.put(key, JSON.stringify(m), { metadata: metaOf(m) })
           return json(m)
         }
+      }
+
+      if (parts[1] === 'lead-photo' && parts[2] && method === 'GET') {
+        if (!PHOTO_ID_RE.test(parts[2])) throw new HttpError(404, 'Not found.')
+        const { value, metadata } = await env.DB.getWithMetadata(`leadphoto:${parts[2]}`, 'arrayBuffer')
+        if (!value) throw new HttpError(404, 'This photo has expired or was deleted.')
+        return new Response(value, {
+          headers: {
+            'Content-Type': metadata?.type || 'application/octet-stream',
+            'Cache-Control': 'private, max-age=3600',
+            'X-Content-Type-Options': 'nosniff',
+          },
+        })
       }
 
       if (path === 'admin/media' && method === 'POST') {

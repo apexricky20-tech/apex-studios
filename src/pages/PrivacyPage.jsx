@@ -41,6 +41,13 @@ export default function PrivacyPage() {
           speak to a person, use WhatsApp or the contact form.
         </p>
         <p>
+          <strong className="font-medium text-paper">When you book a call in the chat.</strong> The chat asks for your
+          name, a phone number, what you need and when suits you, and you may add a short note and up to three photos.
+          This goes to our inbox like a contact form message, and we use it only to arrange and prepare the call. Photos
+          are kept privately with Cloudflare, are visible only to us, and are deleted automatically after 30 days, or
+          sooner if we delete your message.
+        </p>
+        <p>
           <strong className="font-medium text-paper">Visit statistics.</strong> We may use Cloudflare Web Analytics to see
           which pages are visited. It is designed to work without cookies.
         </p>
