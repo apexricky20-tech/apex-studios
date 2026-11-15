@@ -8,7 +8,7 @@ function Card({ project }) {
       to={`/work/${project.slug}`}
       className="group block"
     >
-      <div className="relative aspect-[4/3] overflow-hidden rounded-2xl border border-paper/10 bg-surface">
+      <div data-tilt className="relative aspect-[4/3] overflow-hidden rounded-2xl border border-paper/10 bg-surface">
         <img
           src={project.image}
           alt={`${project.title} website`}

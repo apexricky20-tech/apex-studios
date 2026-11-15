@@ -1,4 +1,6 @@
 import Motion from './Motion'
+import Fx from './Fx'
+import { FX } from '../lib/fx'
 import { useEffect } from 'react'
 import { Outlet, useLocation } from 'react-router-dom'
 import Nav from './Nav'
@@ -14,6 +16,7 @@ function ScrollToTop() {
 }
 
 export default function Layout() {
+  const { pathname, key } = useLocation()
   return (
     <>
       <a
@@ -24,8 +27,14 @@ export default function Layout() {
       </a>
       <ScrollToTop />
       <Motion />
+      <Fx />
       <Nav />
-      <main id="main-content" tabIndex={-1} className="outline-none">
+      <main
+        key={pathname}
+        id="main-content"
+        tabIndex={-1}
+        className={`outline-none${FX.pageFade && key !== 'default' ? ' page-in' : ''}`}
+      >
         <Outlet />
       </main>
       <Footer />

@@ -27,11 +27,11 @@ function Card({ project, index }) {
     </>
   )
   return external ? (
-    <a href={project.href} target="_blank" rel="noreferrer" className={cls}>
+    <a href={project.href} target="_blank" rel="noreferrer" className={cls} data-tilt>
       {inner}
     </a>
   ) : (
-    <Link to={`/work/${project.slug}`} className={cls}>
+    <Link to={`/work/${project.slug}`} className={cls} data-tilt>
       {inner}
     </Link>
   )

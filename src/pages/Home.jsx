@@ -6,6 +6,7 @@ import WhyChooseUs from '../components/WhyChooseUs'
 import Process from '../components/Process'
 import Faq from '../components/Faq'
 import ArticlesSection from '../components/ArticlesSection'
+import ClosingGem from '../components/ClosingGem'
 
 export default function Home() {
   return (
@@ -21,6 +22,7 @@ export default function Home() {
           <Process />
           <Faq />
           <ArticlesSection />
+          <ClosingGem />
         </div>
       </div>
     </>

@@ -14,6 +14,7 @@ export default function Hero() {
             src={site.portrait}
             alt={`Portrait of ${site.name}, founder of Apex Studios`}
             fetchPriority="high"
+            data-parallax="14"
             className="hero-portrait h-full w-auto max-w-full object-contain"
             style={{ maskImage: fade, WebkitMaskImage: fade }}
             onError={(e) => {
