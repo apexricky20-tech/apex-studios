@@ -4,19 +4,18 @@ import { FX } from '../lib/fx'
 
 const Gem3D = lazy(() => import('./Gem3D'))
 
-// A light, flat diamond for phones, slow connections and reduced-motion visitors.
+// A light, flat crystal for phones, slow connections and reduced-motion visitors.
 function GemSvg() {
   const facets = [
-    ['30,80 60,40 65,80', 0.2],
-    ['60,40 100,40 65,80', 0.1],
-    ['100,40 65,80 100,80', 0.26],
-    ['100,40 135,80 100,80', 0.12],
-    ['100,40 140,40 135,80', 0.22],
-    ['140,40 170,80 135,80', 0.08],
-    ['30,80 65,80 100,175', 0.12],
-    ['65,80 100,80 100,175', 0.24],
-    ['100,80 135,80 100,175', 0.1],
-    ['135,80 170,80 100,175', 0.18],
+    ['30,80 62,40 81,80', 0.2],
+    ['62,40 100,40 81,80', 0.1],
+    ['100,40 119,80 81,80', 0.26],
+    ['100,40 138,40 119,80', 0.12],
+    ['138,40 170,80 119,80', 0.22],
+    ['30,80 81,80 100,175', 0.12],
+    ['81,80 100,80 100,175', 0.24],
+    ['100,80 119,80 100,175', 0.1],
+    ['119,80 170,80 100,175', 0.18],
   ]
   return (
     <svg viewBox="0 0 200 200" className="gem-float mx-auto h-full w-full max-w-[320px]" aria-hidden="true">
@@ -72,7 +71,7 @@ export default function ClosingGem() {
             Start a project
           </Link>
         </div>
-        <div role="img" aria-label="A slowly turning faceted diamond" className="mx-auto aspect-square w-full max-w-[460px]">
+        <div role="img" aria-label="A slowly turning faceted crystal" className="mx-auto aspect-square w-full max-w-[460px]">
           {use3d && near ? (
             <Boundary fallback={<GemSvg />}>
               <Suspense fallback={<GemSvg />}>
