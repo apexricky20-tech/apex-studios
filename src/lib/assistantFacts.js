@@ -21,6 +21,7 @@ const pages = [
 ]
 
 export const MODEL = '@cf/meta/llama-3.1-8b-instruct'
+export const BACKUP_MODEL = '@cf/meta/llama-3.2-3b-instruct' // tried if the main model errors
 
 export const FALLBACK_REPLY =
   "I can't answer that right now. The fastest way to reach the studio is WhatsApp, and you'll find all the contact options below."

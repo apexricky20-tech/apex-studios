@@ -3,7 +3,7 @@
 // (Pages project > Settings > Bindings > Add > Workers AI, variable name: AI).
 // Without that binding it still answers, with a friendly "use WhatsApp" message, so the widget never breaks.
 // It also needs the KV binding DB (already used by the rest of the site) for rate limiting.
-import { MODEL, FALLBACK_REPLY, buildSystemPrompt, cleanReply } from '../../src/lib/assistantFacts.js'
+import { MODEL, BACKUP_MODEL, FALLBACK_REPLY, buildSystemPrompt, cleanReply } from '../../src/lib/assistantFacts.js'
 import { site as siteDefault } from '../../src/data/site.js'
 import { contact as contactDefault } from '../../src/data/contact.js'
 import { projects as projectsDefault } from '../../src/data/projects.js'
@@ -12,6 +12,8 @@ const PER_IP_PER_HOUR = 20
 const PER_DAY_TOTAL = 400
 const MAX_TURNS = 8
 const MAX_CHARS = 400
+
+const fallback = (why) => json({ reply: FALLBACK_REPLY, fallback: true, why })
 
 const json = (data, status = 200) =>
   new Response(JSON.stringify(data), {
@@ -82,24 +84,34 @@ export async function onRequestPost({ request, env }) {
     const messages = cleanMessages(body?.messages)
     if (!messages.length || messages[messages.length - 1].role !== 'user') return json({ error: 'Ask a question first.' }, 400)
 
-    if (!env.AI) return json({ reply: FALLBACK_REPLY, fallback: true })
+    if (!env.AI) return fallback('no-ai-binding')
     if (env.DB) {
       const ip = request.headers.get('CF-Connecting-IP') || 'local'
       const day = new Date().toISOString().slice(0, 10)
       if (!(await bump(env, `rl:ai:${ip}`, PER_IP_PER_HOUR, 3600))) return json({ error: 'Too many questions. Please try again later.' }, 429)
-      if (!(await bump(env, `rl:ai:day:${day}`, PER_DAY_TOTAL, 90000))) return json({ reply: FALLBACK_REPLY, fallback: true })
+      if (!(await bump(env, `rl:ai:day:${day}`, PER_DAY_TOTAL, 90000))) return fallback('daily-limit')
     }
 
     const live = await liveContent(env)
-    const out = await env.AI.run(MODEL, {
-      messages: [{ role: 'system', content: buildSystemPrompt(live) }, ...messages],
-      max_tokens: 220,
-      temperature: 0.4,
-    })
-    const reply = cleanReply(out?.response)
-    if (!reply) return json({ reply: FALLBACK_REPLY, fallback: true })
-    return json({ reply })
-  } catch {
-    return json({ reply: FALLBACK_REPLY, fallback: true })
+    const prompt = [{ role: 'system', content: buildSystemPrompt(live) }, ...messages]
+    let reply = ''
+    for (const model of [MODEL, BACKUP_MODEL]) {
+      try {
+        const out = await env.AI.run(model, { messages: prompt, max_tokens: 220, temperature: 0.4 })
+        reply = cleanReply(out?.response)
+        if (reply) break
+      } catch (err) {
+        console.error('assistant: model failed', model, String(err?.message || err).slice(0, 300))
+      }
+    }
+    return reply ? json({ reply }) : fallback('model-error')
+  } catch (err) {
+    console.error('assistant: unexpected error', String(err?.message || err).slice(0, 300))
+    return fallback('error')
   }
+}
+
+// Open /api/assistant in a browser to check the setup. It only reports yes/no, never any secrets.
+export async function onRequestGet({ env }) {
+  return json({ ai: Boolean(env.AI), kv: Boolean(env.DB), model: MODEL })
 }
