@@ -12,7 +12,7 @@ import ClosingGem from '../components/ClosingGem'
 export default function Home() {
   return (
     <>
-      <title>Apex Studios | Websites for Hotels, Lodges and Restaurants</title>
+      <title>Apex Studios | Websites, M-Pesa, Automation and AI for Kenyan Businesses</title>
       <div className="relative">
         <Hero />
         <div className="relative z-10 rounded-t-3xl border-t border-paper/10 bg-ink">
