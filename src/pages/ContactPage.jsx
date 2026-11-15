@@ -206,10 +206,10 @@ export default function ContactPage() {
         )}
         {freeCheck && (
           <div className="mt-10 max-w-2xl rounded-2xl border border-amber/60 bg-surface p-6">
-            <p className="text-lg font-semibold text-amber">Free website check</p>
+            <p className="text-lg font-semibold text-amber">Free digital check</p>
             <p className="mt-2 text-muted">
-              Paste the link to your website or Google listing in the message below, and tell me whether you want more
-              bookings, orders or calls. I&apos;ll reply with three quick fixes. No cost, no obligation.
+              Paste the link to your website, Google listing or Instagram page in the message below, and tell me whether you
+              want more bookings, more orders or faster replies. I&apos;ll reply with three quick fixes. No cost, no obligation.
             </p>
           </div>
         )}

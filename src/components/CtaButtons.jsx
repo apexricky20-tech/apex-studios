@@ -13,7 +13,7 @@ export default function CtaButtons({ topic, className = '', style }) {
         to="/contact?offer=free-check"
         className="rounded-full bg-paper px-8 py-4 text-sm font-semibold uppercase tracking-wider text-ink transition-colors hover:bg-amber"
       >
-        Get a free website check
+        Get a free digital check
       </Link>
       {wa && (
         <a
