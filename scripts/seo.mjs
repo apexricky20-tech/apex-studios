@@ -28,6 +28,7 @@ import { branding } from '../src/data/branding.js'
 import { googleBusinessProfile } from '../src/data/googleBusinessProfile.js'
 import { mpesaPayments } from '../src/data/mpesaPayments.js'
 import { whatsappAutomation } from '../src/data/whatsappAutomation.js'
+import { aiAssistant } from '../src/data/aiAssistant.js'
 import { carePlans } from '../src/data/carePlans.js'
 import { COST_ANSWER } from '../src/data/pricing.js'
 
@@ -58,6 +59,7 @@ const servicePages = [
   ['/google-business-profile', googleBusinessProfile],
   ['/mpesa-payments', mpesaPayments],
   ['/whatsapp-automation', whatsappAutomation],
+  ['/ai-assistant', aiAssistant],
   ['/care-plans', carePlans],
 ]
 
@@ -72,7 +74,7 @@ const routes = [
     path: '/services',
     title: 'Services | Apex Studios',
     description:
-      'Website design, development, automation, M-Pesa payments, WhatsApp automation, branding, Google Business Profile and website care plans for hotels, lodges and restaurants in Kenya.',
+      'Website design, development, automation, M-Pesa payments, WhatsApp automation, AI assistants, branding, Google Business Profile and website care plans for hotels, lodges and restaurants in Kenya.',
   },
   ...servicePages.map(([path, p]) => ({ path, title: p.title, description: p.description })),
   {

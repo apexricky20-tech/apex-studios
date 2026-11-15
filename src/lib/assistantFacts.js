@@ -7,6 +7,7 @@ import { branding } from '../data/branding.js'
 import { googleBusinessProfile } from '../data/googleBusinessProfile.js'
 import { mpesaPayments } from '../data/mpesaPayments.js'
 import { whatsappAutomation } from '../data/whatsappAutomation.js'
+import { aiAssistant } from '../data/aiAssistant.js'
 import { carePlans } from '../data/carePlans.js'
 import { pricing, priceText, PRICE_NOTE } from '../data/pricing.js'
 
@@ -18,6 +19,7 @@ const pages = [
   ['Google Business Profile', googleBusinessProfile],
   ['M-Pesa Payments', mpesaPayments],
   ['WhatsApp Automation', whatsappAutomation],
+  ['AI Assistant', aiAssistant],
   ['Care Plans', carePlans],
 ]
 
@@ -50,7 +52,7 @@ export function buildSystemPrompt({ site, contact, projects }) {
     `When the visitor wants a quote, wants to hire, or asks something you cannot answer, point them to WhatsApp or the contact form.`,
     '',
     'FACTS',
-    `Studio: We are Apex Studios. We build websites, Google Business Profiles, M-Pesa payments, WhatsApp automation and branding for hotels, lodges, restaurants and other local businesses, and we work remotely with clients across Kenya.`,
+    `Studio: We are Apex Studios. We build websites, Google Business Profiles, M-Pesa payments, WhatsApp automation, AI assistants and branding for hotels, lodges, restaurants and other local businesses, and we work remotely with clients across Kenya.`,
     `Founder: ${site.name}. ${site.role || ''}`.trim(),
     'Services:',
     ...pages.map(([name, p]) => `- ${name}: ${short(p.description, 220)}`),

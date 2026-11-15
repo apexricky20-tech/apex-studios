@@ -10,6 +10,7 @@ const pages = {
   Branding: '/branding',
   'M-Pesa Payments': '/mpesa-payments',
   'WhatsApp Automation': '/whatsapp-automation',
+  'AI Assistant': '/ai-assistant',
   'Care Plans': '/care-plans',
 }
 
@@ -85,6 +86,16 @@ const services = [
     ],
   },
   {
+    title: 'AI Assistant',
+    text: 'A chat assistant trained on your own prices, hours and menu. It answers customers day and night, captures bookings, and hands over to your team when a person is needed.',
+    items: [
+      'Answers from your approved facts',
+      'Booking and order capture',
+      'Hand-over to your team',
+      'Staff alerts',
+    ],
+  },
+  {
     title: 'Care Plans',
     text: 'Your website, looked after every month. Updates, security, backups and small changes, with a person to message when something needs fixing.',
     items: [
@@ -107,7 +118,7 @@ export default function Services({ asPage = false }) {
           <Heading className="mt-4 text-5xl md:text-7xl">{asPage ? 'Our services' : 'What we build'}</Heading>
         </div>
         <p className="max-w-md text-paper/70">
-          Eight services with one goal: helping hotels, lodges and restaurants get found,
+          Nine services with one goal: helping hotels, lodges and restaurants get found,
           trusted and booked.
         </p>
       </div>

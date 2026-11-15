@@ -10,6 +10,7 @@ export const SERVICE_CHOICES = [
   'Website Design',
   'M-Pesa Payments',
   'WhatsApp Automation',
+  'AI Assistant',
   'Branding',
   'Google Business Profile',
   'Not sure yet',

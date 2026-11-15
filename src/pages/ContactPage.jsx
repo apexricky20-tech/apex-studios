@@ -13,6 +13,7 @@ const services = [
   'Google Business Profile',
   'M-Pesa Payments',
   'WhatsApp Automation',
+  'AI Assistant',
   'Care Plans',
   'Not sure yet',
 ]

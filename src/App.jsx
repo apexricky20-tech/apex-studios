@@ -12,6 +12,7 @@ import AutomationPage from './pages/AutomationPage'
 import BrandingPage from './pages/BrandingPage'
 import MpesaPaymentsPage from './pages/MpesaPaymentsPage'
 import WhatsAppAutomationPage from './pages/WhatsAppAutomationPage'
+import AiAssistantPage from './pages/AiAssistantPage'
 import CarePlansPage from './pages/CarePlansPage'
 import ProcessPage from './pages/ProcessPage'
 import AboutPage from './pages/AboutPage'
@@ -42,6 +43,7 @@ export default function App() {
           <Route path="branding" element={<BrandingPage />} />
           <Route path="mpesa-payments" element={<MpesaPaymentsPage />} />
           <Route path="whatsapp-automation" element={<WhatsAppAutomationPage />} />
+          <Route path="ai-assistant" element={<AiAssistantPage />} />
           <Route path="care-plans" element={<CarePlansPage />} />
           <Route path="process" element={<ProcessPage />} />
           <Route path="about" element={<AboutPage />} />

@@ -9,6 +9,7 @@ export const pricing = {
   'Google Business Profile': { from: 5000, to: 5000, fixed: true },
   'M-Pesa Payments': { from: 15000, to: 20000 },
   'WhatsApp Automation': { from: 15000, to: 20000 },
+  'AI Assistant': { from: 15000, to: 25000 },
   'Care Plans': { from: 5000, to: 20000, monthly: true },
 }
 
@@ -26,4 +27,4 @@ export const PRICE_NOTE =
   'The final price depends on the features you need, and we agree it with you in writing before any work starts.'
 
 // Used by the FAQ (and its structured data), so keep it one plain paragraph.
-export const COST_ANSWER = `Typical prices: website design ${priceText('Website Design')}, development ${priceText('Development')}, automation ${priceText('Automation')}, branding ${priceText('Branding')}, Google Business Profile ${priceText('Google Business Profile')}, M-Pesa payments ${priceText('M-Pesa Payments')}, WhatsApp automation ${priceText('WhatsApp Automation')} and care plans ${priceText('Care Plans')}. ${PRICE_NOTE}`
+export const COST_ANSWER = `Typical prices: website design ${priceText('Website Design')}, development ${priceText('Development')}, automation ${priceText('Automation')}, branding ${priceText('Branding')}, Google Business Profile ${priceText('Google Business Profile')}, M-Pesa payments ${priceText('M-Pesa Payments')}, WhatsApp automation ${priceText('WhatsApp Automation')}, AI assistant setup ${priceText('AI Assistant')} and care plans ${priceText('Care Plans')}. ${PRICE_NOTE}`

@@ -12,6 +12,7 @@ const SERVICES = [
   ['Google Business Profile', '/google-business-profile'],
   ['M-Pesa Payments', '/mpesa-payments'],
   ['WhatsApp Automation', '/whatsapp-automation'],
+  ['AI Assistant', '/ai-assistant'],
   ['Care Plans', '/care-plans'],
 ]
 
