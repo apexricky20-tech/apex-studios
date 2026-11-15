@@ -40,14 +40,14 @@ export default function WorkPage() {
       <title>Our Work | Apex Studios</title>
       <meta
         name="description"
-        content="Selected projects by Apex Studios, a digital studio in Nairobi, Kenya."
+        content="Selected website projects by Apex Studios, a web design and development studio in Nairobi, Kenya."
       />
       <div className="mx-auto max-w-[1240px]">
         <div className="text-center">
           <p className="text-sm uppercase tracking-widest text-amber">Portfolio</p>
           <h1 className="mt-8 text-[clamp(3rem,9vw,8rem)] font-bold">Our Work</h1>
           <p className="mx-auto mt-8 max-w-xl text-xl text-muted md:text-2xl">
-            Selected projects for businesses in Kenya, each built to be found, trusted and used.
+            Selected websites for businesses in Kenya, each built to be found, trusted and used.
           </p>
         </div>
 

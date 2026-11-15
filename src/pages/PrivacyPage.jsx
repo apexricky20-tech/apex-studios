@@ -15,7 +15,7 @@ export default function PrivacyPage() {
     [
       'Who we are',
       <p key="a">
-        Apex Studios is a digital studio based in Nairobi, Kenya. We are responsible for the
+        Apex Studios is a web design and development studio based in Nairobi, Kenya. We are responsible for the
         personal information collected through this website. You can reach us at {mail}.
       </p>,
     ],

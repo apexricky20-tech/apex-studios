@@ -84,7 +84,7 @@ export default function Footer() {
             <Logo />
           </Link>
           <p className="mt-6 max-w-xs text-paper/70">
-            Websites, payments, automation and AI for Kenyan businesses, built to get you found and paid
+            Websites for hotels, lodges and restaurants, designed and built to get you found
             and booked.
           </p>
           <div className="mt-8 flex max-w-sm items-center justify-between gap-3 rounded-full border border-paper/20 p-2 pl-6">
