@@ -119,6 +119,7 @@ function Login({ onDone }) {
   return (
     <main className="grid min-h-svh place-items-center px-6">
       <form onSubmit={submit} className="w-full max-w-sm space-y-4">
+        <a href="/" className="inline-block text-sm text-muted transition-colors hover:text-amber">&larr; Back to site</a>
         <h1 className="text-3xl">Dashboard</h1>
         <input
           type="password"

@@ -6,7 +6,7 @@ export default function Breadcrumbs({ items }) {
   const all = [{ name: 'Home', to: '/' }, ...items]
   return (
     <nav aria-label="Breadcrumb" className="text-sm text-muted">
-      <ol className="flex flex-wrap items-center gap-x-2 gap-y-1">
+      <ol className="inline-flex flex-wrap items-center gap-x-2 gap-y-1 rounded-3xl border border-paper/10 bg-paper/5 px-4 py-2">
         {all.map((item, i) => {
           const last = i === all.length - 1
           return (

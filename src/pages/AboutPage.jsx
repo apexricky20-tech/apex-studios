@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import Breadcrumbs from '../components/Breadcrumbs'
 import Marquee from '../components/Marquee'
 import { useSite } from '../lib/content'
 
@@ -28,8 +29,11 @@ export default function AboutPage() {
         content="Apex Studios is a Nairobi digital studio that builds websites, M-Pesa payments, WhatsApp automation, AI assistants and brands for hotels, lodges and restaurants across Kenya."
       />
 
-      <section className="px-gutter pb-24 pt-40 text-center md:pb-32 md:pt-56">
-        <p className="text-sm font-medium uppercase tracking-widest text-amber">About</p>
+      <section className="px-gutter pb-24 pt-32 text-center md:pb-32 md:pt-40">
+        <div className="mx-auto max-w-[1240px] text-left">
+          <Breadcrumbs items={[{ name: 'About' }]} />
+        </div>
+        <p className="mt-16 text-sm font-medium uppercase tracking-widest text-amber md:mt-24">About</p>
         <h1 className="mx-auto mt-8 max-w-6xl text-[clamp(3rem,9vw,8rem)] font-bold">
           Great Places Deserve to Be <span className="text-amber">Found</span>
         </h1>

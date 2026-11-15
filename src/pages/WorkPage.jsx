@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useVisibleProjects } from '../lib/content'
+import Breadcrumbs from '../components/Breadcrumbs'
 
 function Card({ project }) {
   return (
@@ -43,7 +44,8 @@ export default function WorkPage() {
         content="Selected projects by Apex Studios, a digital studio in Nairobi, Kenya."
       />
       <div className="mx-auto max-w-[1240px]">
-        <div className="text-center">
+        <Breadcrumbs items={[{ name: 'Our Work' }]} />
+        <div className="mt-10 text-center">
           <p className="text-sm uppercase tracking-widest text-amber">Portfolio</p>
           <h1 className="mt-8 text-[clamp(3rem,9vw,8rem)] font-bold">Our Work</h1>
           <p className="mx-auto mt-8 max-w-xl text-xl text-muted md:text-2xl">

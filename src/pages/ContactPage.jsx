@@ -4,6 +4,7 @@ import { useContact, useSite } from '../lib/content'
 import { getRef, getSource } from '../lib/utm'
 import { waHref, waMessage } from '../lib/whatsapp'
 import { pricing } from '../data/pricing'
+import Breadcrumbs from '../components/Breadcrumbs'
 
 const services = [
   'Website Design',
@@ -186,7 +187,8 @@ export default function ContactPage() {
         content="Tell Apex Studios about your hotel, lodge or restaurant. Share what you need and we will reply with the next step."
       />
       <div className="mx-auto max-w-[1220px]">
-        <p className="text-sm uppercase tracking-widest text-muted">Contact</p>
+        <Breadcrumbs items={[{ name: 'Contact' }]} />
+        <p className="mt-10 text-sm uppercase tracking-widest text-muted">Contact</p>
         <h1 className="mt-8 max-w-4xl text-[clamp(3rem,7vw,6.5rem)] font-medium">
           Let&apos;s talk about your project
         </h1>
