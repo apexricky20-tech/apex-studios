@@ -3,6 +3,7 @@ import { Link, useSearchParams } from 'react-router-dom'
 import { useContact, useSite } from '../lib/content'
 import { getRef, getSource } from '../lib/utm'
 import { waHref, waMessage } from '../lib/whatsapp'
+import { pricing } from '../data/pricing'
 
 const services = [
   'Website Design',
@@ -16,10 +17,14 @@ const services = [
   'Not sure yet',
 ]
 
+const allPrices = Object.values(pricing)
+const lo = Math.min(...allPrices.map((p) => p.from))
+const hi = Math.max(...allPrices.map((p) => p.to))
+
 const before = [
   ['What to include', 'Your business name, a link to your current website or Google listing if you have one, what you want built, and when you need it live.'],
   ['What happens next', 'We read every message, reply with a few questions, and arrange a call if we are a good fit.'],
-  ['Cost', 'A quote follows the first call, once we understand the scope. We do not price from a form.'],
+  ['Cost', `Most projects fall between KES ${lo.toLocaleString('en-US')} and KES ${hi.toLocaleString('en-US')}, depending on the service and features. A written quote follows the first call, once we understand the scope.`],
 ]
 
 const input =
@@ -83,11 +88,18 @@ export default function ContactPage() {
   const contact = useContact()
   const site = useSite()
   const [status, setStatus] = useState('idle') // idle | sending | sent | mailto | error
-  const started = useRef(0)
+  const formToken = useRef({ value: '', at: 0 })
   const [params] = useSearchParams()
   const freeCheck = params.get('offer') === 'free-check'
+  // The server signs the moment the form opened, so the "not too fast" check cannot be faked by the browser.
+  const getToken = async () => {
+    const r = await fetch('/api/form-token')
+    formToken.current = { value: (await r.json()).token || '', at: Date.now() }
+  }
   useEffect(() => {
-    started.current = Date.now()
+    if (!contact.endpoint) return
+    getToken().catch(() => {})
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const onSubmit = async (e) => {
@@ -112,7 +124,6 @@ export default function ContactPage() {
       page: window.location.pathname,
       source: getSource(),
       referrer: d.referrer || '',
-      elapsedMs: Date.now() - started.current,
       sentAt: new Date().toISOString(),
     }
 
@@ -137,10 +148,15 @@ export default function ContactPage() {
 
     setStatus('sending')
     try {
+      if (!formToken.current.value) await getToken() // the first request failed (slow network): ask again
+      // The server quietly drops anything sent within 2 seconds of the form opening (that is how bots behave).
+      // A quick person, or a browser that autofills, must never lose their message, so wait out the difference here.
+      const wait = 2300 - (Date.now() - formToken.current.at)
+      if (wait > 0) await new Promise((ok) => setTimeout(ok, wait))
       const res = await fetch(contact.endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
+        body: JSON.stringify({ ...payload, formToken: formToken.current.value }),
       })
       if (!res.ok) throw new Error('bad status')
       form.reset()

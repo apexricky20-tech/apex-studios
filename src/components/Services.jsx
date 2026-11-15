@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import { priceText } from '../data/pricing'
 
 // Add a line here when a service gets its own page
 const pages = {
@@ -148,6 +149,7 @@ export default function Services({ asPage = false }) {
                       </li>
                     ))}
                   </ul>
+                  <p className="mt-5 text-sm font-medium text-amber">{priceText(s.title)}</p>
                 </div>
               </Row>
             </li>

@@ -1,6 +1,8 @@
+import { COST_ANSWER } from '../data/pricing'
+
 // Keep in sync with the faqs list in scripts/seo.mjs (it writes the FAQ structured data).
 const faqs = [
-  ['What does it cost?', 'Every project is quoted after a first call, once the scope is clear. Nothing is priced from a form.'],
+  ['What does it cost?', COST_ANSWER],
   ['How long does it take?', 'It depends on the size of the site. You get a timeline with your quote.'],
   ['Can the website be updated without a developer?', 'Yes. You get a simple dashboard for posting updates, no developer needed.'],
   ['Will it work on phones?', 'Every site is built mobile-first and tested on real devices.'],

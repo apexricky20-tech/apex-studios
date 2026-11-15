@@ -29,7 +29,15 @@ export default function PrivacyPage() {
         </p>
         <p>
           <strong className="font-medium text-paper">To stop spam and abuse.</strong> We briefly keep a counter linked to
-          your IP address so one visitor cannot flood the form. These counters expire on their own, after about an hour.
+          your IP address so one visitor cannot flood the form or the chat. These counters expire on their own, after about
+          an hour.
+        </p>
+        <p>
+          <strong className="font-medium text-paper">When you use the chat assistant.</strong> The chat on this site is an
+          AI assistant, not a person. The questions you type are sent to Cloudflare&apos;s AI service, which writes the
+          reply. We do not keep a copy of the conversation, and the assistant never needs your name, phone number or
+          payment details, so please do not type passwords, payment details or other private information into it. To
+          speak to a person, use WhatsApp or the contact form.
         </p>
         <p>
           <strong className="font-medium text-paper">Visit statistics.</strong> We may use Cloudflare Web Analytics to see
@@ -40,7 +48,8 @@ export default function PrivacyPage() {
     [
       'How we use it',
       <p key="a">
-        We use your details to reply to your enquiry, to prepare a quote and, if we work together, to run the project. We
+        We use your details to reply to your enquiry, to prepare a quote and, if we work together, to run the project.
+        Chat questions are used only to produce a reply. We
         do not sell your information and we do not send marketing emails unless you ask for them. When a new message
         arrives, we may be notified through a private messaging service such as Telegram so that we can reply quickly.
       </p>,
@@ -49,7 +58,7 @@ export default function PrivacyPage() {
       'Where it is stored',
       <p key="a">
         Messages are stored with Cloudflare, which hosts this website. Cloudflare and our notification services may
-        process data on servers outside Kenya. This site also loads a font from Fontshare, so your browser contacts that
+        process data on servers outside Kenya, and the same goes for the AI service that answers chat questions. This site also loads a font from Fontshare, so your browser contacts that
         service and it receives your IP address.
       </p>,
     ],
@@ -89,7 +98,7 @@ export default function PrivacyPage() {
       <meta name="description" content="What personal information the Apex Studios website collects, why, and how to ask us about it." />
       <LegalPage
         title="Privacy Policy"
-        updated="6 November 2026"
+        updated="15 November 2026"
         intro="This page explains what personal information this website collects, why we collect it and what you can do about it."
         sections={sections}
       />

@@ -7,6 +7,6 @@ export const contact = {
   youtube: 'https://www.youtube.com/@jawan_apex',
   // Where the contact form POSTs JSON (your dashboard inbox).
   // Leave empty and the form opens the visitor's email app instead.
-  // Payload: { name, email, company, service, message, page, elapsedMs, sentAt }
+  // Payload: { name, email, phone, company, service, message, page, source, referrer, formToken, sentAt }
   endpoint: '/api/contact',
 }

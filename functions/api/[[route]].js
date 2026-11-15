@@ -8,6 +8,15 @@ const enc = new TextEncoder()
 const COOKIE = '__Host-session'
 const SESSION_DAYS = 7
 const MAX_MEDIA = 2 * 1024 * 1024
+const SESSION_MS = SESSION_DAYS * 86400000
+const REVOKE_KEY = 'auth:validAfter' // sessions issued before this time are no longer accepted
+const FORM_MIN_MS = 2000 // a human cannot fill the form faster than this
+const FORM_MAX_MS = 12 * 3600 * 1000 // a form left open longer than this must be reloaded
+const CONTACT_PER_DAY = 100 // overall cap, so many connections together cannot flood the inbox or Telegram
+
+// Plain addresses only. Characters like ? & = % , ; are rejected because the dashboard's "Reply by email"
+// link and mail clients treat them as commands (for example ?bcc=).
+const EMAIL_RE = /^[A-Za-z0-9._+'-]+@[A-Za-z0-9-]+(\.[A-Za-z0-9-]+)*\.[A-Za-z]{2,}$/
 
 class HttpError extends Error {
   constructor(status, message) {
@@ -50,7 +59,29 @@ async function isAuthed(request, env) {
   if (!m) return false
   const [exp, sig] = m[1].split('.')
   if (!exp || !sig || !(Number(exp) > Date.now())) return false
-  return safeEqual(sig, await hmac(env.SESSION_SECRET, exp))
+  if (!safeEqual(sig, await hmac(env.SESSION_SECRET, exp))) return false
+  // The token was issued SESSION_MS before it expires. Logging out stores a "valid after" time,
+  // which cancels every session issued before it. (KV can take up to about a minute to spread that worldwide.)
+  const issuedAt = Number(exp) - SESSION_MS
+  const validAfter = Number(await env.DB.get(REVOKE_KEY)) || 0
+  return issuedAt > validAfter
+}
+
+// ---------- contact form token: proves the page was open for a moment before it was sent ----------
+// The server signs the time the form was opened; the browser cannot invent or shorten it.
+// "form:" keeps these signatures different from login-session signatures.
+async function makeFormToken(env) {
+  const ts = Date.now()
+  return `${ts}.${await hmac(env.SESSION_SECRET, `form:${ts}`)}`
+}
+
+async function checkFormToken(env, token) {
+  const [ts, sig] = String(token || '').split('.')
+  if (!ts || !sig || !/^\d{10,16}$/.test(ts)) return 'bad'
+  if (!safeEqual(sig, await hmac(env.SESSION_SECRET, `form:${ts}`))) return 'bad'
+  const age = Date.now() - Number(ts)
+  if (age < 0 || age > FORM_MAX_MS) return 'expired'
+  return age < FORM_MIN_MS ? 'fast' : 'ok'
 }
 
 function sameOrigin(request, url) {
@@ -95,7 +126,7 @@ function cleanContact(c = {}) {
   const out = {}
   if ('email' in c) {
     out.email = str(c.email, 200)
-    if (out.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(out.email)) throw new HttpError(400, 'Email address is not valid.')
+    if (out.email && !EMAIL_RE.test(out.email)) throw new HttpError(400, 'Email address is not valid.')
   }
   if ('whatsapp' in c) out.whatsapp = str(c.whatsapp, 30).replace(/\D/g, '')
   if ('instagram' in c) out.instagram = url(c.instagram)
@@ -255,6 +286,11 @@ export async function onRequest({ request, env, waitUntil }) {
       return json(c, 200, { 'Cache-Control': 'public, max-age=30' })
     }
 
+    if (path === 'form-token' && method === 'GET') {
+      // Without SESSION_SECRET there is nothing to sign with; the form then skips the timing check.
+      return json({ token: env.SESSION_SECRET ? await makeFormToken(env) : '' })
+    }
+
     if (path === 'contact' && method === 'POST') {
       if (!sameOrigin(request, u)) throw new HttpError(403, 'Bad origin.')
       const b = await readJson(request)
@@ -262,13 +298,22 @@ export async function onRequest({ request, env, waitUntil }) {
       const email = str(b.email, 200)
       const phone = str(b.phone, 30).replace(/[^\d+()\-\s]/g, '')
       const message = str(b.message, 5000)
-      const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+      const emailOk = EMAIL_RE.test(email)
       const phoneOk = phone.replace(/\D/g, '').length >= 9
       if (!name || !message || (email && !emailOk) || (!emailOk && !phoneOk)) {
         throw new HttpError(400, 'Please add your name, a message, and a valid phone number or email.')
       }
-      if (b.website || !(Number(b.elapsedMs) >= 2000)) return json({ ok: true }) // bot: pretend it worked
+      if (b.website) return json({ ok: true }) // hidden field filled: a bot, pretend it worked
+      if (env.SESSION_SECRET) {
+        const t = await checkFormToken(env, b.formToken)
+        if (t === 'fast') return json({ ok: true }) // sent faster than a person can type: pretend it worked
+        if (t !== 'ok') throw new HttpError(400, 'This page has been open for a while. Please reload it and send again.')
+      }
       if (!(await bump(env, `rl:contact:${ip}`, 5, 3600))) throw new HttpError(429, 'Too many messages. Please try again later.')
+      const day = new Date().toISOString().slice(0, 10)
+      if (!(await bump(env, `rl:contact:day:${day}`, CONTACT_PER_DAY, 90000))) {
+        throw new HttpError(429, 'We are getting a lot of messages right now. Please message us on WhatsApp instead.')
+      }
       const id = `${String(9999999999999 - Date.now()).padStart(13, '0')}-${randomHex(3)}`
       const m = {
         id,
@@ -325,6 +370,7 @@ export async function onRequest({ request, env, waitUntil }) {
       }
 
       if (path === 'admin/logout' && method === 'POST') {
+        if (await isAuthed(request, env)) await env.DB.put(REVOKE_KEY, String(Date.now()))
         return json({ ok: true }, 200, { 'Set-Cookie': `${COOKIE}=; Path=/; Max-Age=0; HttpOnly; Secure; SameSite=Strict` })
       }
 

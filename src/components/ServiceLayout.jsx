@@ -3,6 +3,7 @@ import { Link, useLocation } from 'react-router-dom'
 import Breadcrumbs from './Breadcrumbs'
 import { serviceNames } from '../lib/crumbs'
 import CtaButtons from './CtaButtons'
+import { priceText, PRICE_NOTE } from '../data/pricing'
 
 export default function ServiceLayout({ page }) {
   const { sections } = page
@@ -44,6 +45,12 @@ export default function ServiceLayout({ page }) {
         <p className="mt-10 max-w-3xl text-xl leading-relaxed text-muted md:text-2xl">
           {page.intro}
         </p>
+        {priceText(serviceNames[pathname]) && (
+          <p className="mt-8 max-w-3xl text-lg leading-relaxed text-paper/80">
+            <span className="font-medium text-amber">Typical price: {priceText(serviceNames[pathname])}.</span>{' '}
+            {PRICE_NOTE}
+          </p>
+        )}
 
         <div className="mt-28 grid gap-16 lg:grid-cols-[260px_1fr] lg:gap-24">
           <aside className="hidden lg:block">

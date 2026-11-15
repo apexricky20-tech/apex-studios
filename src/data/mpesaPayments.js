@@ -130,7 +130,7 @@ export const mpesaPayments = {
         },
         {
           h: 'What does it cost?',
-          p: 'Safaricom charges its own transaction fees, which depend on your account type. Our fee is quoted after a first call, once we know what you need.'
+          p: 'Safaricom charges its own transaction fees, which depend on your account type. Our own fee is typically KES 15,000 to 20,000 depending on the features, and we confirm it in a quote after a first call.'
         },
         {
           h: 'How long does it take?',

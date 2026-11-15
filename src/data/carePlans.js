@@ -122,7 +122,7 @@ export const carePlans = {
       blocks: [
         {
           h: 'What does a care plan cost?',
-          p: 'It is a fixed monthly fee based on what is included. We quote after a first call.'
+          p: 'It is a fixed monthly fee based on what is included, typically KES 5,000 to 20,000 a month. We confirm it in a quote after a first call.'
         },
         {
           h: 'Is a care plan required?',

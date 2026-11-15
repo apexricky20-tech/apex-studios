@@ -29,6 +29,7 @@ import { googleBusinessProfile } from '../src/data/googleBusinessProfile.js'
 import { mpesaPayments } from '../src/data/mpesaPayments.js'
 import { whatsappAutomation } from '../src/data/whatsappAutomation.js'
 import { carePlans } from '../src/data/carePlans.js'
+import { COST_ANSWER } from '../src/data/pricing.js'
 
 const DEFAULT_SITE_URL = 'https://apex-studios-8xq.pages.dev'
 const SITE_URL = (process.env.SITE_URL || DEFAULT_SITE_URL).replace(/\/+$/, '')
@@ -177,7 +178,7 @@ function businessData() {
 
 
 const faqs = [
-  ['What does it cost?', 'Every project is quoted after a first call, once the scope is clear. Nothing is priced from a form.'],
+  ['What does it cost?', COST_ANSWER],
   ['How long does it take?', 'It depends on the size of the site. You get a timeline with your quote.'],
   ['Can the website be updated without a developer?', 'Yes. You get a simple dashboard for posting updates, no developer needed.'],
   ['Will it work on phones?', 'Every site is built mobile-first and tested on real devices.'],

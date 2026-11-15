@@ -209,7 +209,7 @@ function Inbox({ onCount }) {
                     <p className="mt-3 whitespace-pre-wrap">{msg.message}</p>
                     <div className="mt-5 flex flex-wrap gap-2">
                       {msg.phone && <a className={btnMain} href={`https://wa.me/${waDigits(msg.phone)}`} target="_blank" rel="noreferrer">Reply on WhatsApp</a>}
-                      {msg.email && <a className={msg.phone ? btn : btnMain} href={`mailto:${msg.email}?subject=${encodeURIComponent('Re: your enquiry to Apex Studios')}`}>Reply by email</a>}
+                      {msg.email && <a className={msg.phone ? btn : btnMain} href={`mailto:${encodeURIComponent(msg.email).replace(/%40/g, '@')}?subject=${encodeURIComponent('Re: your enquiry to Apex Studios')}`}>Reply by email</a>}
                       <button className={btn} onClick={() => unread(m.id)}>Mark unread</button>
                       <button className={btn} onClick={() => del(m.id)}>Delete</button>
                     </div>

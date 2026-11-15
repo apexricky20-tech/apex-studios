@@ -95,14 +95,26 @@ Bindings and secrets only apply to the next deployment, so redeploy after changi
 ## How the API and dashboard are protected
 
 - The password lives only in Cloudflare. The sign-in cookie is `HttpOnly`, `Secure` and `SameSite=Strict`, and lasts 7 days.
-- Five wrong passwords from one connection locks sign-in for 15 minutes.
+- Five wrong passwords from one connection locks sign-in for 15 minutes. This limit is approximate (see "Extra protection for the dashboard" below).
+- Signing out cancels every sign-in issued before it, on all devices. It can take up to about a minute to take effect everywhere.
 - Write requests from other websites are refused.
-- The contact form allows 5 messages an hour per connection and silently drops bots using a hidden field and a timing check.
+- The contact form allows 5 messages an hour per connection and about 100 a day overall. It silently drops bots using a hidden field and a timing check, and the timer is a signed token from `/api/form-token`, so the browser cannot fake it.
 - Everything the browser sends is cleaned and length-limited on the server, and links are limited to `/`, `http://` and `https://`.
 - Uploaded images must be JPEG, PNG or WebP (checked by file contents) and under 2 MB.
-- Security headers are set in `public/_headers`.
+- Security headers, including a Content-Security-Policy, are set in `public/_headers`. The policy only allows scripts from this site, so add any new third-party script, font or embed host there or the browser will block it.
 
 The dashboard backup contains your dashboard content and all messages. Uploaded images are not included.
+
+### Extra protection for the dashboard (recommended)
+
+The password limit above is stored in KV, which cannot count perfectly when many guesses arrive at once. Put Cloudflare Access in front of the dashboard so the password page is never reachable by strangers:
+
+1. Cloudflare dashboard > Zero Trust > Access > Applications > Add an application > Self-hosted.
+2. Add your site's hostname twice: path `admin`, and path `api/admin`. Add your custom domain too once you have one.
+3. Add a policy: Action Allow, Include > Emails > your own email address. Sign-in is by a one-time code sent to that address.
+4. Save. Open `/admin` in a private window to check that it now asks for your email first.
+
+If you would rather not use Access, add a rate limiting rule instead (Security > WAF > Rate limiting rules) on requests where the URI path equals `/api/admin/login`.
 
 ## Adding a service page
 
@@ -111,6 +123,9 @@ The dashboard backup contains your dashboard content and all messages. Uploaded 
 3. Register it in `src/App.jsx`, `src/components/Services.jsx`, `src/components/Nav.jsx`, `src/components/Footer.jsx`, `src/lib/crumbs.js` and `scripts/seo.mjs`. Add it to the Contact form's "What you need" list and the dashboard's service dropdown if you want it there.
 
 ## Gotchas
+
+- **Content-Security-Policy:** see `public/_headers`. If a new embed, analytics script or font does not appear on the live site, check the browser console for a "Refused to load" message and add that host to the policy.
+- **No inline scripts:** put page-start code in `public/boot.js`, not in a `<script>` tag in `index.html`.
 
 - **Heading styles:** the `h1`, `h2` and `h3` rule in `src/index.css` sits outside Tailwind's layers, so it wins over utility classes such as `font-bold` or `tracking-*` on headings. Give a heading its own class in `index.css` when it needs a different weight or spacing.
 - **Scroll reveals:** `Motion.jsx` fades in `h2`, `h3`, paragraphs, list items and pill-style links (`rounded-full` links) automatically. The header, footer, menu, marquee and the hero text are skipped (see its `SKIP` selector). Add `data-hero` to anything else that must not animate.
