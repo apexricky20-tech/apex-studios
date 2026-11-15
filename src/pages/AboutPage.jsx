@@ -22,10 +22,10 @@ export default function AboutPage() {
   const site = useSite()
   return (
     <div>
-      <title>About Apex Studios | Nairobi Web Design Studio</title>
+      <title>About Apex Studios | Nairobi Digital Studio</title>
       <meta
         name="description"
-        content="Apex Studios is a Nairobi studio that designs and builds websites, Google Business Profiles and brands for hotels, lodges and restaurants across Kenya."
+        content="Apex Studios is a Nairobi digital studio that builds websites, M-Pesa payments, WhatsApp automation, AI assistants and brands for hotels, lodges and restaurants across Kenya."
       />
 
       <section className="px-gutter pb-24 pt-40 text-center md:pb-32 md:pt-56">
@@ -34,8 +34,8 @@ export default function AboutPage() {
           Great Places Deserve to Be <span className="text-amber">Found</span>
         </h1>
         <p className="mx-auto mt-10 max-w-2xl text-lg text-muted md:text-xl">
-          Apex Studios is a Nairobi studio that designs and builds websites, Google Business
-          Profiles and brands for hotels, lodges and restaurants across Kenya.
+          Apex Studios is a Nairobi digital studio that builds websites, M-Pesa payments, WhatsApp
+          automation, AI assistants and brands for hotels, lodges and restaurants across Kenya.
         </p>
       </section>
 

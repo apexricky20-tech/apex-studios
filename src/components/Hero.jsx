@@ -27,10 +27,11 @@ export default function Hero() {
 
       {/* Layer 2: the text sits over the portrait, then scrolls away */}
       <div data-hero className="relative z-10 -mt-[100svh] flex h-svh flex-col items-center justify-end px-gutter pb-8 text-center">
-        <h1 className="sr-only">Websites for hotels, lodges and restaurants</h1>
+        <h1 className="sr-only">Websites, payments, automation and AI for hotels, lodges and restaurants</h1>
         <p className="hero-rise max-w-2xl text-base text-paper md:text-lg" style={{ animationDelay: '250ms' }}>
-          I&apos;m {site.name}. I build websites for hotels, lodges and restaurants that turn
-          visitors into direct bookings and orders, with M-Pesa and WhatsApp connected.
+          I&apos;m {site.name}. I build the digital systems hotels, lodges and restaurants run on: websites,
+          M-Pesa payments, WhatsApp automation and AI assistants that turn visitors into direct bookings,
+          orders and paying guests.
         </p>
 
         <CtaButtons className="hero-rise mt-6 justify-center" style={{ animationDelay: '400ms' }} />

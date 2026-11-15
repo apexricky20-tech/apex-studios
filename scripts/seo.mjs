@@ -36,7 +36,7 @@ const DEFAULT_SITE_URL = 'https://apex-studios-8xq.pages.dev'
 const SITE_URL = (process.env.SITE_URL || DEFAULT_SITE_URL).replace(/\/+$/, '')
 const SITE_NAME = 'Apex Studios'
 const SHARE_IMAGE = `${SITE_URL}/og-image.png`
-const SHARE_IMAGE_ALT = 'Apex Studios: websites for hotels, lodges and restaurants'
+const SHARE_IMAGE_ALT = 'Apex Studios: websites, payments, automation and AI for hotels, lodges and restaurants'
 
 // Pages the owner edited in the dashboard live in KV, not in src/data. So the build asks the live site
 // for them (GET /api/content is public and only returns published projects) and uses them instead of the
@@ -71,9 +71,9 @@ if (!existsSync(template)) {
   process.exit(1)
 }
 
-const HOME_TITLE = 'Apex Studios | Websites for Hotels, Lodges and Restaurants'
+const HOME_TITLE = 'Apex Studios | Websites, M-Pesa, Automation and AI for Hotels, Lodges and Restaurants'
 const HOME_DESCRIPTION =
-  'Apex Studios designs and builds fast, immersive websites for hotels, lodges and restaurants.'
+  'Apex Studios builds the digital systems hotels, lodges and restaurants in Kenya run on: websites, M-Pesa payments, WhatsApp automation, AI assistants and branding.'
 
 const servicePages = [
   ['/website-design', websiteDesign],
@@ -88,11 +88,11 @@ const servicePages = [
 ]
 
 const routes = [
-  { path: '/', title: HOME_TITLE, description: HOME_DESCRIPTION, h1: 'Websites for hotels, lodges and restaurants' },
+  { path: '/', title: HOME_TITLE, description: HOME_DESCRIPTION, h1: 'Websites, payments, automation and AI for hotels, lodges and restaurants' },
   {
     path: '/work',
     title: 'Our Work | Apex Studios',
-    description: 'Selected website projects by Apex Studios, a web design and development studio in Nairobi, Kenya.',
+    description: 'Selected projects by Apex Studios, a digital studio in Nairobi, Kenya.',
   },
   {
     path: '/services',
@@ -108,9 +108,9 @@ const routes = [
   },
   {
     path: '/about',
-    title: 'About Apex Studios | Nairobi Web Design Studio',
+    title: 'About Apex Studios | Nairobi Digital Studio',
     description:
-      'Apex Studios is a Nairobi studio that designs and builds websites, Google Business Profiles and brands for hotels, lodges and restaurants across Kenya.',
+      'Apex Studios is a Nairobi digital studio that builds websites, M-Pesa payments, WhatsApp automation, AI assistants and brands for hotels, lodges and restaurants across Kenya.',
   },
   {
     path: '/contact',
@@ -380,7 +380,7 @@ writeFileSync(
 const llmsLines = [
   `# ${SITE_NAME}`,
   '',
-  `> ${SITE_NAME} is a web design and development studio in Nairobi, Kenya. It builds websites, Google Business Profiles, automation and branding for hotels, lodges and restaurants.`,
+  `> ${SITE_NAME} is a digital studio in Nairobi, Kenya. It builds websites, M-Pesa payments, WhatsApp automation, AI assistants, Google Business Profiles and branding for hotels, lodges and restaurants.`,
   '',
   '## Services',
   ...servicePages.map(([path, p]) => `- [${serviceNames[path]}](${urlFor(path)}): ${p.description}`),
