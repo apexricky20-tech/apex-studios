@@ -24,7 +24,12 @@ export function cleanPhone(raw) {
 }
 
 // Phones take 5 MB photos. Shrink in the browser first: smaller to send, and it fits the free storage limits.
-export async function shrinkPhoto(file) {
+const DEFAULT_ATTEMPTS = [
+  [1280, 0.75],
+  [1024, 0.55],
+  [800, 0.5],
+]
+export async function shrinkPhoto(file, { attempts = DEFAULT_ATTEMPTS, maxBytes = 780 * 1024 } = {}) {
   if (!file.type.startsWith('image/')) throw new Error('That is not a photo. Please choose a JPEG, PNG or WebP image.')
   if (file.size > 25 * 1024 * 1024) throw new Error('That photo is over 25 MB. Please choose a smaller one.')
   let bmp
@@ -33,11 +38,6 @@ export async function shrinkPhoto(file) {
   } catch {
     throw new Error('That photo could not be read. Try a JPEG, PNG or WebP image.')
   }
-  const attempts = [
-    [1280, 0.75],
-    [1024, 0.55],
-    [800, 0.5],
-  ]
   for (const [max, quality] of attempts) {
     const scale = Math.min(1, max / Math.max(bmp.width, bmp.height))
     const c = document.createElement('canvas')
@@ -47,13 +47,33 @@ export async function shrinkPhoto(file) {
     // Older Safari cannot write WebP and quietly returns PNG, which is much bigger, so ask for JPEG there.
     let blob = await new Promise((res) => c.toBlob(res, 'image/webp', quality))
     if (!blob || blob.type !== 'image/webp') blob = await new Promise((res) => c.toBlob(res, 'image/jpeg', quality))
-    if (blob && blob.size <= 780 * 1024) {
+    if (blob && blob.size <= maxBytes) {
       bmp.close?.()
       return blob
     }
   }
   bmp.close?.()
   throw new Error('That photo is too detailed to send. Please try a different one.')
+}
+
+// Photos sent to the assistant are read as a base64 data URL, and the chat keeps a tiny thumbnail for its history.
+export const blobToDataUrl = (blob) =>
+  new Promise((resolve, reject) => {
+    const r = new FileReader()
+    r.onload = () => resolve(String(r.result))
+    r.onerror = () => reject(new Error('That photo could not be read. Try a JPEG, PNG or WebP image.'))
+    r.readAsDataURL(blob)
+  })
+
+export async function thumbOf(blob, max = 180) {
+  const bmp = await createImageBitmap(blob)
+  const scale = Math.min(1, max / Math.max(bmp.width, bmp.height))
+  const c = document.createElement('canvas')
+  c.width = Math.max(1, Math.round(bmp.width * scale))
+  c.height = Math.max(1, Math.round(bmp.height * scale))
+  c.getContext('2d').drawImage(bmp, 0, 0, c.width, c.height)
+  bmp.close?.()
+  return c.toDataURL('image/jpeg', 0.6)
 }
 
 export async function uploadPhoto(blob) {
