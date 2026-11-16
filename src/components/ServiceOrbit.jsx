@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { calm } from '../lib/fx'
+import { bloom, clamp01, easeOut, nodeT, slot, smooth } from '../lib/bloom'
 
 // Simple 24x24 line glyphs, one per service. Add a line here when a service gets a page.
 const SERVICES = [
@@ -19,9 +20,11 @@ const SERVICES = [
 ]
 const PHONE_SET = ['Website Design', 'Automation', 'M-Pesa Payments', 'AI Assistant']
 
-// Ring of service links circling whatever is passed as children (the crystal).
+// Ring of service links circling whatever is passed as children (the blob).
 // Plain HTML links on a CSS transform loop: no extra GPU work, and they stay real, crawlable links.
-export default function ServiceOrbit({ running, children }) {
+// With `bloomOn`, scrolling the section drives them out of the blob one by one (progress goes to
+// lib/bloom.js, which the 3D canvas reads), and the pointer position is shared the same way.
+export default function ServiceOrbit({ running, bloomOn = false, children }) {
   const box = useRef(null)
   const items = useRef([])
   const [phone] = useState(() => window.matchMedia('(max-width: 767px)').matches)
@@ -34,30 +37,54 @@ export default function ServiceOrbit({ running, children }) {
     let width = el.clientWidth
     let angle = 0
     let speed = base
-    let target = base
+    let base_target = base
     let paused = false
     let raf = 0
     let last = 0
 
+    // Scroll progress of the bloom, pointer basis and "keyboard has focus in the ring" override.
+    let target = bloomOn ? 0 : 1
+    let shown = target
+    let forced = false
+    let cx = 0
+    let cy = 0
+    let half = 1
+    const measure = () => {
+      const r = el.getBoundingClientRect()
+      cx = r.left + r.width / 2
+      cy = r.top + r.height / 2
+      half = Math.max(r.width / 2, 1)
+      if (!bloomOn) return
+      const vh = window.innerHeight
+      const byBox = clamp01((vh - cy) / (vh * 0.5)) // starts as the box enters, done when it is centred
+      // On tall screens the page may end before the box reaches the middle: finish the bloom at the end.
+      const left = document.documentElement.scrollHeight - (window.scrollY + vh)
+      target = Math.max(byBox, clamp01(1 - left / 240))
+    }
+
     const place = () => {
-      const rx = width * 0.42
-      const ry = width * 0.15
+      bloom.p = forced ? 1 : shown
+      bloom.angle = angle
+      bloom.w = width
+      bloom.n = nodes.length
       nodes.forEach((node, i) => {
         if (!node) return
-        const a = angle + (i * Math.PI * 2) / nodes.length
-        const s = Math.sin(a)
-        const depth = (s + 1) / 2
-        node.style.transform = `translate(-50%,-50%) translate(${Math.cos(a) * rx}px,${s * ry}px) scale(${0.72 + 0.38 * depth})`
-        node.style.opacity = String(0.4 + 0.6 * depth)
-        node.style.zIndex = s > 0 ? '2' : '0'
+        const sl = slot(i, nodes.length, angle, width)
+        const t = forced ? 1 : nodeT(i, nodes.length, shown)
+        const e = easeOut(t)
+        node.style.transform = `translate(-50%,-50%) translate(${sl.x * e}px,${sl.y * e}px) scale(${Math.max((0.72 + 0.38 * sl.d) * smooth(0.6, 1, t), 0.01)})`
+        node.style.opacity = String((0.4 + 0.6 * sl.d) * smooth(0.7, 1, t))
+        node.style.pointerEvents = t > 0.9 ? '' : 'none'
+        node.style.zIndex = sl.s > 0 ? '2' : '0'
       })
     }
     const tick = (now) => {
       raf = 0
       const dt = Math.min((now - (last || now)) / 1000, 0.05)
       last = now
-      speed += ((paused ? 0 : target) - speed) * Math.min(dt * 5, 1)
+      speed += ((paused ? 0 : base_target) - speed) * Math.min(dt * 5, 1)
       angle += speed * dt
+      shown += (target - shown) * Math.min(dt * 8, 1)
       place()
       raf = requestAnimationFrame(tick)
     }
@@ -71,7 +98,7 @@ export default function ServiceOrbit({ running, children }) {
     const release = () => (paused = false)
     const steer = (e) => {
       const r = el.getBoundingClientRect()
-      target = base + Math.max(-1, Math.min(1, (e.clientX - r.left - r.width / 2) / r.width)) * 0.12
+      base_target = base + Math.max(-1, Math.min(1, (e.clientX - r.left - r.width / 2) / r.width)) * 0.12
     }
     const list_ = el.querySelector('ul')
     list_.addEventListener('pointerover', hold)
@@ -80,6 +107,29 @@ export default function ServiceOrbit({ running, children }) {
     list_.addEventListener('focusout', release)
     el.addEventListener('pointermove', steer)
 
+    const follow = (e) => {
+      bloom.px = (e.clientX - cx) / half
+      bloom.py = (cy - e.clientY) / half
+    }
+    const rest = () => {
+      bloom.px = 0
+      bloom.py = 0
+    }
+    const open = () => (forced = true)
+    const close = () => (forced = false)
+    const live = bloomOn && running
+    if (bloomOn) {
+      list_.addEventListener('focusin', open)
+      list_.addEventListener('focusout', close)
+    }
+    if (live) {
+      window.addEventListener('scroll', measure, { passive: true })
+      window.addEventListener('resize', measure, { passive: true })
+      window.addEventListener('pointermove', follow, { passive: true })
+      document.documentElement.addEventListener('pointerleave', rest)
+    }
+    measure()
+    shown = target
     place()
     if (running && !calm()) raf = requestAnimationFrame(tick)
 
@@ -91,8 +141,15 @@ export default function ServiceOrbit({ running, children }) {
       list_.removeEventListener('focusin', hold)
       list_.removeEventListener('focusout', release)
       el.removeEventListener('pointermove', steer)
+      list_.removeEventListener('focusin', open)
+      list_.removeEventListener('focusout', close)
+      window.removeEventListener('scroll', measure)
+      window.removeEventListener('resize', measure)
+      window.removeEventListener('pointermove', follow)
+      document.documentElement.removeEventListener('pointerleave', rest)
+      rest()
     }
-  }, [running, list])
+  }, [running, list, bloomOn])
 
   return (
     <div ref={box} className="relative mx-auto aspect-square w-full max-w-[560px]">

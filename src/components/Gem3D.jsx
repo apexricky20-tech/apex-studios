@@ -1,139 +1,213 @@
-import { useEffect, useMemo, useRef } from 'react'
-import { Canvas, useFrame } from '@react-three/fiber'
-import { BufferGeometry, Float32BufferAttribute, MathUtils, ShaderMaterial, Vector3 } from 'three'
+import { useMemo, useRef } from 'react'
+import { Canvas, useFrame, useThree } from '@react-three/fiber'
+import { MathUtils, Object3D, Vector3 } from 'three'
+import { bloom, clamp01, easeOut, nodeT, slot, smooth } from '../lib/bloom'
 
-// An 8-fold brilliant cut built from 48 flat facets: table, crown, girdle and pavilion.
-// Faces are flat-shaded and the whole crystal is one mesh, so it costs a single draw call.
-function buildCrystal() {
-  const step = Math.PI / 4
-  const ring = (r, y, offset) =>
-    Array.from({ length: 8 }, (_, i) => [r * Math.cos((i + offset) * step), y, r * Math.sin((i + offset) * step)])
-  const table = ring(0.56, 0.46, 0)
-  const girdle = ring(1, 0, 0.5)
-  const pavilion = ring(0.52, -0.42, 0)
-  const culet = [0, -0.92, 0]
-  const next = (i) => (i + 1) % 8
+// One smooth liquid-metal blob plus up to 12 small droplets that bud off it as the visitor scrolls.
+// Two draw calls in total (blob + one InstancedMesh). No textures, no refraction, no post-processing:
+// the "chrome" is a procedural studio evaluated in the fragment shader, in the site's own colours
+// (paper white, neutral greys, and amber as the single accent).
 
-  const tris = []
-  for (let i = 1; i < 7; i++) tris.push([table[0], table[i], table[i + 1]])
-  for (let i = 0; i < 8; i++) {
-    tris.push([table[i], table[next(i)], girdle[i]]) // crown bezel
-    tris.push([table[next(i)], girdle[next(i)], girdle[i]]) // crown upper girdle
-    tris.push([girdle[i], pavilion[next(i)], girdle[next(i)]]) // pavilion upper
-    tris.push([pavilion[i], girdle[i], pavilion[next(i)]]) // pavilion lower
-    tris.push([pavilion[i], pavilion[next(i)], culet]) // pavilion main
-  }
-
-  const centre = new Vector3(0, -0.1, 0)
-  const positions = []
-  const normals = []
-  const a = new Vector3()
-  const b = new Vector3()
-  const c = new Vector3()
-  const n = new Vector3()
-  const mid = new Vector3()
-  for (const [p, q, r] of tris) {
-    a.set(...p)
-    b.set(...q)
-    c.set(...r)
-    n.crossVectors(b.clone().sub(a), c.clone().sub(a))
-    mid.copy(a).add(b).add(c).divideScalar(3).sub(centre)
-    const flip = n.dot(mid) < 0 // keep every face pointing outward
-    n.normalize()
-    if (flip) n.negate()
-    const order = flip ? [a, c, b] : [a, b, c]
-    for (const v of order) {
-      positions.push(v.x, v.y, v.z)
-      normals.push(n.x, n.y, n.z)
-    }
-  }
-  const geometry = new BufferGeometry()
-  geometry.setAttribute('position', new Float32BufferAttribute(positions, 3))
-  geometry.setAttribute('normal', new Float32BufferAttribute(normals, 3))
-  return geometry
-}
-
-const vertexShader = /* glsl */ `
+const COMMON_VERT_OUT = /* glsl */ `
   varying vec3 vN;
   varying vec3 vW;
+`
+
+const blobVertex = /* glsl */ `
+  uniform float uTime;
+  uniform float uAmp;
+  uniform float uLean;
+  uniform float uHeat;
+  uniform float uBloom;
+  uniform vec3 uDir;
+  ${COMMON_VERT_OUT}
+
+  // Cheap domain-warped sines: smooth, swirly, no noise textures.
+  float field(vec3 p, float t) {
+    p += 0.4 * vec3(sin(p.y * 2.3 + t * 0.5), sin(p.z * 2.1 - t * 0.4), sin(p.x * 2.7 + t * 0.3));
+    return 0.5 * sin(p.x * 2.2 + p.y * 1.3 + t * 0.35)
+         + 0.3 * sin(p.y * 3.1 - p.z * 1.7 - t * 0.45)
+         + 0.2 * sin(p.z * 3.7 + p.x * 2.1 + t * 0.6);
+  }
+
+  vec3 shape(vec3 p) {
+    float toward = max(dot(p, uDir), 0.0);
+    float r = 1.0
+      + uAmp * field(p * 1.3, uTime)
+      + 0.42 * uLean * pow(toward, 2.5)
+      + 0.05 * uHeat * sin(dot(p, uDir) * 9.0 - uTime * 5.0) * pow(toward, 1.5)
+      + 0.12 * uBloom * field(p * 2.1, -uTime * 0.7);
+    return p * r;
+  }
+
   void main() {
-    vN = normalize(mat3(modelMatrix) * normal);
-    vW = (modelMatrix * vec4(position, 1.0)).xyz;
-    gl_Position = projectionMatrix * viewMatrix * vec4(vW, 1.0);
+    vec3 p = normalize(position);
+    vec3 up = abs(p.y) < 0.99 ? vec3(0.0, 1.0, 0.0) : vec3(1.0, 0.0, 0.0);
+    vec3 t1 = normalize(cross(up, p));
+    vec3 t2 = cross(p, t1);
+    vec3 a = shape(p);
+    vec3 b = shape(normalize(p + t1 * 0.02));
+    vec3 c = shape(normalize(p + t2 * 0.02));
+    vec3 n = normalize(cross(b - a, c - a));
+    if (dot(n, p) < 0.0) n = -n;
+    vec4 w = modelMatrix * vec4(a, 1.0);
+    vN = normalize(mat3(modelMatrix) * n);
+    vW = w.xyz;
+    gl_Position = projectionMatrix * viewMatrix * w;
   }
 `
 
-// Refraction is faked: a procedural studio, a slightly different bend for red, green and blue
-// (the coloured "fire"), and one pretend internal bounce. No textures, no ray tracing.
-const fragmentShader = /* glsl */ `
+const dropVertex = /* glsl */ `
+  ${COMMON_VERT_OUT}
+  void main() {
+    mat4 m = modelMatrix;
+    #ifdef USE_INSTANCING
+      m = m * instanceMatrix;
+    #endif
+    vN = normalize(mat3(m) * normal);
+    vec4 w = m * vec4(position, 1.0);
+    vW = w.xyz;
+    gl_Position = projectionMatrix * viewMatrix * w;
+  }
+`
+
+const fragment = /* glsl */ `
   varying vec3 vN;
   varying vec3 vW;
 
+  // Procedural studio: dark floor, soft grey sky, paper-white softboxes, one amber kicker.
   vec3 env(vec3 d) {
-    vec3 c = mix(vec3(0.05, 0.055, 0.07), vec3(0.30, 0.33, 0.40), d.y * 0.5 + 0.5);
+    float y = d.y * 0.5 + 0.5;
+    vec3 c = mix(vec3(0.02), vec3(0.42, 0.43, 0.45), pow(y, 1.5));
     float a = atan(d.z, d.x);
-    c += vec3(1.0, 0.97, 0.92) * smoothstep(0.90, 0.96, sin(a * 3.0 + 1.0) * 0.5 + 0.5) * smoothstep(-0.3, 0.5, d.y) * 2.4;
-    c += vec3(0.75, 0.88, 1.0) * smoothstep(0.93, 0.985, dot(d, normalize(vec3(-0.5, 0.6, 0.6)))) * 3.5;
-    c += vec3(1.0, 0.51, 0.0) * smoothstep(0.90, 0.98, dot(d, normalize(vec3(0.7, 0.2, -0.5)))) * 3.2;
-    c += vec3(1.0, 0.62, 0.2) * smoothstep(0.92, 0.99, dot(d, normalize(vec3(-0.8, -0.1, 0.3)))) * 1.8;
-    c += vec3(0.95, 0.9, 1.0) * smoothstep(0.94, 0.99, dot(d, normalize(vec3(0.1, -0.8, 0.5)))) * 1.6;
+    c += vec3(1.0) * smoothstep(0.86, 0.94, sin(a * 2.0 + 1.3) * 0.5 + 0.5) * smoothstep(-0.2, 0.6, d.y) * 1.5;
+    c += vec3(1.0) * smoothstep(0.94, 0.99, dot(d, normalize(vec3(-0.5, 0.7, 0.5)))) * 2.4;
+    c += vec3(1.0, 0.51, 0.0) * smoothstep(0.88, 0.98, dot(d, normalize(vec3(0.8, 0.1, -0.4)))) * 1.5;
     return c;
-  }
-
-  vec3 through(vec3 V, vec3 N, float ior) {
-    vec3 r = refract(V, N, 1.0 / ior);
-    vec3 b = normalize(-N * 0.55 + vW * 0.9 + vec3(0.0, 0.35, 0.0));
-    return env(normalize(mix(r, reflect(r, b), 0.7)));
   }
 
   void main() {
     vec3 N = normalize(vN);
     vec3 V = normalize(vW - cameraPosition);
-    float fresnel = 0.05 + 0.95 * pow(1.0 - max(dot(-V, N), 0.0), 4.0);
-    vec3 col = vec3(through(V, N, 2.34).r, through(V, N, 2.42).g, through(V, N, 2.53).b);
-    col *= vec3(0.94, 0.98, 1.05) * (0.8 + 0.4 * dot(N, normalize(vec3(0.3, 0.8, 0.5))));
-    col += env(reflect(V, N)) * fresnel * 1.4;
-    col = 1.0 - exp(-col * 1.25);
+    float ndv = max(dot(-V, N), 0.0);
+    float fres = pow(1.0 - ndv, 3.0);
+    vec3 col = env(reflect(V, N)) * mix(vec3(0.78), vec3(1.0), fres);
+    col += vec3(1.0, 0.93, 0.84) * fres * 0.45; // the quiet rim glow
+    col = 1.0 - exp(-col * 1.15);
     gl_FragColor = vec4(pow(col, vec3(0.4545)), 1.0);
   }
 `
 
-function Gem() {
+const CAM_Z = 3.6
+const FOV = 38
+const MAX_DROPS = 12
+const BLOB_RADIUS = 0.48
+const dummy = new Object3D()
+
+function Bloom() {
+  const size = useThree((s) => s.size)
   const group = useRef(null)
-  const geometry = useMemo(() => buildCrystal(), [])
-  const material = useMemo(() => new ShaderMaterial({ vertexShader, fragmentShader }), [])
-  useEffect(
-    () => () => {
-      geometry.dispose()
-      material.dispose()
-    },
-    [geometry, material],
+  const blob = useRef(null)
+  const drops = useRef(null)
+  const state = useRef({ x: 0, y: 0, heat: 0 })
+  const uniforms = useMemo(
+    () => ({
+      uTime: { value: 0 },
+      uAmp: { value: 0.2 },
+      uLean: { value: 0 },
+      uHeat: { value: 0 },
+      uBloom: { value: 0 },
+      uDir: { value: new Vector3(0, 0, 1) },
+    }),
+    [],
   )
 
-  useFrame((state, delta) => {
-    const g = group.current
-    if (!g) return
-    g.rotation.y += delta * 0.3
-    g.rotation.x = MathUtils.damp(g.rotation.x, 0.42 - state.pointer.y * 0.25, 4, delta)
-    g.rotation.z = MathUtils.damp(g.rotation.z, -state.pointer.x * 0.12, 4, delta)
+  useFrame((s, delta) => {
+    if (!blob.current || !drops.current || !group.current) return
+    const dt = Math.min(delta, 0.05)
+    const st = state.current
+    const p = bloom.p
+
+    // Pointer: damped, and its speed feeds a "heat" that makes the surface ripple while you move.
+    const px = MathUtils.clamp(bloom.px, -1.6, 1.6)
+    const py = MathUtils.clamp(bloom.py, -1.6, 1.6)
+    const nx = MathUtils.damp(st.x, px, 5, dt)
+    const ny = MathUtils.damp(st.y, py, 5, dt)
+    const speed = Math.hypot(nx - st.x, ny - st.y) / Math.max(dt, 1e-3)
+    st.heat = MathUtils.damp(st.heat, Math.min(speed * 0.6, 1), 3, dt)
+    st.x = nx
+    st.y = ny
+
+    const u = blob.current.material.uniforms
+    u.uDir.value.set(nx * 0.9, ny * 0.9, 1).normalize()
+    u.uTime.value += dt
+    u.uLean.value = clamp01(Math.hypot(nx, ny) / 1.1)
+    u.uHeat.value = st.heat
+    u.uBloom.value = Math.sin(Math.PI * clamp01(p)) // the blob swells while the droplets leave
+    group.current.scale.setScalar(BLOB_RADIUS * (1 - 0.16 * p)) // and gives up a little mass after
+    group.current.rotation.y += dt * 0.12
+
+    // Droplets: leave the surface, arc outwards, then shrink to nothing as the real link tile appears.
+    const k = (2 * Math.tan((FOV * Math.PI) / 360) * CAM_Z) / size.height // world units per px
+    const n = Math.min(bloom.n, MAX_DROPS)
+    for (let i = 0; i < MAX_DROPS; i++) {
+      if (i >= n) {
+        dummy.position.set(0, 0, 0)
+        dummy.scale.setScalar(0)
+        dummy.updateMatrix()
+        drops.current.setMatrixAt(i, dummy.matrix)
+        continue
+      }
+      const t = nodeT(i, n, p)
+      const e = easeOut(t)
+      const sl = slot(i, n, bloom.angle, bloom.w)
+      const gy = 1 - ((i + 0.5) * 2) / n
+      const gr = Math.sqrt(1 - gy * gy)
+      const th = i * 2.39996
+      const r0 = BLOB_RADIUS * 0.9
+      const arc = Math.sin(Math.PI * e) * 0.16
+      dummy.position.set(
+        MathUtils.lerp(Math.cos(th) * gr * r0, sl.x * k, e) + Math.cos(th) * arc,
+        MathUtils.lerp(gy * r0, -sl.y * k, e) + Math.sin(th * 0.7) * arc * 0.6,
+        MathUtils.lerp(Math.sin(th) * gr * r0, sl.s * 0.3, e),
+      )
+      const r = 0.055 * (1 + 0.9 * Math.sin(Math.PI * t)) * smooth(0, 0.08, t) * (1 - smooth(0.72, 1, t))
+      dummy.scale.setScalar(Math.max(r, 0))
+      dummy.updateMatrix()
+      drops.current.setMatrixAt(i, dummy.matrix)
+    }
+    drops.current.instanceMatrix.needsUpdate = true
   })
 
   return (
-    <group ref={group} position={[0, 0.1, 0]} scale={0.82}>
-      <mesh geometry={geometry} material={material} />
-    </group>
+    <>
+      <group ref={group} scale={BLOB_RADIUS}>
+        <mesh ref={blob}>
+          <icosahedronGeometry args={[1, 14]} />
+          <shaderMaterial vertexShader={blobVertex} fragmentShader={fragment} uniforms={uniforms} />
+        </mesh>
+      </group>
+      <instancedMesh ref={drops} args={[undefined, undefined, MAX_DROPS]} frustumCulled={false}>
+        <sphereGeometry args={[1, 18, 12]} />
+        <shaderMaterial vertexShader={dropVertex} fragmentShader={fragment} />
+      </instancedMesh>
+    </>
   )
 }
 
+// The canvas is as wide as the whole orbit box (not just the middle 60%), so the droplets can travel
+// all the way out to the ring without being clipped. It never takes pointer events: the page's
+// links and buttons stay on top and work exactly as before.
 export default function Gem3D({ visible }) {
   return (
     <Canvas
-      camera={{ position: [0, 0.2, 3.6], fov: 38 }}
+      style={{ position: 'absolute', inset: '-33.333%', width: 'auto', height: 'auto', pointerEvents: 'none' }}
+      camera={{ position: [0, 0, CAM_Z], fov: FOV }}
       dpr={[1, 1.5]}
       frameloop={visible ? 'always' : 'never'}
       gl={{ alpha: true, antialias: true, powerPreference: 'low-power' }}
     >
-      <Gem />
+      <Bloom />
     </Canvas>
   )
 }

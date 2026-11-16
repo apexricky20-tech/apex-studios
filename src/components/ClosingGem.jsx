@@ -5,24 +5,25 @@ import ServiceOrbit from './ServiceOrbit'
 
 const Gem3D = lazy(() => import('./Gem3D'))
 
-// A light, flat crystal for phones, slow connections and reduced-motion visitors.
+// A light, flat blob for phones, slow connections and reduced-motion visitors. Same neutral
+// chrome-and-amber palette as the 3D version, no filters, one gradient.
 function GemSvg() {
-  const facets = [
-    ['30,80 62,40 81,80', 0.2],
-    ['62,40 100,40 81,80', 0.1],
-    ['100,40 119,80 81,80', 0.26],
-    ['100,40 138,40 119,80', 0.12],
-    ['138,40 170,80 119,80', 0.22],
-    ['30,80 81,80 100,175', 0.12],
-    ['81,80 100,80 100,175', 0.24],
-    ['100,80 119,80 100,175', 0.1],
-    ['119,80 170,80 100,175', 0.18],
-  ]
   return (
     <svg viewBox="0 0 200 200" className="gem-float mx-auto h-full w-full max-w-[320px]" aria-hidden="true">
-      {facets.map(([points, o]) => (
-        <polygon key={points} points={points} fill="#ffffff" fillOpacity={o} stroke="#ff8200" strokeOpacity="0.55" strokeWidth="1" strokeLinejoin="round" />
-      ))}
+      <defs>
+        <radialGradient id="blob-fill" cx="36%" cy="30%" r="80%">
+          <stop offset="0" stopColor="#ffffff" />
+          <stop offset="0.45" stopColor="#9a9a9a" />
+          <stop offset="1" stopColor="#141414" />
+        </radialGradient>
+      </defs>
+      <path
+        d="M100 30C130 24 164 48 166 82C168 112 150 150 112 166C78 180 40 160 32 122C24 88 44 52 70 40C80 35 90 32 100 30Z"
+        fill="url(#blob-fill)"
+        stroke="#ff8200"
+        strokeOpacity="0.45"
+        strokeWidth="1"
+      />
     </svg>
   )
 }
@@ -72,7 +73,7 @@ export default function ClosingGem() {
             Start a project
           </Link>
         </div>
-        <ServiceOrbit running={near}>
+        <ServiceOrbit running={near} bloomOn={use3d}>
           {use3d && near ? (
             <Boundary fallback={<GemSvg />}>
               <Suspense fallback={<GemSvg />}>
