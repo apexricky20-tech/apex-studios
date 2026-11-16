@@ -1,7 +1,7 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { calm } from '../lib/fx'
-import { bloom, clamp01, easeOut, nodeT, slot, smooth } from '../lib/bloom'
+import { bloom, clamp01, easeOut, nodeT, slot, smooth, timeline } from '../lib/bloom'
 
 // Simple 24x24 line glyphs, one per service. Add a line here when a service gets a page.
 const SERVICES = [
@@ -20,15 +20,25 @@ const SERVICES = [
 ]
 const PHONE_SET = ['Website Design', 'Automation', 'M-Pesa Payments', 'AI Assistant']
 
+// Where the box centre sits on screen (0 = top edge, 1 = bottom edge) while the bloom plays.
+// Enter: starts as the box rises into view, finished just above the middle of the screen.
+// Exit: starts once it has climbed past the upper third, finished as it leaves towards the footer.
+const ENTER_FROM = 0.95
+const ENTER_TO = 0.42
+const EXIT_FROM = 0.32
+const EXIT_TO = -0.05
+
 // Ring of service links circling whatever is passed as children (the blob).
 // Plain HTML links on a CSS transform loop: no extra GPU work, and they stay real, crawlable links.
-// With `bloomOn`, scrolling the section drives them out of the blob one by one (progress goes to
-// lib/bloom.js, which the 3D canvas reads), and the pointer position is shared the same way.
+// With `bloomOn`, scrolling plays a timeline (lib/bloom.js `timeline`): the blob swells with the
+// services still inside, eases back a touch, then they leave one by one. Scrolling on towards the
+// footer plays it backwards: they slide back in and the blob returns to its original size. The
+// 3D canvas reads the same shared state, and the pointer position is shared the same way.
 export default function ServiceOrbit({ running, bloomOn = false, children }) {
   const box = useRef(null)
   const items = useRef([])
   const [phone] = useState(() => window.matchMedia('(max-width: 767px)').matches)
-  const list = phone ? SERVICES.filter((s) => PHONE_SET.includes(s.label)) : SERVICES
+  const list = useMemo(() => (phone ? SERVICES.filter((s) => PHONE_SET.includes(s.label)) : SERVICES), [phone])
 
   useEffect(() => {
     const el = box.current
@@ -42,9 +52,12 @@ export default function ServiceOrbit({ running, bloomOn = false, children }) {
     let raf = 0
     let last = 0
 
-    // Scroll progress of the bloom, pointer basis and "keyboard has focus in the ring" override.
-    let target = bloomOn ? 0 : 1
-    let shown = target
+    // Scroll progress of the bloom: m while entering, x while leaving towards the footer (see lib/bloom.js),
+    // pointer basis and the "keyboard has focus in the ring" override.
+    let targetM = bloomOn ? 0 : 1
+    let targetX = 0
+    let shownM = targetM
+    let shownX = 0
     let forced = false
     let cx = 0
     let cy = 0
@@ -56,21 +69,25 @@ export default function ServiceOrbit({ running, bloomOn = false, children }) {
       half = Math.max(r.width / 2, 1)
       if (!bloomOn) return
       const vh = window.innerHeight
-      const byBox = clamp01((vh - cy) / (vh * 0.5)) // starts as the box enters, done when it is centred
+      const at = cy / vh
+      const byBox = clamp01((ENTER_FROM - at) / (ENTER_FROM - ENTER_TO))
       // On tall screens the page may end before the box reaches the middle: finish the bloom at the end.
       const left = document.documentElement.scrollHeight - (window.scrollY + vh)
-      target = Math.max(byBox, clamp01(1 - left / 240))
+      targetM = Math.max(byBox, clamp01(1 - left / 240))
+      targetX = clamp01((EXIT_FROM - at) / (EXIT_FROM - EXIT_TO))
     }
 
     const place = () => {
-      bloom.p = forced ? 1 : shown
+      const tl = forced ? timeline(1, 0) : timeline(shownM, shownX)
+      bloom.p = tl.p
+      bloom.scale = tl.scale
       bloom.angle = angle
       bloom.w = width
       bloom.n = nodes.length
       nodes.forEach((node, i) => {
         if (!node) return
         const sl = slot(i, nodes.length, angle, width)
-        const t = forced ? 1 : nodeT(i, nodes.length, shown)
+        const t = nodeT(i, nodes.length, tl.p)
         const e = easeOut(t)
         node.style.transform = `translate(-50%,-50%) translate(${sl.x * e}px,${sl.y * e}px) scale(${Math.max((0.72 + 0.38 * sl.d) * smooth(0.6, 1, t), 0.01)})`
         node.style.opacity = String((0.4 + 0.6 * sl.d) * smooth(0.7, 1, t))
@@ -84,7 +101,9 @@ export default function ServiceOrbit({ running, bloomOn = false, children }) {
       last = now
       speed += ((paused ? 0 : base_target) - speed) * Math.min(dt * 5, 1)
       angle += speed * dt
-      shown += (target - shown) * Math.min(dt * 8, 1)
+      const k = Math.min(dt * 8, 1)
+      shownM += (targetM - shownM) * k
+      shownX += (targetX - shownX) * k
       place()
       raf = requestAnimationFrame(tick)
     }
@@ -108,6 +127,7 @@ export default function ServiceOrbit({ running, bloomOn = false, children }) {
     el.addEventListener('pointermove', steer)
 
     const follow = (e) => {
+      if (e.pointerType === 'touch') return // a finger is scrolling, not aiming
       bloom.px = (e.clientX - cx) / half
       bloom.py = (cy - e.clientY) / half
     }
@@ -129,7 +149,8 @@ export default function ServiceOrbit({ running, bloomOn = false, children }) {
       document.documentElement.addEventListener('pointerleave', rest)
     }
     measure()
-    shown = target
+    shownM = targetM
+    shownX = targetX
     place()
     if (running && !calm()) raf = requestAnimationFrame(tick)
 

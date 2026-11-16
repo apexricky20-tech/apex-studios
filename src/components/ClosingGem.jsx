@@ -38,22 +38,50 @@ class Boundary extends Component {
   }
 }
 
+// Phones get the 3D blob too. The flat SVG stays for the cases where WebGL would hurt: reduced motion,
+// data saver, a 2G link, a very low-memory device, or no working WebGL at all.
+function canRun3d() {
+  if (!FX.gem) return false
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return false
+  const c = navigator.connection
+  if (c?.saveData || /(^|-)2g$/.test(c?.effectiveType ?? '')) return false
+  if (navigator.deviceMemory && navigator.deviceMemory <= 2) return false
+  try {
+    const gl = document.createElement('canvas').getContext('webgl2') || document.createElement('canvas').getContext('webgl')
+    if (!gl) return false
+    gl.getExtension('WEBGL_lose_context')?.loseContext() // hand the context back, phones only allow a few
+    return true
+  } catch {
+    return false
+  }
+}
+
 export default function ClosingGem() {
   const ref = useRef(null)
   const [near, setNear] = useState(false)
-  const [use3d] = useState(
-    () =>
-      FX.gem &&
-      window.matchMedia('(min-width: 768px)').matches &&
-      !window.matchMedia('(prefers-reduced-motion: reduce)').matches &&
-      !navigator.connection?.saveData,
-  )
+  const [use3d] = useState(canRun3d)
 
   useEffect(() => {
     const io = new IntersectionObserver(([entry]) => setNear(entry.isIntersecting), { rootMargin: '200px' })
     io.observe(ref.current)
-    return () => io.disconnect()
-  }, [])
+    // Start fetching the 3D chunk a few screens early so it is ready (no flat-blob flash) on a phone.
+    let warm
+    if (use3d) {
+      warm = new IntersectionObserver(
+        ([entry]) => {
+          if (!entry.isIntersecting) return
+          import('./Gem3D')
+          warm.disconnect()
+        },
+        { rootMargin: '1500px 0px' },
+      )
+      warm.observe(ref.current)
+    }
+    return () => {
+      io.disconnect()
+      warm?.disconnect()
+    }
+  }, [use3d])
 
   return (
     <section ref={ref} aria-labelledby="closing-title" className="relative overflow-hidden px-gutter py-32 md:py-44">

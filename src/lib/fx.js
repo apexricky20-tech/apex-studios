@@ -6,7 +6,7 @@ export const FX = {
   tilt: true, // project cards tilt with a light sheen (desktop only)
   parallax: true, // hero portrait drifts slightly with the mouse (desktop only)
   pageFade: true, // gentle fade when moving between pages
-  gem: true, // the 3D diamond near the bottom of the home page
+  gem: true, // the 3D liquid-metal blob at the bottom of the home page (desktop and phones)
   scenes: true, // the faint 3D model behind each inner page
 }
 

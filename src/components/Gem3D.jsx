@@ -144,7 +144,10 @@ function Bloom() {
     u.uLean.value = clamp01(Math.hypot(nx, ny) / 1.1)
     u.uHeat.value = st.heat
     u.uBloom.value = Math.sin(Math.PI * clamp01(p)) // the blob swells while the droplets leave
-    group.current.scale.setScalar(BLOB_RADIUS * (1 - 0.16 * p)) // and gives up a little mass after
+    // Size comes from the scroll timeline: swells with everything inside, eases back, then gives up a
+    // little mass as the droplets leave; on the way out it returns to its original size.
+    const size3 = bloom.scale
+    group.current.scale.setScalar(BLOB_RADIUS * size3)
     group.current.rotation.y += dt * 0.12
 
     // Droplets: leave the surface, arc outwards, then shrink to nothing as the real link tile appears.
@@ -164,7 +167,7 @@ function Bloom() {
       const gy = 1 - ((i + 0.5) * 2) / n
       const gr = Math.sqrt(1 - gy * gy)
       const th = i * 2.39996
-      const r0 = BLOB_RADIUS * 0.9
+      const r0 = BLOB_RADIUS * size3 * 0.9 // droplets bud off wherever the surface is right now
       const arc = Math.sin(Math.PI * e) * 0.16
       dummy.position.set(
         MathUtils.lerp(Math.cos(th) * gr * r0, sl.x * k, e) + Math.cos(th) * arc,

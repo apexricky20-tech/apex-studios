@@ -2,6 +2,7 @@
 // Gem3D reads it every frame. A plain mutable object on purpose: no React re-renders at 60 fps.
 export const bloom = {
   p: 1, // 0 = every service is still inside the blob, 1 = all of them have settled on the ring
+  scale: 0.84, // blob size relative to its resting size (see SCALE), already includes the grow/dip
   angle: 0, // current orbit angle in radians
   w: 560, // width of the orbit box in px
   n: 12, // how many services are on the ring
@@ -24,4 +25,29 @@ export function slot(i, n, angle, w) {
   const a = angle + (i * Math.PI * 2) / n
   const s = Math.sin(a)
   return { x: Math.cos(a) * w * 0.42, y: s * w * 0.15, s, d: (s + 1) / 2 }
+}
+
+// ---- Scroll timeline -------------------------------------------------------------------------
+// Two scroll-driven inputs, both 0..1, both pure functions of where the box is on screen, so the
+// whole thing scrubs: scroll up and every step simply plays backwards.
+//   m  enter: the box climbs into view.   0 .. GROW_END      the blob swells, services still inside
+//                                         GROW_END .. DIP_END the blob eases back a touch (wind-up)
+//                                         DIP_END .. 1        services leave one after another
+//   x  exit:  the box leaves towards the footer. Services slide back into the blob in reverse order
+//             and the blob returns to its original size.
+export const SCALE = { rest: 1, peak: 1.42, dip: 1.2, ring: 0.84 }
+export const GROW_END = 0.42
+export const DIP_END = 0.58
+
+export function timeline(m, x = 0) {
+  const grow = smooth(0, GROW_END, m)
+  const dip = smooth(GROW_END, DIP_END, m)
+  const pop = clamp01((m - DIP_END) / (1 - DIP_END))
+  const entered =
+    SCALE.rest +
+    (SCALE.peak - SCALE.rest) * grow -
+    (SCALE.peak - SCALE.dip) * dip -
+    (SCALE.dip - SCALE.ring) * smooth(0, 1, pop)
+  const out = smooth(0, 1, clamp01(x))
+  return { p: pop * (1 - out), scale: entered + (SCALE.rest - entered) * out }
 }
