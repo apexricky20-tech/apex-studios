@@ -4,6 +4,7 @@ import Breadcrumbs from './Breadcrumbs'
 import { serviceNames } from '../lib/crumbs'
 import CtaButtons from './CtaButtons'
 import { priceText, PRICE_NOTE } from '../data/pricing'
+import ServiceVoices from './ServiceVoices'
 
 export default function ServiceLayout({ page }) {
   const { sections } = page
@@ -116,6 +117,8 @@ export default function ServiceLayout({ page }) {
             ))}
           </div>
         </div>
+
+        <ServiceVoices />
 
         <section className="mt-32 border-t border-paper/15 pt-20 md:mt-40">
           <h2 className="text-4xl md:text-6xl">Want this for your business?</h2>

@@ -8,6 +8,7 @@ import Faq from '../components/Faq'
 import ProofStrip from '../components/ProofStrip'
 import ArticlesSection from '../components/ArticlesSection'
 import ClosingGem from '../components/ClosingGem'
+import Testimonials from '../components/Testimonials'
 
 export default function Home() {
   return (
@@ -20,6 +21,7 @@ export default function Home() {
           <Services />
           <Marquee />
           <Work />
+          <Testimonials />
           <WhyChooseUs />
           <Process />
           <Faq />

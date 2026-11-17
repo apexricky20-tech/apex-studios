@@ -3,6 +3,8 @@ import { useVisibleProjects } from '../lib/content'
 import NotFound from './NotFound'
 import Breadcrumbs from '../components/Breadcrumbs'
 import { withUtm } from '../lib/utm'
+import { forProject } from '../data/testimonials'
+import ClientQuote from '../components/ClientQuote'
 
 function Row({ label, children }) {
   return (
@@ -68,6 +70,15 @@ export default function ProjectPage() {
                   {r.note && <p className="mt-1 text-sm text-muted">{r.note}</p>}
                 </div>
               ))}
+            </Row>
+          )}
+          {forProject(project.slug).length > 0 && (
+            <Row label="In their words">
+              <div className="space-y-10">
+                {forProject(project.slug).map((t) => (
+                  <ClientQuote key={t.id} t={t} text="full" />
+                ))}
+              </div>
             </Row>
           )}
           {project.service && (

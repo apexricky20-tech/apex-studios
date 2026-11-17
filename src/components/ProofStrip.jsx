@@ -1,5 +1,7 @@
 import { Link } from 'react-router-dom'
 import { useVisibleProjects } from '../lib/content'
+import { forProject } from '../data/testimonials'
+import ClientQuote from './ClientQuote'
 
 // Real, measured results from your own projects, shown right under the hero.
 // It reads the first project that has `results` filled in (src/data/projects.js or the dashboard).
@@ -7,6 +9,7 @@ export default function ProofStrip() {
   const projects = useVisibleProjects()
   const lead = projects.find((p) => p.results?.length)
   if (!lead) return null
+  const voice = forProject(lead.slug)[0]
   const others = projects.filter((p) => p.slug !== lead.slug).map((p) => p.title)
   return (
     <section aria-labelledby="proof-title" className="mx-auto max-w-[1220px] px-gutter pt-20 md:pt-28">
@@ -23,6 +26,7 @@ export default function ProofStrip() {
           </div>
         ))}
       </div>
+      {voice && <ClientQuote t={voice} className="mt-10 max-w-3xl" />}
       <div className="mt-8 flex flex-wrap items-center gap-x-8 gap-y-3">
         <Link
           to={`/work/${lead.slug}`}

@@ -1,7 +1,9 @@
 import { Link } from 'react-router-dom'
 import { useVisibleProjects } from '../lib/content'
+import { forProject } from '../data/testimonials'
 
 function Card({ project, index }) {
+  const voice = forProject(project.slug)[0]
   const external = false
   const cls = `group relative block aspect-[4/3] w-full overflow-hidden rounded-2xl border border-paper/10 bg-gradient-to-br from-neutral-800 to-neutral-950 md:w-[46%] ${
     index % 2 ? 'md:ml-auto' : ''
@@ -23,6 +25,11 @@ function Card({ project, index }) {
           {project.title}
         </h3>
         <p className="mt-2 text-sm text-paper/70">{project.category}</p>
+        {voice && (
+          <p className="mt-3 hidden max-w-md text-sm italic text-paper/60 md:block">
+            &ldquo;{voice.short}&rdquo; <span className="not-italic">&mdash; {voice.name}</span>
+          </p>
+        )}
       </div>
     </>
   )

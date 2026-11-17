@@ -2,6 +2,7 @@ import { useLocation } from 'react-router-dom'
 import Breadcrumbs from './Breadcrumbs'
 import { serviceNames } from '../lib/crumbs'
 import CtaButtons from './CtaButtons'
+import ServiceVoices from './ServiceVoices'
 
 const cols = { 3: 'md:grid-cols-3', 4: 'md:grid-cols-4' }
 
@@ -101,6 +102,8 @@ export default function ServicePage({ page }) {
             ))}
           </div>
         </section>
+
+        <ServiceVoices />
       </div>
 
       <div className="mt-32 border-t border-paper/15 pt-24 md:mt-40">
