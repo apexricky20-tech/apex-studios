@@ -8,8 +8,8 @@ export default function Hero() {
   return (
     <>
       {/* Layer 1: the portrait stays pinned while the page scrolls over it */}
-      <div className="sticky top-0 z-0 h-svh overflow-hidden bg-ink">
-        <div className="absolute inset-x-0 bottom-[46svh] top-20 flex justify-center md:bottom-[36svh]">
+      <div data-hero-stage className="sticky top-0 z-0 h-svh overflow-hidden bg-ink">
+        <div data-hero-dolly className="absolute inset-x-0 bottom-[46svh] top-20 flex justify-center md:bottom-[36svh]">
           <img
             src={site.portrait}
             alt={`Portrait of ${site.name}, founder of Apex Studios`}
@@ -23,6 +23,8 @@ export default function Hero() {
           />
         </div>
         <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-ink via-ink/80 to-transparent" />
+        <div className="hero-dim" aria-hidden="true" />
+        <div className="hero-lights" aria-hidden="true" />
       </div>
 
       {/* Layer 2: the text sits over the portrait, then scrolls away */}

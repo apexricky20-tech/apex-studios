@@ -3,7 +3,7 @@ import { useVisibleProjects } from '../lib/content'
 
 function Card({ project, index }) {
   const external = false
-  const cls = `group relative block aspect-[4/3] w-full overflow-hidden rounded-2xl border border-paper/10 bg-gradient-to-br from-neutral-800 to-neutral-950 md:w-[46%] ${
+  const cls = `fx-card fx-media group relative block aspect-[4/3] w-full overflow-hidden rounded-2xl border border-paper/10 bg-gradient-to-br from-neutral-800 to-neutral-950 md:w-[46%] ${
     index % 2 ? 'md:ml-auto' : ''
   }`
   const inner = (
@@ -27,11 +27,11 @@ function Card({ project, index }) {
     </>
   )
   return external ? (
-    <a href={project.href} target="_blank" rel="noreferrer" className={cls} data-tilt>
+    <a href={project.href} target="_blank" rel="noreferrer" className={cls} data-tilt data-scrollp data-cursor="Step inside">
       {inner}
     </a>
   ) : (
-    <Link to={`/work/${project.slug}`} className={cls} data-tilt>
+    <Link to={`/work/${project.slug}`} className={cls} data-tilt data-scrollp data-cursor="Step inside">
       {inner}
     </Link>
   )
@@ -40,7 +40,7 @@ function Card({ project, index }) {
 export default function Work() {
   const projects = useVisibleProjects()
   return (
-    <section id="work" className="relative">
+    <section id="work" data-scrollp className="relative">
       <div className="sticky top-0 flex h-svh items-center justify-center overflow-hidden px-gutter">
         <h2 className="work-title whitespace-nowrap text-[17.5vw] leading-none">
           <span className="sr-only">Latest work</span>
@@ -49,7 +49,7 @@ export default function Work() {
           </span>
         </h2>
       </div>
-      <div className="relative z-10 flex flex-col gap-[18svh] px-gutter pb-[30svh] pt-[30svh]">
+      <div className="fx-stack relative z-10 flex flex-col gap-[18svh] px-gutter pb-[30svh] pt-[30svh]">
         {projects.map((p, i) => (
           <Card key={p.slug} project={p} index={i} />
         ))}

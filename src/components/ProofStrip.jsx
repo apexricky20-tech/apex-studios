@@ -16,7 +16,7 @@ export default function ProofStrip() {
       </h2>
       <div className="mt-10 grid gap-4 md:grid-cols-2">
         {lead.results.map((r) => (
-          <div key={r.label} className="rounded-2xl border border-paper/15 bg-surface p-6">
+          <div key={r.label} data-tilt className="relative rounded-2xl border border-paper/15 bg-surface p-6">
             <p className="text-xs uppercase tracking-widest text-muted">{r.label}</p>
             <p className="mt-3 text-xl md:text-2xl">{r.value}</p>
             {r.note && <p className="mt-3 text-sm text-muted">{r.note}</p>}

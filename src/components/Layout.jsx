@@ -1,5 +1,6 @@
 import Motion from './Motion'
 import Fx from './Fx'
+import Stage from './Stage'
 import { FX } from '../lib/fx'
 import { Suspense, useEffect } from 'react'
 import { Outlet, useLocation } from 'react-router-dom'
@@ -30,6 +31,7 @@ export default function Layout() {
       <ScrollToTop />
       <Motion />
       <Fx />
+      <Stage />
       <PageScene />
       <Nav />
       <main

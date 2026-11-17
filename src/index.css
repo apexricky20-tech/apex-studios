@@ -153,7 +153,7 @@ a:focus-visible, button:focus-visible, summary:focus-visible {
   transition: transform 0.25s cubic-bezier(0.22, 0.7, 0.2, 1), color 0.15s, background-color 0.15s, border-color 0.15s;
 }
 
-[data-tilt] { transition: transform 0.35s cubic-bezier(0.22, 0.7, 0.2, 1); }
+[data-tilt] { transition: transform 0.35s cubic-bezier(0.22, 0.7, 0.2, 1), border-color 0.3s; }
 [data-tilt]::after {
   content: "";
   position: absolute;
