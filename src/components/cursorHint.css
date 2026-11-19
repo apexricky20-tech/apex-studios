@@ -5,8 +5,9 @@
   z-index: 45;
   padding: 0.35rem 0.8rem;
   border-radius: 999px;
-  background: var(--color-amber);
+  background: #fff;
   color: #000;
+  box-shadow: 0 0 0 1px rgb(0 0 0 / 0.1), 0 8px 24px rgb(0 0 0 / 0.4);
   font: 700 0.75rem/1 var(--font-body);
   white-space: nowrap;
   pointer-events: none;

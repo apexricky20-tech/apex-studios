@@ -17,6 +17,7 @@ import {
   uploadPhoto,
 } from '../lib/booking'
 import { ago, chatTitle, clearChats, loadStore, newId, removeChat, resumable, saveChat, setActive } from '../lib/chatStore'
+import { takeAsk } from '../lib/ney'
 
 // "Ney", the Apex Studios assistant: the floating pill, and the chat it opens.
 // Answers come from /api/assistant (Cloudflare Workers AI). The panel says plainly that it is an AI assistant,
@@ -28,6 +29,35 @@ const chips = ['What do you build?', 'How much does it cost?', 'How long does a 
 const BOOK = 'Book a free call'
 const PHOTO_ONLY = 'Please have a look at this photo.'
 const PHOTO_SHRINK = { attempts: [[1024, 0.7], [800, 0.55], [640, 0.5]], maxBytes: 420 * 1024 }
+
+// One quiet nudge per visit, never on a form or the legal pages, never while someone is typing, never
+// after they have already chatted. [where it applies, what it says, what is typed into the box if they tap it]
+const NUDGES = [
+  [/^\/$/, 'Wondering what it costs? Ask me.', 'What does it cost?'],
+  [/^\/(work|articles)/, 'Want a result like this for your place?', 'Can you build something like this for my place?'],
+  [/^\/mpesa-payments/, 'Curious how M-Pesa checkout works?', 'How does M-Pesa checkout work for a hotel or restaurant?'],
+  [/^\/(website-design|development|automation|whatsapp-automation|ai-assistant|google-business-profile|branding|care-plans)/, 'Not sure this fits your place? Ask me.', ''],
+]
+const NO_NUDGE = /^\/(contact|21|privacy|terms)/
+const NUDGE_KEY = 'apex-ney-nudge'
+const NUDGE_AFTER = 15000
+const NUDGE_FOR = 14000
+function nudgeFor(path) {
+  if (NO_NUDGE.test(path)) return null
+  const hit = NUDGES.find(([re]) => re.test(path))
+  return hit ? { text: hit[1], ask: hit[2] } : { text: 'Got a question? I am one tap away.', ask: '' }
+}
+function nudgeSeen() {
+  try {
+    return sessionStorage.getItem(NUDGE_KEY) === '1'
+  } catch {
+    return true // if the browser will not remember, never risk showing it twice
+  }
+}
+function typing() {
+  const a = document.activeElement
+  return Boolean(a && (/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName) || a.isContentEditable))
+}
 
 const linkCls =
   'rounded-[999px] border border-paper/20 px-3.5 py-2 text-xs font-medium transition-colors hover:border-amber hover:text-amber'
@@ -61,9 +91,10 @@ function Linked({ text }) {
 }
 
 // Ney's photo, with the "N" monogram underneath as the fallback if the image ever fails to load.
-function Avatar({ size }) {
+function Avatar({ size, live = false }) {
   return (
     <span className="relative shrink-0" style={{ width: size, height: size }}>
+      {live && <span aria-hidden="true" className="ney-ring" />}
       <span className="relative block h-full w-full overflow-hidden rounded-[50%] bg-amber ring-1 ring-paper/30">
         <span
           aria-hidden="true"
@@ -156,6 +187,52 @@ export default function ChatLauncher() {
     else if (wasOpen.current) pillRef.current?.focus()
     wasOpen.current = open
   }, [open])
+
+  const [nudge, setNudge] = useState(null) // { path, text, ask }
+  // Other parts of the page can open Ney with a question typed in (the FAQ does). Nothing is sent.
+  const bookingRef = useRef(null)
+  useEffect(() => {
+    bookingRef.current = booking
+  }, [booking])
+  useEffect(() => {
+    const take = () => {
+      const q = takeAsk()
+      if (!q) return
+      if (!bookingRef.current) {
+        setView('chat')
+        setText(q.slice(0, 400))
+      }
+      setNudge(null)
+      setUnread(false)
+      setOpen(true)
+    }
+    take() // a question that arrived while this file was still downloading
+    window.addEventListener('apex:ask', take)
+    return () => window.removeEventListener('apex:ask', take)
+  }, [])
+
+  // The nudge: a small bubble above the button, once per visit, after a pause.
+  const chatted = messages.length > 1
+  useEffect(() => {
+    if (open || unread || chatted) return undefined
+    const offer = nudgeFor(pathname)
+    if (!offer || nudgeSeen()) return undefined
+    let hide = 0
+    const show = setTimeout(() => {
+      if (document.hidden || typing() || nudgeSeen()) return
+      try {
+        sessionStorage.setItem(NUDGE_KEY, '1')
+      } catch {
+        return
+      }
+      setNudge({ path: pathname, ...offer })
+      hide = setTimeout(() => setNudge(null), NUDGE_FOR)
+    }, NUDGE_AFTER)
+    return () => {
+      clearTimeout(show)
+      clearTimeout(hide)
+    }
+  }, [pathname, open, unread, chatted])
 
   // Escape, or a tap anywhere outside the panel, tucks the chat away. It stays mounted, so nothing is lost.
   useEffect(() => {
@@ -505,11 +582,32 @@ export default function ChatLauncher() {
 
   return (
     <>
+      {!open && !unread && nudge && nudge.path === pathname && (
+        <div className="ney-nudge fixed bottom-[5.75rem] right-5 z-40 md:bottom-[6.5rem] md:right-8">
+          <button
+            type="button"
+            onClick={() => {
+              if (nudge.ask && !text) setText(nudge.ask)
+              setNudge(null)
+              setUnread(false)
+              setOpen(true)
+            }}
+            className="ney-nudge__body"
+          >
+            {nudge.text}
+          </button>
+          <button type="button" onClick={() => setNudge(null)} aria-label="Dismiss" className="ney-nudge__x">
+            &times;
+          </button>
+        </div>
+      )}
+
       {!open && (
         <button
           ref={pillRef}
           type="button"
           onClick={() => {
+            setNudge(null)
             setUnread(false)
             setOpen(true)
           }}
@@ -518,7 +616,7 @@ export default function ChatLauncher() {
           aria-controls="apex-chat"
           className="chat-launcher fixed bottom-5 right-5 z-40 flex items-center gap-3 rounded-[999px] bg-ink/90 py-2 pl-2 pr-5 text-left shadow-lg shadow-black/50 backdrop-blur transition-transform hover:scale-[1.03] md:bottom-8 md:right-8"
         >
-          <Avatar size={44} />
+          <Avatar size={44} live />
           <span className="leading-tight">
             <span className="block text-sm font-semibold">Chat with Ney</span>
             <span className="block text-xs text-paper/60">{unread ? 'New reply waiting' : 'Apex Studios assistant · online'}</span>

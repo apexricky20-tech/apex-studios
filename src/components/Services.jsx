@@ -165,8 +165,11 @@ export default function Services({ asPage = false }) {
           return (
             <li
               key={s.title}
-              className="group border-b border-paper/15"
+              data-svc
+              className="group relative border-b border-paper/15"
             >
+              <span aria-hidden="true" className="svc-index">{String(i + 1).padStart(2, '0')}</span>
+              <span aria-hidden="true" className="svc-rule" />
               <Row
                 {...rowProps}
                 className={`flex flex-col gap-8 py-12 md:items-center md:gap-16 md:py-16 ${
@@ -179,6 +182,7 @@ export default function Services({ asPage = false }) {
                   }`}
                 >
                   {s.title}
+                  {to && <span aria-hidden="true" className="svc-arrow">&rarr;</span>}
                 </Title>
                 <div className="md:w-[38%] lg:w-[30%]">
                   <p className="text-paper/80">{s.text}</p>

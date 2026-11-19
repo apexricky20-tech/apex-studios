@@ -19,7 +19,7 @@ function DeferredChat() {
   const [ready, setReady] = useState(false)
   useEffect(() => {
     const go = () => setReady(true)
-    const events = ['pointerdown', 'keydown', 'scroll']
+    const events = ['pointerdown', 'keydown', 'scroll', 'apex:ask']
     events.forEach((e) => window.addEventListener(e, go, { once: true, passive: true }))
     const idle = 'requestIdleCallback' in window ? requestIdleCallback(go, { timeout: 4000 }) : setTimeout(go, 2500)
     return () => {

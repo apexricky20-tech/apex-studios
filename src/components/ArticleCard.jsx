@@ -5,7 +5,8 @@ export default function ArticleCard({ article }) {
   return (
     <Link
       to={`/articles/${article.slug}`}
-      className="group flex flex-col rounded-2xl border border-paper/10 bg-surface p-5 transition-colors hover:border-amber/60"
+      data-tilt
+      className="group relative flex flex-col rounded-2xl border border-paper/10 bg-surface p-5 transition-colors hover:border-amber/60"
     >
       <div className="relative aspect-[16/10] overflow-hidden rounded-xl bg-gradient-to-br from-neutral-800 to-neutral-950">
         <img
@@ -29,7 +30,10 @@ export default function ArticleCard({ article }) {
       {article.description && (
         <p className="mt-3 line-clamp-3 text-sm leading-relaxed text-muted">{article.description}</p>
       )}
-      <span className="mt-4 text-sm font-medium">Read Article →</span>
+      <span className="mt-4 inline-flex items-center gap-2 text-sm font-medium">
+        Read Article
+        <span aria-hidden="true" className="transition-transform duration-300 group-hover:translate-x-1.5">&rarr;</span>
+      </span>
     </Link>
   )
 }

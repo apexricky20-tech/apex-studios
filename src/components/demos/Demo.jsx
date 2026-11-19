@@ -185,7 +185,7 @@ export default function Demo({ kind }) {
             </button>
           )}
           <Link to="/contact?offer=free-check" className="border-b border-paper pb-0.5 font-semibold transition-colors hover:border-amber hover:text-amber">
-            {k.cta} Get a free digital check &rsaquo;
+            {k.cta} Get my 3 free fixes &rsaquo;
           </Link>
         </div>
         <p className="mt-5 text-xs text-muted">An illustration of the flow. Amounts, names and numbers are examples, and the real thing carries your own branding.</p>

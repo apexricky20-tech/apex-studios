@@ -9,6 +9,7 @@ import ProofStrip from '../components/ProofStrip'
 import ArticlesSection from '../components/ArticlesSection'
 import ClosingGem from '../components/ClosingGem'
 import Testimonials from '../components/Testimonials'
+import AmbientField from '../components/AmbientField'
 
 export default function Home() {
   return (
@@ -17,6 +18,7 @@ export default function Home() {
       <div className="relative">
         <Hero />
         <div className="relative z-10 rounded-t-3xl border-t border-paper/10 bg-ink">
+          <AmbientField />
           <ProofStrip />
           <Services />
           <Marquee />

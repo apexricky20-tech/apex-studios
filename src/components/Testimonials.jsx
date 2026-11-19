@@ -2,6 +2,25 @@ import { Link } from 'react-router-dom'
 import { testimonials } from '../data/testimonials'
 import { Attribution } from './ClientQuote'
 
+// Decorative, and themed to match the "transmission" labels: five bars that lock in as a quote scrolls
+// into view, and one carrier wave drawn between the lead voice and the rest. CSS only (see index.css).
+const WAVE = (() => {
+  const pts = []
+  for (let x = 0; x <= 600; x += 3) {
+    const env = Math.sin((Math.PI * x) / 600) ** 2
+    pts.push(`${x ? 'L' : 'M'}${x} ${(20 + Math.sin(x / 6) * 15 * env * (0.6 + 0.4 * Math.sin(x / 37))).toFixed(1)}`)
+  }
+  return pts.join('')
+})()
+
+const Signal = () => (
+  <span className="signal" aria-hidden="true">
+    {[0, 1, 2, 3, 4].map((i) => (
+      <i key={i} style={{ '--i': i }} />
+    ))}
+  </span>
+)
+
 // Home page: one big voice, then the rest as "transmissions" from real clients.
 export default function Testimonials() {
   const lead = testimonials.find((t) => t.featured) || testimonials[0]
@@ -16,7 +35,10 @@ export default function Testimonials() {
       </h2>
 
       <figure className="mt-14 md:mt-20">
-        <p className="font-mono text-xs uppercase tracking-widest text-muted">{label(lead, 0)}</p>
+        <p className="flex items-center gap-3 font-mono text-xs uppercase tracking-widest text-muted">
+          <Signal />
+          {label(lead, 0)}
+        </p>
         <blockquote className="mt-6">
           <p className="max-w-4xl text-2xl leading-snug md:text-5xl md:leading-[1.15]">
             <span className="text-amber" aria-hidden="true">&ldquo;</span>
@@ -33,14 +55,21 @@ export default function Testimonials() {
         </Link>
       </figure>
 
-      <div className="mt-16 grid gap-4 md:mt-24 md:grid-cols-3">
+      <svg className="wave mt-16 md:mt-24" viewBox="0 0 600 40" preserveAspectRatio="none" aria-hidden="true">
+        <path d={WAVE} />
+      </svg>
+
+      <div className="mt-10 grid gap-4 md:mt-14 md:grid-cols-3">
         {rest.map((t, i) => (
           <figure
             key={t.id}
             data-tilt
             className="relative flex flex-col rounded-2xl border border-paper/15 bg-surface p-6 md:p-8"
           >
-            <p className="font-mono text-xs uppercase tracking-widest text-muted">{label(t, i + 1)}</p>
+            <p className="flex items-center gap-3 font-mono text-xs uppercase tracking-widest text-muted">
+              <Signal />
+              {label(t, i + 1)}
+            </p>
             <blockquote className="mt-5 flex-1">
               <p className="text-lg leading-relaxed text-paper/90">&ldquo;{t.full}&rdquo;</p>
             </blockquote>

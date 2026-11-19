@@ -3,6 +3,7 @@ import { useVisibleProjects } from '../lib/content'
 import { forProject } from '../data/testimonials'
 import ClientQuote from './ClientQuote'
 import ScoreRings from './ScoreRings'
+import LiveNumber from './LiveNumber'
 import { isPageSpeed, parseScores } from '../lib/scores'
 
 // Real, measured results from your own projects, shown right under the hero.
@@ -23,9 +24,9 @@ export default function ProofStrip() {
         {lead.results.map((r) => {
           const scores = isPageSpeed(r.label) ? parseScores(r.value) : []
           return (
-          <div key={r.label} className="rounded-2xl border border-paper/15 bg-surface p-6">
+          <div key={r.label} data-tilt className="relative rounded-2xl border border-paper/15 bg-surface p-6">
             <p className="text-xs uppercase tracking-widest text-muted">{r.label}</p>
-            <p className="mt-3 text-xl md:text-2xl">{r.value}</p>
+            <p className="mt-3 text-xl md:text-2xl">{scores.length > 0 ? r.value : <LiveNumber text={r.value} />}</p>
             {scores.length > 0 && <ScoreRings scores={scores} />}
             {r.note && <p className="mt-3 text-sm text-muted">{r.note}</p>}
           </div>
