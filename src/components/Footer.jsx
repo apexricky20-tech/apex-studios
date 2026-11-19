@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import Logo from './Logo'
+import FooterField from './FooterField'
 import { useSite, useContact } from '../lib/content'
 import { visibleArticles } from '../data/articles'
 
@@ -80,7 +81,8 @@ export default function Footer() {
   const contact = useContact()
   const columns = makeColumns(contact)
   return (
-    <footer className="border-t border-paper/10 px-gutter pb-8 pt-20 md:pt-28">
+    <footer className="relative isolate overflow-hidden border-t border-paper/10 px-gutter pb-8 pt-20 md:pt-28">
+      <FooterField />
       <div className="mx-auto grid max-w-[2000px] grid-cols-2 gap-x-6 gap-y-12 md:grid-cols-3 lg:grid-cols-[minmax(0,1.7fr)_repeat(5,minmax(0,1fr))]">
         <div className="col-span-2 md:col-span-3 lg:col-span-1">
           <Link to="/" aria-label="Apex Studios home">

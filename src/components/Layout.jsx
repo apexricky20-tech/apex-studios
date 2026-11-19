@@ -9,6 +9,7 @@ import Nav from './Nav'
 import Footer from './Footer'
 import BackToTop from './BackToTop'
 import PageScene from './PageScene'
+import PageField from './PageField'
 
 // The chat assistant is a big file (about 800 lines) that nobody needs in the first second. It is
 // fetched once the browser is idle, or at the visitor's first touch, click, key or scroll, whichever
@@ -60,6 +61,7 @@ export default function Layout() {
       <Motion />
       <Fx />
       <Prefetch />
+      <PageField />
       <PageScene />
       <Nav />
       <main

@@ -8,6 +8,7 @@ export const FX = {
   pageFade: true, // gentle fade when moving between pages
   gem: true, // the 3D liquid-metal blob at the bottom of the home page (desktop and phones)
   scenes: true, // the faint 3D model behind each inner page
+  fields: true, // the full-page background field behind each inner page, and the footer lamp
 }
 
 export const calm = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches

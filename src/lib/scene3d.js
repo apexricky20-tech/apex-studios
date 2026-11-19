@@ -1,4 +1,4 @@
-import { FX, calm, fine } from './fx'
+import { FX, calm, fine } from './fx.js'
 
 // Which background scene belongs to which page. The home page is left out on purpose,
 // it already has its own 3D (the globe and the diamond).

@@ -373,6 +373,24 @@ a:focus-visible, button:focus-visible, summary:focus-visible {
   mask-image: radial-gradient(ellipse 90% 80% at 50% 45%, #000 40%, transparent 100%);
 }
 @keyframes field-in { from { opacity: 0; } to { opacity: 1; } }
+.page-field {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  animation: field-in 1.6s ease-out both;
+  -webkit-mask-image: radial-gradient(ellipse 95% 85% at 50% 45%, #000 35%, transparent 100%);
+  mask-image: radial-gradient(ellipse 95% 85% at 50% 45%, #000 35%, transparent 100%);
+}
+.footer-field { position: absolute; inset: 0; z-index: -1; pointer-events: none; }
+.footer-field__canvas {
+  width: 100%;
+  height: 100%;
+  animation: field-in 1.6s ease-out both;
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 22%);
+  mask-image: linear-gradient(to bottom, transparent, #000 22%);
+}
+@media (prefers-reduced-motion: reduce) { .page-field, .footer-field { display: none; } }
 @media (prefers-reduced-motion: reduce) { .constellation { display: none; } }
 @keyframes field-drift {
   from { transform: translate3d(0, 0, 0) scale(1); }
