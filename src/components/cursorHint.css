@@ -1,0 +1,19 @@
+.cursor-hint {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 45;
+  padding: 0.35rem 0.8rem;
+  border-radius: 999px;
+  background: var(--color-amber);
+  color: #000;
+  font: 700 0.75rem/1 var(--font-body);
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  scale: 0.85;
+  transition: opacity 0.2s, scale 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+  will-change: transform;
+}
+.cursor-hint[data-on] { opacity: 1; scale: 1; }
+@media (hover: none), (prefers-reduced-motion: reduce), print { .cursor-hint { display: none; } }
