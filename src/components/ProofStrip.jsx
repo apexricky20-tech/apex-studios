@@ -2,6 +2,8 @@ import { Link } from 'react-router-dom'
 import { useVisibleProjects } from '../lib/content'
 import { forProject } from '../data/testimonials'
 import ClientQuote from './ClientQuote'
+import ScoreRings from './ScoreRings'
+import { isPageSpeed, parseScores } from '../lib/scores'
 
 // Real, measured results from your own projects, shown right under the hero.
 // It reads the first project that has `results` filled in (src/data/projects.js or the dashboard).
@@ -18,13 +20,17 @@ export default function ProofStrip() {
         {lead.title}
       </h2>
       <div className="mt-10 grid gap-4 md:grid-cols-2">
-        {lead.results.map((r) => (
+        {lead.results.map((r) => {
+          const scores = isPageSpeed(r.label) ? parseScores(r.value) : []
+          return (
           <div key={r.label} className="rounded-2xl border border-paper/15 bg-surface p-6">
             <p className="text-xs uppercase tracking-widest text-muted">{r.label}</p>
             <p className="mt-3 text-xl md:text-2xl">{r.value}</p>
+            {scores.length > 0 && <ScoreRings scores={scores} />}
             {r.note && <p className="mt-3 text-sm text-muted">{r.note}</p>}
           </div>
-        ))}
+          )
+        })}
       </div>
       {voice && <ClientQuote t={voice} className="mt-10 max-w-3xl" />}
       <div className="mt-8 flex flex-wrap items-center gap-x-8 gap-y-3">

@@ -97,7 +97,7 @@ export default function ClosingGem() {
             Tell us about your hotel, lodge or restaurant. We will reply with the next step.
           </p>
           <ClientQuote t={testimonials.find((t) => t.id === 'said')} className="mt-8 max-w-lg" />
-          <CtaButtons className="mt-10" />
+          <CtaButtons className="cta-sheen-group mt-10" />
         </div>
         <ServiceOrbit running={near} bloomOn={use3d}>
           {use3d && near ? (
