@@ -8,7 +8,7 @@ Live: <https://apex-studios-8xq.pages.dev>
 
 - **Public site:** Home, Work (with a page per project), Services, eight service pages, Process, About, Contact, Articles, Privacy and Terms.
 - **Service pages:** Website Design, Development, Automation, Branding, Google Business Profile, M-Pesa Payments, WhatsApp Automation and Care Plans.
-- **Private dashboard at `/admin`:** an inbox for enquiries, editable site and contact details, a projects editor with image upload, a test alert button and a backup download.
+- **Private dashboard at `/21`:** an inbox for enquiries, editable site and contact details, a projects editor with image upload, a test alert button and a backup download.
 - **Enquiry pipeline:** contact form, then `/api/contact`, then the dashboard inbox, with an optional Telegram alert for every new enquiry. The visitor's source (for example `instagram / bio`) is stored with the message when links are tagged with `?utm_source=`.
 - **SEO at build time:** every page gets its own title, description, canonical link and share tags written into the HTML, plus `sitemap.xml`, `robots.txt`, `llms.txt`, business and breadcrumb structured data.
 
@@ -55,7 +55,7 @@ src/
   pages/                     One file per route
   data/                      Content: site, contact, projects, articles, one file per service page
   lib/                       content.js (built-in plus dashboard content), crumbs.js, utm.js
-  admin/Admin.jsx            The dashboard (loaded only on /admin)
+  admin/Admin.jsx            The dashboard (loaded only on /21)
 ```
 
 ## Where content lives
@@ -110,9 +110,9 @@ The dashboard backup contains your dashboard content and all messages. Uploaded 
 The password limit above is stored in KV, which cannot count perfectly when many guesses arrive at once. Put Cloudflare Access in front of the dashboard so the password page is never reachable by strangers:
 
 1. Cloudflare dashboard > Zero Trust > Access > Applications > Add an application > Self-hosted.
-2. Add your site's hostname twice: path `admin`, and path `api/admin`. Add your custom domain too once you have one.
+2. Add your site's hostname twice: path `21`, and path `api/admin`. Add your custom domain too once you have one.
 3. Add a policy: Action Allow, Include > Emails > your own email address. Sign-in is by a one-time code sent to that address.
-4. Save. Open `/admin` in a private window to check that it now asks for your email first.
+4. Save. Open `/21` in a private window to check that it now asks for your email first.
 
 If you would rather not use Access, add a rate limiting rule instead (Security > WAF > Rate limiting rules) on requests where the URI path equals `/api/admin/login`.
 
@@ -148,7 +148,7 @@ Everything here runs on Cloudflare's free plan. The one limit that matters is KV
 
 **Publish dashboard edits to Google:** Pages project > Settings > Builds > Deploy hooks > add one, copy the URL, and save it as the secret `DEPLOY_HOOK_URL`. Then the dashboard's *Rebuild the site now* button refreshes titles, descriptions and the sitemap. The build reads your saved projects from `/api/content` (set `CONTENT_URL=off` to skip).
 
-**Lock down /admin (free):** Cloudflare dashboard > Zero Trust > Access > Applications > add a Self-hosted app for `<your-site>/admin*` and `<your-site>/api/admin/*` with an email one-time-PIN policy for your address (free for up to 50 users). This puts a login in front of the password.
+**Lock down /admin (free):** Cloudflare dashboard > Zero Trust > Access > Applications > add a Self-hosted app for `<your-site>/21*` and `<your-site>/api/admin/*` with an email one-time-PIN policy for your address (free for up to 50 users). This puts a login in front of the password.
 
 **Spam/flood protection beyond KV (free):** Security > WAF > Rate limiting rules (free plan gets one rule): match `URI Path` starts with `/api/` and limit by IP, 20 requests per 10 seconds. This costs no KV writes.
 

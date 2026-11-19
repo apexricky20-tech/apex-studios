@@ -34,7 +34,7 @@ export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="admin" element={<Suspense fallback={null}><Admin /></Suspense>} />
+        <Route path="21" element={<Suspense fallback={null}><Admin /></Suspense>} />
         <Route element={<Layout />}>
           <Route index element={<Home />} />
           <Route path="work" element={<WorkPage />} />

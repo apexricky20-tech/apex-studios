@@ -209,7 +209,7 @@ function enquiryAlert(m, origin) {
     m.message.length > 1200 ? `${m.message.slice(0, 1200)}...` : m.message,
     '',
     wa.length >= 10 ? `Reply on WhatsApp: https://wa.me/${wa}` : null,
-    `Open inbox: ${origin}/admin`,
+    `Open inbox: ${origin}/21`,
   ]
   return lines.filter((l) => l !== null).join('\n')
 }

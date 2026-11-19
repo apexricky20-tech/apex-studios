@@ -1,0 +1,133 @@
+diff --git a/README.md b/README.md
+index e39680e..b7c67ab 100644
+--- a/README.md
++++ b/README.md
+@@ -8,7 +8,7 @@ Live: <https://apex-studios-8xq.pages.dev>
+ 
+ - **Public site:** Home, Work (with a page per project), Services, eight service pages, Process, About, Contact, Articles, Privacy and Terms.
+ - **Service pages:** Website Design, Development, Automation, Branding, Google Business Profile, M-Pesa Payments, WhatsApp Automation and Care Plans.
+-- **Private dashboard at `/admin`:** an inbox for enquiries, editable site and contact details, a projects editor with image upload, a test alert button and a backup download.
++- **Private dashboard at `/21`:** an inbox for enquiries, editable site and contact details, a projects editor with image upload, a test alert button and a backup download.
+ - **Enquiry pipeline:** contact form, then `/api/contact`, then the dashboard inbox, with an optional Telegram alert for every new enquiry. The visitor's source (for example `instagram / bio`) is stored with the message when links are tagged with `?utm_source=`.
+ - **SEO at build time:** every page gets its own title, description, canonical link and share tags written into the HTML, plus `sitemap.xml`, `robots.txt`, `llms.txt`, business and breadcrumb structured data.
+ 
+@@ -55,7 +55,7 @@ src/
+   pages/                     One file per route
+   data/                      Content: site, contact, projects, articles, one file per service page
+   lib/                       content.js (built-in plus dashboard content), crumbs.js, utm.js
+-  admin/Admin.jsx            The dashboard (loaded only on /admin)
++  admin/Admin.jsx            The dashboard (loaded only on /21)
+ ```
+ 
+ ## Where content lives
+@@ -110,9 +110,9 @@ The dashboard backup contains your dashboard content and all messages. Uploaded
+ The password limit above is stored in KV, which cannot count perfectly when many guesses arrive at once. Put Cloudflare Access in front of the dashboard so the password page is never reachable by strangers:
+ 
+ 1. Cloudflare dashboard > Zero Trust > Access > Applications > Add an application > Self-hosted.
+-2. Add your site's hostname twice: path `admin`, and path `api/admin`. Add your custom domain too once you have one.
++2. Add your site's hostname twice: path `21`, and path `api/admin`. Add your custom domain too once you have one.
+ 3. Add a policy: Action Allow, Include > Emails > your own email address. Sign-in is by a one-time code sent to that address.
+-4. Save. Open `/admin` in a private window to check that it now asks for your email first.
++4. Save. Open `/21` in a private window to check that it now asks for your email first.
+ 
+ If you would rather not use Access, add a rate limiting rule instead (Security > WAF > Rate limiting rules) on requests where the URI path equals `/api/admin/login`.
+ 
+@@ -148,7 +148,7 @@ Everything here runs on Cloudflare's free plan. The one limit that matters is KV
+ 
+ **Publish dashboard edits to Google:** Pages project > Settings > Builds > Deploy hooks > add one, copy the URL, and save it as the secret `DEPLOY_HOOK_URL`. Then the dashboard's *Rebuild the site now* button refreshes titles, descriptions and the sitemap. The build reads your saved projects from `/api/content` (set `CONTENT_URL=off` to skip).
+ 
+-**Lock down /admin (free):** Cloudflare dashboard > Zero Trust > Access > Applications > add a Self-hosted app for `<your-site>/admin*` and `<your-site>/api/admin/*` with an email one-time-PIN policy for your address (free for up to 50 users). This puts a login in front of the password.
++**Lock down /admin (free):** Cloudflare dashboard > Zero Trust > Access > Applications > add a Self-hosted app for `<your-site>/21*` and `<your-site>/api/admin/*` with an email one-time-PIN policy for your address (free for up to 50 users). This puts a login in front of the password.
+ 
+ **Spam/flood protection beyond KV (free):** Security > WAF > Rate limiting rules (free plan gets one rule): match `URI Path` starts with `/api/` and limit by IP, 20 requests per 10 seconds. This costs no KV writes.
+ 
+diff --git a/functions/api/[[route]].js b/functions/api/[[route]].js
+index 1a9cbac..cbba85c 100644
+--- a/functions/api/[[route]].js
++++ b/functions/api/[[route]].js
+@@ -209,7 +209,7 @@ function enquiryAlert(m, origin) {
+     m.message.length > 1200 ? `${m.message.slice(0, 1200)}...` : m.message,
+     '',
+     wa.length >= 10 ? `Reply on WhatsApp: https://wa.me/${wa}` : null,
+-    `Open inbox: ${origin}/admin`,
++    `Open inbox: ${origin}/21`,
+   ]
+   return lines.filter((l) => l !== null).join('\n')
+ }
+diff --git a/functions/api/assistant.js b/functions/api/assistant.js
+index 5932adb..fc1a444 100644
+--- a/functions/api/assistant.js
++++ b/functions/api/assistant.js
+@@ -187,7 +187,7 @@ export async function onRequestPost({ request, env }) {
+   }
+ }
+ 
+-// Setup check for the owner only (it reveals which bindings exist). Sign in to /admin first, then open /api/assistant.
++// Setup check for the owner only (it reveals which bindings exist). Sign in to the dashboard first, then open /api/assistant.
+ export async function onRequestGet({ request, env }) {
+   if (!env.DB || !(await isAuthed(request, env))) return json({ error: 'Not found.' }, 404)
+   return json({ ai: Boolean(env.AI), kv: Boolean(env.DB), model: MODEL, vision: VISION_MODEL })
+diff --git a/public/_headers b/public/_headers
+index f282408..9b30707 100644
+--- a/public/_headers
++++ b/public/_headers
+@@ -21,7 +21,7 @@
+ /fonts/*
+   Cache-Control: public, max-age=31536000, immutable
+ 
+-/admin
++/21
+   X-Robots-Tag: noindex, nofollow
+ 
+ /api/*
+diff --git a/scripts/seo.mjs b/scripts/seo.mjs
+index 8cf7b3c..a197759 100644
+--- a/scripts/seo.mjs
++++ b/scripts/seo.mjs
+@@ -377,7 +377,7 @@ for (const route of routes) {
+ // ---------- robots.txt and sitemap.xml ----------
+ writeFileSync(
+   join(dist, 'robots.txt'),
+-  ['User-agent: *', 'Disallow: /admin', 'Disallow: /api/admin/', '', `Sitemap: ${SITE_URL}/sitemap.xml`, ''].join('\n'),
++  ['User-agent: *', 'Disallow: /api/admin/', '', `Sitemap: ${SITE_URL}/sitemap.xml`, ''].join('\n'),
+ )
+ 
+ // <lastmod> is only written where we really know when the content changed (articles, and the articles index).
+diff --git a/src/App.jsx b/src/App.jsx
+index 0eab4cb..04eebfb 100644
+--- a/src/App.jsx
++++ b/src/App.jsx
+@@ -34,7 +34,7 @@ export default function App() {
+   return (
+     <BrowserRouter>
+       <Routes>
+-        <Route path="admin" element={<Suspense fallback={null}><Admin /></Suspense>} />
++        <Route path="21" element={<Suspense fallback={null}><Admin /></Suspense>} />
+         <Route element={<Layout />}>
+           <Route index element={<Home />} />
+           <Route path="work" element={<WorkPage />} />
+diff --git a/src/lib/routes.js b/src/lib/routes.js
+index 9ec873d..f2ab929 100644
+--- a/src/lib/routes.js
++++ b/src/lib/routes.js
+@@ -57,7 +57,7 @@ const BY_PATH = {
+ // main bundle, and the dashboard is never warmed up on purpose).
+ export function routeKeyFor(pathname) {
+   const p = String(pathname || '/').split(/[?#]/)[0].replace(/\/+$/, '') || '/'
+-  if (p === '/' || p === '/admin') return null
++  if (p === '/' || p === '/21') return null
+   if (BY_PATH[p]) return BY_PATH[p]
+   if (p.startsWith('/work/')) return 'project'
+   if (p.startsWith('/articles/')) return 'article'
+diff --git a/tests/routes.test.js b/tests/routes.test.js
+index 7acee26..b0d065c 100644
+--- a/tests/routes.test.js
++++ b/tests/routes.test.js
+@@ -22,6 +22,6 @@ test('routeKeyFor never warms the home page, the dashboard or unknown paths', ()
+   assert.equal(routeKeyFor('/'), null)
+   assert.equal(routeKeyFor(''), null)
+   assert.equal(routeKeyFor(undefined), null)
+-  assert.equal(routeKeyFor('/admin'), null)
++  assert.equal(routeKeyFor('/21'), null)
+   assert.equal(routeKeyFor('/does-not-exist'), null)
+ })

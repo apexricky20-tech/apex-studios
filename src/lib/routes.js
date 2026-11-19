@@ -57,7 +57,7 @@ const BY_PATH = {
 // main bundle, and the dashboard is never warmed up on purpose).
 export function routeKeyFor(pathname) {
   const p = String(pathname || '/').split(/[?#]/)[0].replace(/\/+$/, '') || '/'
-  if (p === '/' || p === '/admin') return null
+  if (p === '/' || p === '/21') return null
   if (BY_PATH[p]) return BY_PATH[p]
   if (p.startsWith('/work/')) return 'project'
   if (p.startsWith('/articles/')) return 'article'

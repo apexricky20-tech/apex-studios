@@ -187,7 +187,7 @@ export async function onRequestPost({ request, env }) {
   }
 }
 
-// Setup check for the owner only (it reveals which bindings exist). Sign in to /admin first, then open /api/assistant.
+// Setup check for the owner only (it reveals which bindings exist). Sign in to the dashboard first, then open /api/assistant.
 export async function onRequestGet({ request, env }) {
   if (!env.DB || !(await isAuthed(request, env))) return json({ error: 'Not found.' }, 404)
   return json({ ai: Boolean(env.AI), kv: Boolean(env.DB), model: MODEL, vision: VISION_MODEL })

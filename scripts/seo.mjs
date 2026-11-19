@@ -377,7 +377,7 @@ for (const route of routes) {
 // ---------- robots.txt and sitemap.xml ----------
 writeFileSync(
   join(dist, 'robots.txt'),
-  ['User-agent: *', 'Disallow: /admin', 'Disallow: /api/admin/', '', `Sitemap: ${SITE_URL}/sitemap.xml`, ''].join('\n'),
+  ['User-agent: *', 'Disallow: /api/admin/', '', `Sitemap: ${SITE_URL}/sitemap.xml`, ''].join('\n'),
 )
 
 // <lastmod> is only written where we really know when the content changed (articles, and the articles index).
