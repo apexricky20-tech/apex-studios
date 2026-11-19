@@ -1,10 +1,13 @@
-import { useEffect, useState } from 'react'
+import { lazy, Suspense, useEffect, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import Breadcrumbs from './Breadcrumbs'
 import { serviceNames } from '../lib/crumbs'
 import CtaButtons from './CtaButtons'
 import { priceText, PRICE_NOTE } from '../data/pricing'
 import ServiceVoices from './ServiceVoices'
+
+// Only the two pages that have a demo download it.
+const Demo = lazy(() => import('./demos/Demo'))
 
 export default function ServiceLayout({ page }) {
   const { sections } = page
@@ -51,6 +54,12 @@ export default function ServiceLayout({ page }) {
             <span className="font-medium text-amber">Typical price: {priceText(serviceNames[pathname])}.</span>{' '}
             {PRICE_NOTE}
           </p>
+        )}
+
+        {page.demo && (
+          <Suspense fallback={<div className="mt-20 min-h-[640px] md:min-h-[600px]" aria-hidden="true" />}>
+            <Demo kind={page.demo} />
+          </Suspense>
         )}
 
         <div className="mt-28 grid gap-16 lg:grid-cols-[260px_1fr] lg:gap-24">

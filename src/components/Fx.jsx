@@ -6,6 +6,7 @@ import { FX, calm, fine } from '../lib/fx'
 export default function Fx() {
   const bar = useRef(null)
   const glow = useRef(null)
+  const label = useRef(null)
 
   useEffect(() => {
     if (calm()) return undefined
@@ -89,6 +90,21 @@ export default function Fx() {
         el.style.transform = `perspective(900px) rotateX(${((0.5 - y) * 6).toFixed(2)}deg) rotateY(${((x - 0.5) * 8).toFixed(2)}deg)`
       }
 
+      // A pill that tags along beside the pointer over anything marked data-cursor="Some words".
+      // The real cursor stays visible, and the pill never takes clicks.
+      const tag = (e) => {
+        const el = label.current
+        if (!el || !FX.cursorLabel) return
+        const host = e.target.closest?.('[data-cursor]')
+        if (!host) {
+          delete el.dataset.on
+          return
+        }
+        if (el.textContent !== host.dataset.cursor) el.textContent = host.dataset.cursor
+        el.dataset.on = '1'
+        el.style.transform = `translate3d(${e.clientX + 16}px, ${e.clientY + 16}px, 0)`
+      }
+
       const onMove = (e) => {
         target.x = e.clientX
         target.y = e.clientY
@@ -96,9 +112,11 @@ export default function Fx() {
         if (glow.current) glow.current.dataset.on = '1'
         lean(e)
         tilt(e)
+        tag(e)
       }
       const onLeave = () => {
         if (glow.current) delete glow.current.dataset.on
+        if (label.current) delete label.current.dataset.on
         if (magnet) magnet.style.transform = ''
         if (card) card.style.transform = ''
         magnet = null
@@ -121,6 +139,7 @@ export default function Fx() {
     <>
       {FX.progressBar && <div ref={bar} className="scroll-progress" aria-hidden="true" />}
       {FX.cursorGlow && <div ref={glow} className="cursor-glow" aria-hidden="true" />}
+      {FX.cursorLabel && <div ref={label} className="cursor-label" aria-hidden="true" />}
     </>
   )
 }

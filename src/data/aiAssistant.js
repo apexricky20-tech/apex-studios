@@ -1,7 +1,7 @@
 export const aiAssistant = {
   title: 'AI Assistant for Businesses in Kenya | Apex Studios',
   description:
-    'An AI assistant for hotels, restaurants and shops in Kenya: it answers customer questions from your own prices, hours and menu, captures bookings and orders, and hands over to your team when a person is needed.',
+    'An AI assistant for hotels, restaurants and shops in Kenya: answers from your own prices, hours and menu, captures bookings and hands over to your team.',
   label: 'Services',
   h1: 'AI Assistant',
   intro:

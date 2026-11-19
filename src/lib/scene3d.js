@@ -42,7 +42,8 @@ export function sceneTier() {
   if (calm()) return 0
   const nav = navigator
   const conn = nav.connection
-  if (conn?.saveData || /(^|-)2g$/.test(conn?.effectiveType || '')) return 0
+  // 3G counts as slow too: the 3D code is about 265 KB over the wire, for a faint background.
+  if (conn?.saveData || /^(slow-2g|2g|3g)$/.test(conn?.effectiveType || '')) return 0
   const light =
     window.innerWidth < 768 || !fine() || (nav.deviceMemory ?? 8) <= 4 || (nav.hardwareConcurrency ?? 8) <= 4
   return light ? 1 : 2

@@ -3,6 +3,7 @@ export const mpesaPayments = {
   title: 'M-Pesa Payments for Websites in Kenya | Apex Studios',
   description: 'Accept M-Pesa on your website: payment prompts on the customer\'s phone, booking deposits, order payments and automatic confirmation for hotels, lodges and restaurants in Kenya.',
   label: 'Services',
+  demo: 'mpesa',
   h1: 'M-Pesa Payments',
   intro: 'Let guests pay the way they already do. We connect your website to your own M-Pesa Paybill or Till number, so a booking deposit or an order is paid with a prompt on the customer\'s phone and confirmed on your side without anyone checking messages.',
   sections: [

@@ -8,7 +8,8 @@ export default function ArticlesPage() {
   const [featured, ...rest] = list
   return (
     <div className="px-gutter pb-24 pt-40">
-      <title>Articles | Apex Studios</title>
+      <title>Articles: Websites for Hotels, Lodges and Restaurants | Apex Studios</title>
+      <meta name="description" content="Practical articles on websites, Google Business Profile, M-Pesa and WhatsApp for hotels, lodges and restaurants in Kenya." />
       <div className="mx-auto max-w-[1400px]">
         <Breadcrumbs items={[{ name: 'Articles' }]} />
 

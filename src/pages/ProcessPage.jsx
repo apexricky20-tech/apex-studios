@@ -46,7 +46,8 @@ const ready = [
 export default function ProcessPage() {
   return (
     <div className="pt-20">
-      <title>Our Process | Apex Studios</title>
+      <title>Our Process: From First Call to Launch | Apex Studios</title>
+      <meta name="description" content="How Apex Studios takes a hotel, lodge or restaurant website from the first call to launch and handover, in four clear steps." />
 
       <div className="px-gutter pt-20 md:pt-28">
         <div className="mx-auto max-w-[1400px]">

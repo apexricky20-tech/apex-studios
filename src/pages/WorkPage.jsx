@@ -2,12 +2,18 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useVisibleProjects } from '../lib/content'
 import Breadcrumbs from '../components/Breadcrumbs'
+import { useMorphTo } from '../lib/morph'
+import { warmProject } from '../lib/warm'
 
 function Card({ project }) {
+  const morph = useMorphTo()
   return (
     <Link
       to={`/work/${project.slug}`}
       className="group block"
+      data-cursor="View case study"
+      onClick={(e) => morph(e, `/work/${project.slug}`)}
+      {...warmProject}
     >
       <div data-tilt className="relative aspect-[4/3] overflow-hidden rounded-2xl border border-paper/10 bg-surface">
         <img
@@ -38,10 +44,10 @@ export default function WorkPage() {
 
   return (
     <div className="px-gutter pb-32 pt-40 md:pt-48">
-      <title>Our Work | Apex Studios</title>
+      <title>Our Work: Hotel, Lodge and Restaurant Websites | Apex Studios</title>
       <meta
         name="description"
-        content="Selected projects by Apex Studios, a digital studio in Nairobi, Kenya."
+        content="Selected websites and Google Business Profiles built by Apex Studios, a Nairobi digital studio, for hotels, lodges and restaurants in Kenya."
       />
       <div className="mx-auto max-w-[1240px]">
         <Breadcrumbs items={[{ name: 'Our Work' }]} />

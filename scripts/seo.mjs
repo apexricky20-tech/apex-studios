@@ -19,6 +19,7 @@ import { fileURLToPath } from 'node:url'
 
 import { contact as contactDefault } from '../src/data/contact.js'
 import { projects as projectsDefault } from '../src/data/projects.js'
+import { site as siteDefault } from '../src/data/site.js'
 import { articles } from '../src/data/articles.js'
 import { serviceNames, pageNames } from '../src/lib/crumbs.js'
 import { websiteDesign } from '../src/data/websiteDesign.js'
@@ -97,20 +98,20 @@ const routes = [
   { path: '/', title: HOME_TITLE, description: HOME_DESCRIPTION, h1: 'Websites, payments, automation and AI for hotels, lodges and restaurants' },
   {
     path: '/work',
-    title: 'Our Work | Apex Studios',
-    description: 'Selected projects by Apex Studios, a digital studio in Nairobi, Kenya.',
+    title: 'Our Work: Hotel, Lodge and Restaurant Websites | Apex Studios',
+    description: 'Selected websites and Google Business Profiles built by Apex Studios, a Nairobi digital studio, for hotels, lodges and restaurants in Kenya.',
   },
   {
     path: '/services',
-    title: 'Services | Apex Studios',
+    title: 'Services: Websites, M-Pesa, WhatsApp and AI for Hotels | Apex Studios',
     description:
-      'Website design, development, automation, M-Pesa payments, WhatsApp automation, AI assistants, branding, Google Business Profile, website care plans, 3D creation, UI/UX design and motion design for hotels, lodges and restaurants in Kenya.',
+      'Twelve services for hotels, lodges and restaurants in Kenya: website design, M-Pesa payments, WhatsApp automation, AI assistants, branding and care plans.',
   },
   ...servicePages.map(([path, p]) => ({ path, title: p.title, description: p.description })),
   {
     path: '/process',
-    title: 'Our Process | Apex Studios',
-    description: 'How Apex Studios takes a hotel, lodge or restaurant website from the first call to launch and handover.',
+    title: 'Our Process: From First Call to Launch | Apex Studios',
+    description: 'How Apex Studios takes a hotel, lodge or restaurant website from the first call to launch and handover, in four clear steps.',
   },
   {
     path: '/about',
@@ -142,15 +143,15 @@ const routes = [
   },
   ...projects
     .filter((p) => p.published)
-    .map((p) => ({ path: `/work/${p.slug}`, title: `${p.title} | Apex Studios`, description: p.summary })),
+    .map((p) => ({ path: `/work/${p.slug}`, title: `${p.title} | Apex Studios`, description: p.summary, project: p })),
 ]
 
 const publishedArticles = articles.filter((a) => a.published)
 if (publishedArticles.length) {
   routes.push({
     path: '/articles',
-    title: 'Articles | Apex Studios',
-    description: 'Practical articles on websites for hotels, lodges and restaurants in Kenya.',
+    title: 'Articles: Websites for Hotels, Lodges and Restaurants | Apex Studios',
+    description: 'Practical articles on websites, Google Business Profile, M-Pesa and WhatsApp for hotels, lodges and restaurants in Kenya.',
     // The index changes when its newest article does.
     lastmod: publishedArticles.map((a) => a.updated || a.date).filter(Boolean).sort().pop(),
   })
@@ -308,13 +309,35 @@ function shell(route) {
   )
 }
 
+// Reads a WebP picture's real width and height (lossy, lossless or extended), so the share tags never guess.
+function imageSize(file) {
+  try {
+    const b = readFileSync(file)
+    if (b.toString('ascii', 0, 4) !== 'RIFF' || b.toString('ascii', 8, 12) !== 'WEBP') return null
+    const kind = b.toString('ascii', 12, 16)
+    if (kind === 'VP8 ') return { w: b.readUInt16LE(26) & 0x3fff, h: b.readUInt16LE(28) & 0x3fff }
+    if (kind === 'VP8L') {
+      const v = b.readUInt32LE(21)
+      return { w: (v & 0x3fff) + 1, h: ((v >> 14) & 0x3fff) + 1 }
+    }
+    if (kind === 'VP8X') return { w: b.readUIntLE(24, 3) + 1, h: b.readUIntLE(27, 3) + 1 }
+  } catch {
+    /* fall through to the default size */
+  }
+  return null
+}
+
 function headBlock(route) {
   const url = urlFor(route.path)
   // Articles share with their own picture when the file exists, otherwise the site-wide share image.
-  const own = route.article?.image && existsSync(join(root, 'public', route.article.image))
-  const image = own ? `${SITE_URL}${route.article.image}` : SHARE_IMAGE
-  const imageHeight = own ? 750 : 630
-  const imageAlt = own ? route.article.title : SHARE_IMAGE_ALT
+  // Articles and case studies share with their own picture when the file exists, otherwise the site-wide share image.
+  const pic = route.article?.image || route.project?.image
+  const own = pic && existsSync(join(root, 'public', pic))
+  const image = own ? `${SITE_URL}${pic}` : SHARE_IMAGE
+  const size = own ? imageSize(join(root, 'public', pic)) : null
+  const imageWidth = size?.w ?? 1200
+  const imageHeight = size ? size.h : 630
+  const imageAlt = own ? (route.article?.title || route.project.title) : SHARE_IMAGE_ALT
   const lines = [
     `<link rel="canonical" href="${attr(url)}" />`,
     `<meta property="og:type" content="${route.article ? 'article' : 'website'}" />`,
@@ -324,7 +347,7 @@ function headBlock(route) {
     `<meta property="og:description" content="${attr(route.description)}" />`,
     `<meta property="og:url" content="${attr(url)}" />`,
     `<meta property="og:image" content="${attr(image)}" />`,
-    `<meta property="og:image:width" content="1200" />`,
+    `<meta property="og:image:width" content="${imageWidth}" />`,
     `<meta property="og:image:height" content="${imageHeight}" />`,
     `<meta property="og:image:alt" content="${attr(imageAlt)}" />`,
     `<meta name="twitter:card" content="summary_large_image" />`,
@@ -336,6 +359,13 @@ function headBlock(route) {
     lines.push(`<meta name="google-site-verification" content="${attr(process.env.GOOGLE_SITE_VERIFICATION)}" />`)
   }
   if (route.path === '/') {
+    // The hero portrait is the largest thing on the home page. Without this hint the browser only
+    // discovers it after the JavaScript has run (measured: requested at ~3.0s on throttled mobile).
+    // Home only, so inner pages never download a picture they do not show.
+    const portrait = siteDefault.portrait
+    if (typeof portrait === 'string' && portrait.startsWith('/')) {
+      lines.unshift(`<link rel="preload" as="image" href="${attr(portrait)}" fetchpriority="high" />`)
+    }
     lines.push(jsonLd(businessData()))
     lines.push(jsonLd(faqData()))
   }
@@ -365,6 +395,20 @@ for (const route of routes) {
   mkdirSync(dirname(file), { recursive: true })
   writeFileSync(file, render(route))
 }
+
+// ---------- a real 404, and the dashboard page ----------
+// Without a top-level 404.html, Cloudflare Pages treats the site as a single-page app and answers every
+// unknown address with 200 OK (a "soft 404" that search engines distrust). With one, unknown addresses get
+// a true 404 status and still load the app, which draws its own "Page not found" screen.
+// /admin gets its own copy so it keeps answering 200 (it is protected and marked noindex in _headers).
+const notFoundHtml = html
+  .replace(/<title>[\s\S]*?<\/title>/, '<title>Page not found | Apex Studios</title>')
+  .replace(/<meta name="description"[^>]*>/, '<meta name="description" content="This page does not exist or has moved." />')
+  .replace('<!--seo-->', '<meta name="robots" content="noindex" />')
+  .replace('<!--shell-->', '')
+writeFileSync(join(dist, '404.html'), notFoundHtml)
+mkdirSync(join(dist, 'admin'), { recursive: true })
+writeFileSync(join(dist, 'admin', 'index.html'), notFoundHtml.replace('Page not found | Apex Studios', 'Dashboard | Apex Studios'))
 
 // ---------- robots.txt and sitemap.xml ----------
 writeFileSync(
