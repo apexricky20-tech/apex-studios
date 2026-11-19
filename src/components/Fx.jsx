@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { FX, calm, fine } from '../lib/fx'
+import CursorHint from './CursorHint'
 
 // Small, optional touches. Nothing here runs for visitors who prefer reduced motion,
 // and the mouse effects never run on touch screens.
@@ -121,6 +122,7 @@ export default function Fx() {
     <>
       {FX.progressBar && <div ref={bar} className="scroll-progress" aria-hidden="true" />}
       {FX.cursorGlow && <div ref={glow} className="cursor-glow" aria-hidden="true" />}
+      <CursorHint />
     </>
   )
 }
