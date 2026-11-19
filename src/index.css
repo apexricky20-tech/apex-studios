@@ -253,3 +253,63 @@ a:focus-visible, button:focus-visible, summary:focus-visible {
 @media (prefers-reduced-motion: reduce) {
   ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation: none !important; }
 }
+
+/* ---- proof rings (ProofStrip) and the sent tick (ContactPage): their resting look ---- */
+.score-rings { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0.75rem; margin-top: 1.5rem; }
+.score-ring { display: grid; justify-items: center; gap: 0.5rem; }
+.score-dial { position: relative; width: 100%; max-width: 4.5rem; aspect-ratio: 1; }
+.score-dial svg { display: block; width: 100%; height: 100%; }
+.score-track { fill: none; stroke: rgb(255 255 255 / 0.12); stroke-width: 3; }
+.score-arc {
+  fill: none;
+  stroke: var(--color-amber);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: calc(1 - var(--v, 1));
+  transform: rotate(-90deg);
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.score-num {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-size: 1.05rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.score-label { font-size: 0.62rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-muted); text-align: center; }
+.sent-tick { display: inline-block; width: 1.5rem; height: 1.5rem; margin: -0.2rem 0.6rem 0 0; vertical-align: middle; }
+@media print { .score-rings { display: none !important; } }
+
+/* ---- motion for the three above: only for visitors who have not asked for reduced motion ---- */
+@media (prefers-reduced-motion: no-preference) {
+  /* Proof: the speed is measured, not claimed. Rings fill when the card scrolls into view. */
+  .score-arc {
+    stroke-dashoffset: 1;
+    transition: stroke-dashoffset 1.5s cubic-bezier(0.2, 0.7, 0.2, 1);
+    transition-delay: calc(var(--i, 0) * 140ms + 120ms);
+  }
+  .score-rings[data-seen] .score-arc { stroke-dashoffset: calc(1 - var(--v)); }
+
+  /* Closing: the services settle on the ring, then the next step catches the light. One amber sweep, once. */
+  .cta-sheen-group > a:first-child { position: relative; overflow: hidden; isolation: isolate; }
+  .cta-sheen-group > a:first-child::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background: linear-gradient(105deg, transparent 35%, rgb(255 130 0 / 0.42) 50%, transparent 65%);
+    transform: translateX(-120%);
+  }
+  [data-bloomed] .cta-sheen-group > a:first-child::after { animation: cta-sheen 1.2s 0.25s cubic-bezier(0.4, 0, 0.2, 1) both; }
+  @keyframes cta-sheen { from { transform: translateX(-120%); } to { transform: translateX(120%); } }
+
+  /* Contact: a sent form should feel received. The tick draws itself, circle first. */
+  .sent-tick .tick-ring { stroke-dasharray: 1; animation: tick-draw 0.55s 0.05s ease-out both; }
+  .sent-tick .tick-mark { stroke-dasharray: 1; animation: tick-draw 0.4s 0.5s ease-out both; }
+  @keyframes tick-draw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+}

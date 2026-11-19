@@ -1,4 +1,5 @@
-import Motion from './Motion'
+import Motion, { Reveal } from './Motion'
+import Prefetch from './Prefetch'
 import Fx from './Fx'
 import { FX } from '../lib/fx'
 import { morph } from '../lib/morph'
@@ -58,6 +59,7 @@ export default function Layout() {
       <ScrollToTop />
       <Motion />
       <Fx />
+      <Prefetch />
       <PageScene />
       <Nav />
       <main
@@ -70,6 +72,7 @@ export default function Layout() {
             footer was visible, then pushed off screen: a layout shift of 0.4 on every direct visit to an inner page. */}
         <Suspense fallback={<div style={{ minHeight: '100svh' }} aria-hidden="true" />}>
           <Outlet />
+          <Reveal />
         </Suspense>
       </main>
       <Footer />

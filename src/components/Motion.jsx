@@ -48,7 +48,15 @@ export default function Motion() {
     lenisRef.current?.scrollTo(0, { immediate: true })
   }, [pathname])
 
-  // Reveal on scroll
+  return null
+}
+
+// Reveal on scroll. It lives inside the page's Suspense boundary (see Layout.jsx) on purpose: a page that is
+// still downloading has no content yet, and this has to run when the content is actually in the DOM.
+// It used to run at the moment the route changed, so on a first visit to any inner page nothing was
+// revealed at all; only on a second visit (code already cached) did the animation play.
+export function Reveal() {
+  const { pathname } = useLocation()
   useLayoutEffect(() => {
     if (reduced()) return
     let els = [...document.querySelectorAll(SELECTOR)].filter((el) => !el.closest(SKIP))

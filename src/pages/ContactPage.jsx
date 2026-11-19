@@ -317,6 +317,10 @@ export default function ContactPage() {
               <div role="status" aria-live="polite" className="mt-6 max-w-md text-lg">
                 {status === 'sent' && (
                   <p className="text-amber">
+                    <svg viewBox="0 0 24 24" className="sent-tick" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                      <circle className="tick-ring" cx="12" cy="12" r="10" pathLength="1" />
+                      <path className="tick-mark" d="M7.5 12.5l3 3 6-6.5" pathLength="1" />
+                    </svg>
                     Thank you, your message is in. I&apos;ll reply on WhatsApp or by email, usually within a day.
                     {chat && (
                       <>

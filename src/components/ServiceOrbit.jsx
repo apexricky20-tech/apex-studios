@@ -59,6 +59,10 @@ export default function ServiceOrbit({ running, bloomOn = false, children }) {
     let shownM = targetM
     let shownX = 0
     let forced = false
+    // Lets the closing section's button catch the light once the services have settled on the ring.
+    const section = el.closest('section')
+    let sawLow = false
+    let lit = false
     let cx = 0
     let cy = 0
     let half = 1
@@ -81,6 +85,13 @@ export default function ServiceOrbit({ running, bloomOn = false, children }) {
       const tl = forced ? timeline(1, 0) : timeline(shownM, shownX)
       bloom.p = tl.p
       bloom.scale = tl.scale
+      if (bloomOn && running) {
+        if (tl.p < 0.3) sawLow = true
+        else if (tl.p > 0.97 && sawLow && !lit) {
+          lit = true
+          section?.setAttribute('data-bloomed', '')
+        }
+      }
       bloom.angle = angle
       bloom.w = width
       bloom.n = nodes.length
@@ -168,6 +179,7 @@ export default function ServiceOrbit({ running, bloomOn = false, children }) {
       window.removeEventListener('resize', measure)
       window.removeEventListener('pointermove', follow)
       document.documentElement.removeEventListener('pointerleave', rest)
+      section?.removeAttribute('data-bloomed')
       rest()
     }
   }, [running, list, bloomOn])
