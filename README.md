@@ -128,6 +128,10 @@ If you would rather not use Access, add a rate limiting rule instead (Security >
 - **No inline scripts:** put page-start code in `public/boot.js`, not in a `<script>` tag in `index.html`.
 
 - **Heading styles:** the `h1`, `h2` and `h3` rule in `src/index.css` sits outside Tailwind's layers, so it wins over utility classes such as `font-bold` or `tracking-*` on headings. Give a heading its own class in `index.css` when it needs a different weight or spacing.
+- **Motion budget:** every effect must say something about the work, and must never delay the first paint or a call to action. Switch effects off in `src/lib/fx.js`. The cursor glow is off on purpose.
+- **Demos and the process path:** the M-Pesa and WhatsApp demos (`src/components/demos/`) are plain HTML and CSS, loaded only on those two pages. The process line is CSS scroll-driven animation (`.process-path` in `index.css`); browsers without it show the finished line.
+- **Card to case study:** `src/lib/morph.js` runs a View Transition, then the page behaves as before. Painting is paused while it waits, so never poll with `requestAnimationFrame` inside it.
+- **Particle formations** (`Sphere3D.jsx`, `lib/forms.js`): one per "Why choose us" pillar. Colours in that buffer are linear, not sRGB.
 - **Scroll reveals:** `Motion.jsx` fades in `h2`, `h3`, paragraphs, list items and pill-style links (`rounded-full` links) automatically. The header, footer, menu, marquee and the hero text are skipped (see its `SKIP` selector). Add `data-hero` to anything else that must not animate.
 - **The 3D sphere** is a large chunk on purpose. It loads only when scrolled near.
 - **Source maps** are disabled so the source is not published with the site.

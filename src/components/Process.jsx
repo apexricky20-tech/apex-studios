@@ -16,9 +16,11 @@ export default function Process({ asPage = false }) {
     <section id="process" className="mx-auto max-w-[2000px] px-gutter py-24  md:py-32">
       <Heading className="sr-only">{asPage ? 'Our process' : 'How a build runs'}</Heading>
       <p className="text-sm uppercase tracking-widest text-amber">How a build runs</p>
-      <div className="mt-12 grid gap-6 md:grid-cols-4">
-        {steps.map(([n, title, text]) => (
-          <div key={n}>
+      <div className="process-path mt-12 grid md:grid-cols-4">
+        {steps.map(([n, title, text], i) => (
+          <div key={n} className="process-step relative pb-10 pl-8 md:pb-0 md:pl-0 md:pr-8 md:pt-10" style={{ '--i': i }}>
+            <span className="process-rail" aria-hidden="true" />
+            <span className="process-dot" aria-hidden="true" />
             <p className="font-display text-5xl font-extrabold text-amber">{n}</p>
             <Title className="mt-4 text-2xl">{title}</Title>
             <p className="mt-3 text-paper/70">{text}</p>

@@ -3,6 +3,7 @@ export const whatsappAutomation = {
   title: 'WhatsApp Automation for Businesses in Kenya | Apex Studios',
   description: 'WhatsApp automation for hotels, lodges and restaurants in Kenya: instant replies, booking and order capture, staff alerts and follow-up messages.',
   label: 'Services',
+  demo: 'whatsapp',
   h1: 'WhatsApp Automation',
   intro: 'Most of your customers already message you on WhatsApp. We set it up so common questions are answered straight away, bookings and orders are captured properly, and nothing waits unseen in a chat.',
   sections: [

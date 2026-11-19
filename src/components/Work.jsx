@@ -1,8 +1,11 @@
 import { Link } from 'react-router-dom'
 import { useVisibleProjects } from '../lib/content'
 import { forProject } from '../data/testimonials'
+import { useMorphTo } from '../lib/morph'
+import { warmProject } from '../lib/warm'
 
 function Card({ project, index }) {
+  const morph = useMorphTo()
   const voice = forProject(project.slug)[0]
   const external = false
   const cls = `group relative block aspect-[4/3] w-full overflow-hidden rounded-2xl border border-paper/10 bg-gradient-to-br from-neutral-800 to-neutral-950 md:w-[46%] ${
@@ -38,7 +41,7 @@ function Card({ project, index }) {
       {inner}
     </a>
   ) : (
-    <Link to={`/work/${project.slug}`} className={cls} data-tilt>
+    <Link to={`/work/${project.slug}`} className={cls} data-tilt onClick={(e) => morph(e, `/work/${project.slug}`)} {...warmProject}>
       {inner}
     </Link>
   )

@@ -11,8 +11,10 @@ export default function Motion() {
   const lenisRef = useRef(null)
 
   // Smooth scroll
+  // Only for a mouse or trackpad. On a phone the browser's own momentum scrolling is better than
+  // anything JavaScript can fake, and running a frame loop all day just drains the battery.
   useEffect(() => {
-    if (reduced()) return
+    if (reduced() || !window.matchMedia('(hover: hover) and (pointer: fine)').matches) return
     const lenis = new Lenis({ lerp: 0.1, anchors: true })
     lenisRef.current = lenis
     let id = requestAnimationFrame(function raf(t) {

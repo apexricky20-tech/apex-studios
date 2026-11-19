@@ -1,5 +1,7 @@
 import { Component, lazy, Suspense, useEffect, useRef, useState } from 'react'
 
+import { FORMS } from '../lib/forms'
+
 const Sphere3D = lazy(() => import('./Sphere3D'))
 
 const values = [
@@ -37,6 +39,10 @@ export default function WhyChooseUs() {
   const [reduce] = useState(() => window.matchMedia('(prefers-reduced-motion: reduce)').matches)
   const sectionRef = useRef(null)
   const progress = useRef(0)
+  const form = useRef(open + 1) // which formation the particles take: 0 resting, 1 to 4 = the open pillar
+  useEffect(() => {
+    form.current = open + 1
+  }, [open])
 
   useEffect(() => {
     const el = sectionRef.current
@@ -110,13 +116,13 @@ export default function WhyChooseUs() {
 
         <div
           role="img"
-          aria-label="Animated 3D sphere"
+          aria-label={`Animated 3D particles forming ${FORMS[open + 1]}`}
           className="mx-auto aspect-square w-full max-w-[560px]"
         >
           {near && !reduce && (
             <SafeCanvas>
               <Suspense fallback={null}>
-                <Sphere3D progress={progress} visible={near} />
+                <Sphere3D progress={progress} visible={near} form={form} />
               </Suspense>
             </SafeCanvas>
           )}

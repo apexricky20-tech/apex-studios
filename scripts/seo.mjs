@@ -19,6 +19,7 @@ import { fileURLToPath } from 'node:url'
 
 import { contact as contactDefault } from '../src/data/contact.js'
 import { projects as projectsDefault } from '../src/data/projects.js'
+import { site as siteDefault } from '../src/data/site.js'
 import { articles } from '../src/data/articles.js'
 import { serviceNames, pageNames } from '../src/lib/crumbs.js'
 import { websiteDesign } from '../src/data/websiteDesign.js'
@@ -336,6 +337,13 @@ function headBlock(route) {
     lines.push(`<meta name="google-site-verification" content="${attr(process.env.GOOGLE_SITE_VERIFICATION)}" />`)
   }
   if (route.path === '/') {
+    // The hero portrait is the largest thing on the home page. Without this hint the browser only
+    // discovers it after the JavaScript has run (measured: requested at ~3.0s on throttled mobile).
+    // Home only, so inner pages never download a picture they do not show.
+    const portrait = siteDefault.portrait
+    if (typeof portrait === 'string' && portrait.startsWith('/')) {
+      lines.unshift(`<link rel="preload" as="image" href="${attr(portrait)}" fetchpriority="high" />`)
+    }
     lines.push(jsonLd(businessData()))
     lines.push(jsonLd(faqData()))
   }

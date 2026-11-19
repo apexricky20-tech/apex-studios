@@ -1,5 +1,5 @@
 import { Component, lazy, Suspense, useEffect, useRef, useState } from 'react'
-import { Link } from 'react-router-dom'
+import CtaButtons from './CtaButtons'
 import { FX } from '../lib/fx'
 import ServiceOrbit from './ServiceOrbit'
 import ClientQuote from './ClientQuote'
@@ -97,12 +97,7 @@ export default function ClosingGem() {
             Tell us about your hotel, lodge or restaurant. We will reply with the next step.
           </p>
           <ClientQuote t={testimonials.find((t) => t.id === 'said')} className="mt-8 max-w-lg" />
-          <Link
-            to="/contact"
-            className="mt-10 inline-block rounded-full bg-paper px-9 py-4 text-sm font-semibold text-ink transition-colors hover:bg-amber"
-          >
-            Start a project
-          </Link>
+          <CtaButtons className="mt-10" />
         </div>
         <ServiceOrbit running={near} bloomOn={use3d}>
           {use3d && near ? (

@@ -1,4 +1,5 @@
 import { Link, useParams } from 'react-router-dom'
+import CtaButtons from '../components/CtaButtons'
 import { useVisibleProjects } from '../lib/content'
 import NotFound from './NotFound'
 import Breadcrumbs from '../components/Breadcrumbs'
@@ -51,6 +52,8 @@ export default function ProjectPage() {
             alt={`${project.title} website`}
             fetchPriority="high"
             decoding="async"
+            data-morph-target
+            style={{ viewTransitionName: 'project-image' }}
             className="h-full w-full object-cover"
             onError={(e) => {
               e.currentTarget.style.display = 'none'
@@ -113,12 +116,7 @@ export default function ProjectPage() {
           <p className="mt-6 max-w-xl text-xl leading-relaxed text-muted">
             {cta.text}
           </p>
-          <Link
-            to="/contact"
-            className="mt-10 inline-block rounded-full border border-paper/25 px-8 py-4 text-lg font-medium transition-colors hover:border-amber hover:text-amber"
-          >
-            Start a project
-          </Link>
+          <CtaButtons className="mt-10" />
         </div>
 
         <div className="mt-32 flex flex-wrap items-center justify-between gap-6 border-t border-paper/15 pt-10">

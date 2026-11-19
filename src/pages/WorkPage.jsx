@@ -2,12 +2,17 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useVisibleProjects } from '../lib/content'
 import Breadcrumbs from '../components/Breadcrumbs'
+import { useMorphTo } from '../lib/morph'
+import { warmProject } from '../lib/warm'
 
 function Card({ project }) {
+  const morph = useMorphTo()
   return (
     <Link
       to={`/work/${project.slug}`}
       className="group block"
+      onClick={(e) => morph(e, `/work/${project.slug}`)}
+      {...warmProject}
     >
       <div data-tilt className="relative aspect-[4/3] overflow-hidden rounded-2xl border border-paper/10 bg-surface">
         <img
