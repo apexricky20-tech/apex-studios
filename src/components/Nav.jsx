@@ -72,7 +72,7 @@ export default function Nav() {
       >
         <div className="flex items-center justify-between px-gutter py-5">
           <Link to="/" onClick={close} aria-label="Apex Studios home">
-            <Logo />
+            <Logo alive />
           </Link>
           <div className="flex items-center gap-3 md:gap-4">
             <Link
