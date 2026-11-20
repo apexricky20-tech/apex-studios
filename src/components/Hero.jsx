@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import { useSite } from '../lib/content'
 import CtaButtons from './CtaButtons'
 
@@ -5,6 +6,13 @@ const fade = 'linear-gradient(to bottom, black 70%, transparent 100%)'
 
 export default function Hero() {
   const site = useSite()
+  // True only when the page opened with the first screen already painted from the HTML: skip the intro
+  // animations once, so nothing blinks. Cleared after mount so a later visit to the home page animates as usual.
+  const [painted] = useState(() => document.documentElement.dataset.shell === '1')
+  const still = painted ? ' no-intro' : ''
+  useEffect(() => {
+    delete document.documentElement.dataset.shell
+  }, [])
   return (
     <>
       {/* Layer 1: the portrait stays pinned while the page scrolls over it */}
@@ -15,7 +23,7 @@ export default function Hero() {
             alt={`Portrait of ${site.name}, founder of Apex Studios`}
             fetchPriority="high"
             data-parallax="14"
-            className="hero-portrait h-full w-auto max-w-full object-contain"
+            className={`hero-portrait h-full w-auto max-w-full object-contain${still}`}
             style={{ maskImage: fade, WebkitMaskImage: fade }}
             onError={(e) => {
               e.currentTarget.style.display = 'none'
@@ -28,15 +36,15 @@ export default function Hero() {
       {/* Layer 2: the text sits over the portrait, then scrolls away */}
       <div data-hero className="relative z-10 -mt-[100svh] flex h-svh flex-col items-center justify-end px-gutter pb-8 text-center">
         <h1 className="sr-only">Websites, payments, automation and AI for hotels, lodges and restaurants</h1>
-        <p className="hero-rise max-w-2xl text-base text-paper md:text-lg" style={{ animationDelay: '250ms' }}>
+        <p className={`hero-rise max-w-2xl text-base text-paper md:text-lg${still}`} style={{ animationDelay: '250ms' }}>
           I&apos;m {site.name}. I build the digital systems hotels, lodges and restaurants run on: websites,
           M-Pesa payments, WhatsApp automation and AI assistants that turn visitors into direct bookings,
           orders and paying guests.
         </p>
 
-        <CtaButtons className="hero-rise mt-6 justify-center" style={{ animationDelay: '400ms' }} />
+        <CtaButtons className={`hero-rise mt-6 justify-center${still}`} style={{ animationDelay: '400ms' }} />
 
-        <ul className="hero-rise mt-6 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs text-paper/70" style={{ animationDelay: '550ms' }}>
+        <ul className={`hero-rise mt-6 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs text-paper/70${still}`} style={{ animationDelay: '550ms' }}>
           {site.available !== false && (
           <li className="flex items-center gap-2 text-paper">
             <span className="relative flex h-2 w-2" aria-hidden="true">
@@ -53,7 +61,7 @@ export default function Hero() {
         <button
           type="button"
           onClick={() => window.scrollTo({ top: window.innerHeight, behavior: 'smooth' })}
-          className="hero-rise mt-6 flex items-center gap-2 text-xs font-medium text-paper transition-colors hover:text-amber" style={{ animationDelay: '700ms' }}
+          className={`hero-rise mt-6 flex items-center gap-2 text-xs font-medium text-paper transition-colors hover:text-amber${still}`} style={{ animationDelay: '700ms' }}
         >
           <svg
             viewBox="0 0 24 24"

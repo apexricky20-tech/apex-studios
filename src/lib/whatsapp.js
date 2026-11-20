@@ -1,4 +1,4 @@
-import { serviceNames } from './crumbs'
+import { serviceNames } from './crumbs.js'
 
 // Builds a wa.me link with a ready-typed message. Returns '' when no number is set.
 export function waHref(number, text) {

@@ -8,6 +8,7 @@ import ServiceVoices from './ServiceVoices'
 
 // Only the two pages that have a demo download it.
 const Demo = lazy(() => import('./demos/Demo'))
+const ModelShowcase = lazy(() => import('./ModelShowcase'))
 
 export default function ServiceLayout({ page }) {
   const { sections } = page
@@ -59,6 +60,12 @@ export default function ServiceLayout({ page }) {
         {page.demo && (
           <Suspense fallback={<div className="mt-20 min-h-[640px] md:min-h-[600px]" aria-hidden="true" />}>
             <Demo kind={page.demo} />
+          </Suspense>
+        )}
+
+        {page.model && (
+          <Suspense fallback={<div className="mt-20 min-h-[420px]" aria-hidden="true" />}>
+            <ModelShowcase model={page.model} />
           </Suspense>
         )}
 

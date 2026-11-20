@@ -20,6 +20,7 @@ import { fileURLToPath } from 'node:url'
 import { contact as contactDefault } from '../src/data/contact.js'
 import { projects as projectsDefault } from '../src/data/projects.js'
 import { site as siteDefault } from '../src/data/site.js'
+import { waHref, waMessage } from '../src/lib/whatsapp.js'
 import { articles } from '../src/data/articles.js'
 import { serviceNames, pageNames } from '../src/lib/crumbs.js'
 import { websiteDesign } from '../src/data/websiteDesign.js'
@@ -108,6 +109,13 @@ const routes = [
       'Website design, development, automation, M-Pesa payments, WhatsApp automation, AI assistants, branding, Google Business Profile, website care plans, 3D creation, UI/UX design and motion design for hotels, lodges and restaurants in Kenya.',
   },
   ...servicePages.map(([path, p]) => ({ path, title: p.title, description: p.description })),
+  {
+    path: '/free-check',
+    title: 'Free Website Speed and SEO Check for Hotels and Restaurants | Apex Studios',
+    description:
+      'Test your hotel, lodge or restaurant website for free. See how fast it loads on a phone, whether Google can read it, and the three fixes that matter most.',
+    h1: 'Free digital check',
+  },
   {
     path: '/process',
     title: 'Our Process | Apex Studios',
@@ -293,12 +301,49 @@ const shellLinks = [
   ['Contact', '/contact'],
   ['Privacy', '/privacy'],
 ]
+// The home page's first screen, written straight into the HTML (same markup and classes as src/components/Hero.jsx),
+// so the portrait and the call-to-action paint as soon as the CSS arrives instead of after the JavaScript has run.
+// React then replaces it with the identical real thing; boot.js flags this so the intro animations do not replay.
+function homeShell(route, linksHtml, reach) {
+  const s = siteDefault
+  const fade = 'linear-gradient(to bottom, black 70%, transparent 100%)'
+  const wa = waHref(contact.whatsapp, waMessage('/'))
+  const portrait = typeof s.portrait === 'string' && s.portrait.startsWith('/') ? s.portrait : ''
+  return (
+    `<div class="shell-hero relative" data-path="/">` +
+    `<div class="sticky top-0 z-0 h-svh overflow-hidden bg-ink">` +
+    `<div class="absolute inset-x-0 bottom-[46svh] top-20 flex justify-center md:bottom-[36svh]">` +
+    (portrait
+      ? `<img src="${attr(portrait)}" alt="${attr(`Portrait of ${s.name}, founder of Apex Studios`)}" fetchpriority="high" class="h-full w-auto max-w-full object-contain" style="mask-image:${fade};-webkit-mask-image:${fade}" />`
+      : '') +
+    `</div><div class="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-ink via-ink/80 to-transparent"></div></div>` +
+    `<div class="relative z-10 -mt-[100svh] flex h-svh flex-col items-center justify-end px-gutter pb-8 text-center">` +
+    `<h1 class="sr-only">${text(route.h1)}</h1>` +
+    `<p class="max-w-2xl text-base text-paper md:text-lg">I&#39;m ${text(s.name)}. I build the digital systems hotels, lodges and restaurants run on: websites, M-Pesa payments, WhatsApp automation and AI assistants that turn visitors into direct bookings, orders and paying guests.</p>` +
+    `<div class="mt-6 flex flex-wrap gap-3 justify-center">` +
+    `<a href="/free-check" class="rounded-full bg-paper px-8 py-4 text-sm font-semibold uppercase tracking-wider text-ink transition-colors hover:bg-amber">Get a free digital check</a>` +
+    (wa ? `<a href="${attr(wa)}" target="_blank" rel="noreferrer" class="rounded-full border border-paper/25 px-8 py-4 text-sm font-semibold uppercase tracking-wider transition-colors hover:border-amber hover:text-amber">Chat on WhatsApp</a>` : '') +
+    `</div>` +
+    `<ul class="mt-6 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs text-paper/70">` +
+    (s.available !== false
+      ? `<li class="flex items-center gap-2 text-paper"><span class="relative flex h-2 w-2" aria-hidden="true"><span class="relative inline-flex h-2 w-2 rounded-full bg-[#12b76a]"></span></span>${text(s.availability)}</li>`
+      : '') +
+    `<li>${text(s.role)}</li><li>${text(s.location)}</li></ul>` +
+    `<span class="mt-6 flex items-center gap-2 text-xs font-medium text-paper"><svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>Scroll to explore</span>` +
+    `</div>` +
+    `<nav class="sr-only" aria-label="Main"><ul>${linksHtml}</ul></nav>` +
+    (reach.length ? `<p class="sr-only">${reach.join(' &middot; ')}</p>` : '') +
+    `</div>`
+  )
+}
+
 function shell(route) {
   const links = shellLinks.map(([label, to]) => `<li><a href="${attr(to)}">${text(label)}</a></li>`).join('')
   const reach = [
     contact.email && `<a href="mailto:${attr(contact.email)}">${text(contact.email)}</a>`,
     contact.whatsapp && `<a href="https://wa.me/${attr(contact.whatsapp)}">WhatsApp</a>`,
   ].filter(Boolean)
+  if (route.path === '/') return homeShell(route, links, reach)
   return (
     `<div class="shell" data-path="${attr(route.path)}">` +
     `<h1>${text(route.h1 || stripBrand(route.title))}</h1>` +

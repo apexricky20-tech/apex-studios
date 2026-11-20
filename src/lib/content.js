@@ -12,6 +12,13 @@ const subscribe = (fn) => {
   return () => listeners.delete(fn)
 }
 
+// The dashboard saves a fixed set of project fields, so a video or before picture added in src/data/projects.js
+// would vanish once the dashboard list is saved. They are carried over by slug instead.
+const withMedia = (p) => {
+  const d = projectsDefault.find((x) => x.slug === p.slug)
+  return d && (d.video || d.before) ? { ...p, video: d.video, before: d.before } : p
+}
+
 export function applyContent(c = {}) {
   const contact = { ...contactDefault }
   // A blank value saved in the dashboard falls back to the default in src/data/contact.js,
@@ -22,7 +29,7 @@ export function applyContent(c = {}) {
   state = {
     site: { ...siteDefault, ...(c.site || {}) },
     contact,
-    projects: Array.isArray(c.projects) ? c.projects : projectsDefault,
+    projects: Array.isArray(c.projects) ? c.projects.map(withMedia) : projectsDefault,
   }
   listeners.forEach((fn) => fn())
 }

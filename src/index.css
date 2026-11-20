@@ -534,3 +534,13 @@ a:focus-visible, button:focus-visible, summary:focus-visible {
   .chat-launcher, .ney-nudge { animation: none; }
 }
 @media print { .ney-nudge { display: none !important; } }
+
+/* ---- free digital check ---- */
+.site-ring { stroke-dashoffset: var(--to); animation: site-ring 1.1s cubic-bezier(0.22, 0.7, 0.2, 1) both; }
+@keyframes site-ring { from { stroke-dashoffset: var(--c); } to { stroke-dashoffset: var(--to); } }
+.site-bar { width: 40%; animation: site-bar 1.6s ease-in-out infinite; }
+@keyframes site-bar { 0% { transform: translateX(-100%); } 100% { transform: translateX(250%); } }
+@media (prefers-reduced-motion: reduce) { .site-ring { animation: none; } .site-bar { animation: none; width: 100%; opacity: 0.5; } }
+
+/* the first screen was already painted from the HTML: do not replay its intro (see Hero.jsx) */
+.no-intro { animation: none !important; }

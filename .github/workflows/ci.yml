@@ -20,3 +20,9 @@ jobs:
       - run: npm run build
         env:
           CONTENT_URL: 'off' # CI must not depend on the live site being up
+      # Guardrail: fails the check if a change makes the site worse for guests (accessibility, search basics,
+      # layout jumping). Speed only warns, because lab speed numbers move a little from run to run.
+      - name: Lighthouse
+        run: npx --yes @lhci/cli@0.14.0 autorun
+        env:
+          CONTENT_URL: 'off'

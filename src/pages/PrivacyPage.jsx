@@ -52,6 +52,11 @@ export default function PrivacyPage() {
           sooner if we delete your message.
         </p>
         <p>
+          <strong className="font-medium text-paper">The free digital check.</strong> When you run it, the website address
+          you type is sent to Google PageSpeed Insights, which tests that site and sends back scores. We do not store the
+          address or the result. If you choose to send the result to us on WhatsApp, it is sent as a normal WhatsApp message.
+        </p>
+        <p>
           <strong className="font-medium text-paper">Visit statistics.</strong> We may use Cloudflare Web Analytics to see
           which pages are visited. It is designed to work without cookies.
         </p>

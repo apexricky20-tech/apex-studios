@@ -27,6 +27,7 @@ const ArticlePage = lazy(loaders.article)
 const PrivacyPage = lazy(loaders.privacy)
 const TermsPage = lazy(loaders.terms)
 const ReferPage = lazy(loaders.refer)
+const FreeCheckPage = lazy(loaders.freeCheck)
 const NotFound = lazy(loaders.notFound)
 const Admin = lazy(loaders.admin)
 
@@ -57,6 +58,7 @@ export default function App() {
           <Route path="contact" element={<ContactPage />} />
           <Route path="articles" element={<ArticlesPage />} />
           <Route path="articles/:slug" element={<ArticlePage />} />
+          <Route path="free-check" element={<FreeCheckPage />} />
           <Route path="refer" element={<ReferPage />} />
           <Route path="privacy" element={<PrivacyPage />} />
           <Route path="terms" element={<TermsPage />} />
