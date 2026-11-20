@@ -24,4 +24,5 @@ export const pageNames = {
   '/terms': 'Website Terms',
   '/articles': 'Articles',
   '/refer': 'Refer a Client',
+  '/free-check': 'Free digital check',
 }

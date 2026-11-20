@@ -25,6 +25,7 @@ export const loaders = {
   privacy: () => import('../pages/PrivacyPage'),
   terms: () => import('../pages/TermsPage'),
   refer: () => import('../pages/ReferPage'),
+  freeCheck: () => import('../pages/FreeCheckPage'),
   notFound: () => import('../pages/NotFound'),
   admin: () => import('../admin/Admin'),
 }

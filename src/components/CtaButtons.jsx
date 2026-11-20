@@ -10,7 +10,7 @@ export default function CtaButtons({ topic, className = '', style }) {
   return (
     <div className={`flex flex-wrap gap-3 ${className}`} style={style}>
       <Link
-        to="/contact?offer=free-check"
+        to="/free-check"
         className="rounded-full bg-paper px-8 py-4 text-sm font-semibold uppercase tracking-wider text-ink transition-colors hover:bg-amber"
       >
         Get my 3 free fixes

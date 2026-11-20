@@ -25,3 +25,4 @@ dist-ssr
 
 # Cloudflare local dev state (created by `wrangler pages dev`)
 .wrangler
+.lighthouseci

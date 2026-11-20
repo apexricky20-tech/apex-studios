@@ -1,4 +1,11 @@
 // Only published projects appear on the live site. Unpublished ones show in dev.
+//
+// Optional extras per project. Add them when you have the files; a project without them looks as it does now.
+//   video:  { src: '/projects/bullhead.mp4', webm: '/projects/bullhead.webm', poster: '/projects/bullhead.webp', alt: 'What the clip shows' }
+//           A silent phone screen recording, portrait, about 10 to 20 seconds, under 1 MB (ffmpeg: -vf scale=540:-2 -crf 30 -an).
+//           Put the files in public/projects/. It plays only while on screen, and never on data saver or a slow link.
+//   before: { image: '/projects/bullhead-before.webp', alt: 'The old website' }
+//           A screenshot of the old site at the same size as the main image. The main image is used as the "after".
 export const projects = [
   {
     slug: 'bullhead',

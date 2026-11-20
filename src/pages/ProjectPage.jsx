@@ -6,6 +6,7 @@ import Breadcrumbs from '../components/Breadcrumbs'
 import { withUtm } from '../lib/utm'
 import { forProject } from '../data/testimonials'
 import ClientQuote from '../components/ClientQuote'
+import CaseMedia from '../components/CaseMedia'
 
 function Row({ label, children }) {
   return (
@@ -60,6 +61,8 @@ export default function ProjectPage() {
             }}
           />
         </div>
+
+        <CaseMedia project={project} />
 
         <h2 className="mt-32 text-5xl md:text-7xl">The work</h2>
         <div className="mt-16">

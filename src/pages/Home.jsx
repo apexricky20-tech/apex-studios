@@ -6,6 +6,7 @@ import WhyChooseUs from '../components/WhyChooseUs'
 import Process from '../components/Process'
 import Faq from '../components/Faq'
 import ProofStrip from '../components/ProofStrip'
+import SiteCheck from '../components/SiteCheck'
 import ArticlesSection from '../components/ArticlesSection'
 import ClosingGem from '../components/ClosingGem'
 import Testimonials from '../components/Testimonials'
@@ -20,6 +21,7 @@ export default function Home() {
         <div className="relative z-10 rounded-t-3xl border-t border-paper/10 bg-ink">
           <AmbientField />
           <ProofStrip />
+          <SiteCheck />
           <Services />
           <Marquee />
           <Work />

@@ -4,6 +4,7 @@ export const threeDCreation = {
   description:
     '3D creation for businesses in Kenya: product and dish renders, room and space visuals, 3D logos and interactive 3D for your website, made before anything is built or photographed.',
   label: 'Services',
+  model: { src: '/models/room.glb', poster: '/models/room.webp', alt: 'A hotel room modelled in 3D' },
   h1: '3D Creation',
   intro:
     'Show a room, a dish, a product or a space before it exists, or from an angle a camera could never reach. We model it, light it and deliver it as images, clips or interactive 3D for your website.',

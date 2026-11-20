@@ -22,6 +22,7 @@ const SCENES = {
   '/contact': 'contact',
   '/articles': 'articles',
   '/refer': 'refer',
+  '/free-check': 'development',
   '/privacy': 'privacy',
   '/terms': 'terms',
 }
